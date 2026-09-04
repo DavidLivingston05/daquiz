@@ -89,7 +89,7 @@ export async function getAvailableBooks() {
  */
 export async function getQuizSession(
   book: string,
-  count = 10,
+  count = 50,
   mode: 'competition' | 'practice' = 'competition'
 ): Promise<SanitizedQuestion[]> {
   let clientIp = 'unknown';
@@ -106,7 +106,7 @@ export async function getQuizSession(
     // For practice mode, return questions with explanation
     await connectToDatabase();
     const questions = await Question.find({ book: validated.book, isActive: true })
-      .limit(validated.count || 10)
+      .limit(validated.count || 50)
       .select('-options.isCorrect')
       .lean();
 

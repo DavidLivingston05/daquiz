@@ -50,7 +50,7 @@ export async function ensureProductionIndexes() {
  * Get quiz questions with caching
  * 30-minute cache prevents database hammering
  */
-export async function getCachedQuizQuestions(book: string, count = 10) {
+export async function getCachedQuizQuestions(book: string, count = 50) {
   const cacheKey = `quiz:questions:${book}:${count}`;
 
   if (redis) {
@@ -89,7 +89,7 @@ export async function getCachedQuizQuestions(book: string, count = 10) {
  * - Removes correct answer hints
  * - Uses indexed queries
  */
-export async function getOptimizedQuizSession(book: string, count = 10) {
+export async function getOptimizedQuizSession(book: string, count = 50) {
   await connectToDatabase();
 
   const totalCount = await Question.countDocuments({ book, isActive: true });

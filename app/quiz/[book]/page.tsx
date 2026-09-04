@@ -87,7 +87,7 @@ export default function QuizPlayPage() {
       try {
         setLoading(true);
         setErrorMsg(null);
-        const data = await getQuizSession(book, 10, quizMode);
+        const data = await getQuizSession(book, 50, quizMode);
         if (!data || data.length === 0) {
           setErrorMsg(
             `No active questions found for ${book}. You can add questions in the Admin portal or try another book.`
