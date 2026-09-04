@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { User, Phone, Calendar, Sparkles, X, ArrowRight } from 'lucide-react';
 import { registerOrLoginUser } from '@/lib/actions/userActions';
 
@@ -19,13 +20,18 @@ export default function UserAuthModal({
   title = 'Join Bible Quiz & Save Scores',
   subtitle = 'Enter your details to track your competition rank and practice history.',
 }: UserAuthModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [age, setAge] = useState<number | ''>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,8 +65,8 @@ export default function UserAuthModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
       {/* Click outside backdrop */}
       <div className="fixed inset-0" onClick={onClose} />
 
@@ -179,4 +185,6 @@ export default function UserAuthModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
