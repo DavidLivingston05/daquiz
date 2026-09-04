@@ -18,6 +18,11 @@ import {
   Languages,
   Sparkles,
   ChevronLeft,
+  Flame,
+  Check,
+  HelpCircle,
+  Trophy,
+  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -66,7 +71,7 @@ export default function QuizPlayPage() {
         setErrorMsg(null);
         const data = await getQuizSession(book, 10);
         if (!data || data.length === 0) {
-          setErrorMsg(`No active questions found for ${book}. Please seed or add questions via Admin.`);
+          setErrorMsg(`No active questions found for ${book}. You can add questions in the Admin portal or choose another book.`);
         } else {
           setQuestions(data);
         }
@@ -93,7 +98,6 @@ export default function QuizPlayPage() {
       setQuestionTimeSpent((prev) => prev + 1);
       setQuestionTimeLeft((prev) => {
         if (prev <= 1) {
-          // Time's up for this question - automatically advance
           handleNextQuestion(true);
           return 30;
         }
@@ -130,7 +134,6 @@ export default function QuizPlayPage() {
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      // Finished all questions
       submitQuiz(nextAnswers);
     }
   };
@@ -143,7 +146,9 @@ export default function QuizPlayPage() {
         guestIdentifier: guestId || 'anonymous_guest',
         book,
         totalTime: totalQuizTimeRef.current || 1,
-        answers: answersToSubmit.filter((a) => a.selectedOptionId && a.selectedOptionId !== 'timeout_no_answer'),
+        answers: answersToSubmit.filter(
+          (a) => a.selectedOptionId && a.selectedOptionId !== 'timeout_no_answer'
+        ),
       };
 
       const result = await verifyAndSubmitQuiz(payload);
@@ -160,140 +165,183 @@ export default function QuizPlayPage() {
     window.location.reload();
   };
 
+  // Timer color indicator
+  const getTimerColor = () => {
+    if (questionTimeLeft > 15) return 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
+    if (questionTimeLeft > 7) return 'text-amber-400 border-amber-500/40 bg-amber-500/10';
+    return 'text-rose-400 border-rose-500/40 bg-rose-500/10 animate-pulse';
+  };
+
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-600 font-medium">Preparing quiz for {book}...</p>
+      <div className="flex flex-col items-center justify-center min-h-[65vh] space-y-6">
+        <div className="relative">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-xl shadow-emerald-500/30 animate-pulse">
+            <BookOpen className="w-8 h-8 text-white" />
+          </div>
+          <div className="absolute -inset-2 rounded-2xl border-2 border-emerald-500/30 animate-ping pointer-events-none" />
+        </div>
+        <div className="text-center space-y-1">
+          <h3 className="text-lg font-bold text-white tracking-wide">Loading Questions</h3>
+          <p className="text-xs text-slate-400 font-tamil">
+            {book} புத்தகத்தின் கேள்விகள் தயாராகின்றன...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (errorMsg && !quizResult) {
     return (
-      <div className="max-w-lg mx-auto bg-white p-8 rounded-3xl border border-red-200 shadow-sm text-center space-y-4">
-        <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 mx-auto flex items-center justify-center">
-          <XCircle className="w-6 h-6" />
+      <div className="max-w-lg mx-auto glass-panel p-8 rounded-3xl border border-red-500/30 text-center space-y-5 shadow-2xl mt-8">
+        <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 mx-auto flex items-center justify-center">
+          <HelpCircle className="w-7 h-7" />
         </div>
-        <h2 className="text-xl font-bold text-slate-800">Quiz Unavailable</h2>
-        <p className="text-sm text-slate-600">{errorMsg}</p>
-        <div className="pt-4 flex items-center justify-center gap-3">
+        <div className="space-y-2">
+          <h2 className="text-xl font-extrabold text-white">Quiz Unavailable</h2>
+          <p className="text-sm text-slate-300">{errorMsg}</p>
+        </div>
+        <div className="pt-3 flex items-center justify-center gap-3">
           <Link
             href="/"
-            className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-sm font-medium hover:bg-slate-200 transition-colors"
+            className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all"
           >
             Back to Books
           </Link>
           <Link
             href="/admin"
-            className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all"
           >
-            Add Questions in Admin
+            Open Admin Portal
           </Link>
         </div>
       </div>
     );
   }
 
-  // RESULT & REVIEW VIEW
+  // ================= RESULT & REVIEW VIEW =================
   if (quizResult) {
     return (
       <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
-        {/* Score Card Header */}
-        <div className="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-3xl p-8 text-center space-y-4 shadow-xl">
-          <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-md text-yellow-300">
-            <Award className="w-10 h-10" />
-          </div>
-          <h1 className="text-3xl font-extrabold">Quiz Completed!</h1>
-          <p className="text-emerald-100 text-sm">
-            Book: <span className="font-semibold text-white">{book}</span> • Accuracy:{' '}
-            <span className="font-semibold text-white">{quizResult.accuracy}%</span>
-          </p>
+        {/* Glowing Score Hero Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950/80 via-[#0e1c2e] to-[#0a1220] border border-emerald-500/30 p-8 sm:p-10 text-center space-y-6 shadow-2xl glow-emerald">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
 
-          <div className="grid grid-cols-3 gap-4 pt-4 max-w-md mx-auto">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-              <span className="text-xs text-emerald-200 font-medium">Total Score</span>
-              <p className="text-2xl font-black text-yellow-300">{quizResult.score}</p>
+          <div className="inline-flex p-4 rounded-3xl bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 shadow-xl shadow-yellow-500/20 animate-float">
+            <Trophy className="w-10 h-10 stroke-[2.2]" />
+          </div>
+
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+              Quiz Completed!
+            </h1>
+            <p className="text-slate-300 text-sm">
+              Book: <span className="font-bold text-emerald-400">{book}</span> • Accuracy:{' '}
+              <span className="font-bold text-emerald-400">{quizResult.accuracy}%</span>
+            </p>
+          </div>
+
+          {/* Metric Stats Cards */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2 max-w-lg mx-auto">
+            <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
+              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Total Score</span>
+              <p className="text-2xl sm:text-3xl font-black text-amber-400 mt-1">{quizResult.score}</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-              <span className="text-xs text-emerald-200 font-medium">Correct</span>
-              <p className="text-2xl font-black text-emerald-300">
+            <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
+              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Correct</span>
+              <p className="text-2xl sm:text-3xl font-black text-emerald-400 mt-1">
                 {quizResult.correctCount} / {quizResult.totalQuestions}
               </p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-              <span className="text-xs text-emerald-200 font-medium">Accuracy</span>
-              <p className="text-2xl font-black text-white">{quizResult.accuracy}%</p>
+            <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
+              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Accuracy</span>
+              <p className="text-2xl sm:text-3xl font-black text-white mt-1">{quizResult.accuracy}%</p>
             </div>
           </div>
 
-          <div className="flex justify-center gap-3 pt-4">
+          {/* Action CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               onClick={handleRestart}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-emerald-800 font-bold text-sm shadow hover:bg-emerald-50 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02]"
             >
-              <RotateCcw className="w-4 h-4" /> Try Again
+              <RotateCcw className="w-4 h-4 stroke-[2.5]" /> Try Again (மீண்டும் விளையாடு)
             </button>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 text-white font-semibold text-sm hover:bg-emerald-600 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-slate-700 transition-all hover:scale-[1.02]"
             >
-              <BookOpen className="w-4 h-4" /> Other Books
+              <BookOpen className="w-4 h-4 text-emerald-400" /> Explore Other Books
             </Link>
           </div>
         </div>
 
-        {/* Detailed Question Reviews */}
+        {/* Detailed Question Review List */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>Answer Review & Explanations</span>
-            <span className="text-xs font-normal text-slate-500">(விளக்கங்கள்)</span>
-          </h2>
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <span>Answer Review & Explanations</span>
+            </h2>
+            <span className="text-xs font-tamil text-slate-400">விடைகளின் விளக்கம்</span>
+          </div>
 
           <div className="space-y-4">
             {quizResult.review?.map((item: any, idx: number) => (
               <div
                 key={idx}
-                className={`p-6 rounded-2xl border bg-white space-y-3 transition-all ${
-                  item.isCorrect ? 'border-emerald-200 bg-emerald-50/20' : 'border-red-200 bg-red-50/20'
+                className={`p-6 rounded-2xl border glass-panel transition-all ${
+                  item.isCorrect
+                    ? 'border-emerald-500/30 bg-emerald-950/20'
+                    : 'border-red-500/30 bg-red-950/20'
                 }`}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-7 h-7 rounded-xl bg-slate-800 text-slate-200 text-xs font-black flex items-center justify-center border border-slate-700">
                       {idx + 1}
                     </span>
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase px-2.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                       {item.reference}
                     </span>
                   </div>
                   <div>
                     {item.isCorrect ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Correct
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Correct (+pts)
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-red-700 bg-red-100 px-2.5 py-1 rounded-full">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1 rounded-full">
                         <XCircle className="w-3.5 h-3.5" /> Incorrect
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-2 mb-4">
                   {item.question?.en && (
-                    <p className="font-semibold text-slate-900 text-base">{item.question.en}</p>
+                    <p className="font-bold text-white text-base leading-snug">{item.question.en}</p>
                   )}
                   {item.question?.ta && (
-                    <p className="text-sm text-slate-700">{item.question.ta}</p>
+                    <p className="text-sm font-tamil text-slate-300 leading-relaxed">
+                      {item.question.ta}
+                    </p>
                   )}
                 </div>
 
                 {item.explanation && (
-                  <div className="pt-2 border-t border-slate-100 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl space-y-1">
-                    <span className="font-bold text-slate-700 block">Explanation:</span>
-                    {item.explanation.en && <p>{item.explanation.en}</p>}
-                    {item.explanation.ta && <p className="text-slate-500">{item.explanation.ta}</p>}
+                  <div className="border-t border-slate-800/80 pt-3 text-xs bg-black/20 p-3.5 rounded-xl space-y-1.5 border border-slate-800">
+                    <span className="font-extrabold text-amber-400 flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Scripture Context:
+                    </span>
+                    {item.explanation.en && (
+                      <p className="text-slate-300 leading-relaxed">{item.explanation.en}</p>
+                    )}
+                    {item.explanation.ta && (
+                      <p className="text-slate-400 font-tamil leading-relaxed">
+                        {item.explanation.ta}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -304,42 +352,49 @@ export default function QuizPlayPage() {
     );
   }
 
-  // ACTIVE QUIZ PLAY VIEW
+  // ================= ACTIVE QUIZ PLAY VIEW =================
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Top Bar: Navigation, Book, Language Toggle */}
-      <div className="flex items-center justify-between">
+      {/* Top Header Bar */}
+      <div className="flex items-center justify-between gap-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all"
         >
-          <ChevronLeft className="w-4 h-4" /> All Books
+          <ChevronLeft className="w-4 h-4 text-emerald-400" />
+          <span>All Books</span>
         </Link>
 
-        {/* Language selector toggle */}
-        <div className="inline-flex p-1 rounded-xl bg-slate-200/70 text-xs font-medium">
+        {/* Language segmented control */}
+        <div className="inline-flex p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold shadow-inner">
           <button
             onClick={() => setLangMode('both')}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
-              langMode === 'both' ? 'bg-white text-emerald-800 shadow-sm font-bold' : 'text-slate-600'
+            className={`px-3 py-1.5 rounded-lg transition-all ${
+              langMode === 'both'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             Both (இருமொழி)
           </button>
           <button
             onClick={() => setLangMode('en')}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
-              langMode === 'en' ? 'bg-white text-emerald-800 shadow-sm font-bold' : 'text-slate-600'
+            className={`px-3 py-1.5 rounded-lg transition-all ${
+              langMode === 'en'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             English
           </button>
           <button
             onClick={() => setLangMode('ta')}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
-              langMode === 'ta' ? 'bg-white text-emerald-800 shadow-sm font-bold' : 'text-slate-600'
+            className={`px-3 py-1.5 rounded-lg font-tamil transition-all ${
+              langMode === 'ta'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             தமிழ்
@@ -347,87 +402,121 @@ export default function QuizPlayPage() {
         </div>
       </div>
 
-      {/* Progress & Question Counter */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-          <span>
-            Question {currentIndex + 1} of {questions.length}
-          </span>
-          <span className="flex items-center gap-1 font-mono text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-            <Clock className="w-3.5 h-3.5" /> {questionTimeLeft}s
-          </span>
+      {/* Progress & Live Timer Bar */}
+      <div className="glass-panel p-4 rounded-2xl border border-slate-800/90 space-y-2.5">
+        <div className="flex items-center justify-between text-xs font-extrabold">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-400">
+              QUESTION {currentIndex + 1}
+            </span>
+            <span className="text-slate-500">/</span>
+            <span className="text-slate-400">{questions.length}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {questionTimeLeft > 15 && (
+              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold">
+                <Zap className="w-3 h-3 text-amber-400" /> Speed Bonus Active
+              </span>
+            )}
+            <span
+              className={`inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-1 rounded-lg border font-bold transition-all ${getTimerColor()}`}
+            >
+              <Clock className="w-3.5 h-3.5" /> {questionTimeLeft}s
+            </span>
+          </div>
         </div>
-        <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+
+        {/* Progress bar with glow */}
+        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
           <div
-            className="h-full bg-emerald-600 transition-all duration-300 rounded-full"
+            className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 rounded-full transition-all duration-300 shadow-sm shadow-emerald-400/50"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>
 
       {/* Question Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
-        <div className="space-y-3">
+      <div className="relative overflow-hidden rounded-3xl glass-panel border border-slate-700/60 p-6 sm:p-8 shadow-2xl space-y-6">
+        {/* Card Header Badges */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase tracking-wider">
+            <span className="text-[11px] font-black px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
               {currentQ.difficulty}
             </span>
             {currentQ.category && (
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
                 {currentQ.category}
               </span>
             )}
-            <span className="text-xs text-slate-400 ml-auto font-medium">
+          </div>
+
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300/90 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-xl">
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+            <span>
               {currentQ.book} {currentQ.chapter ? `${currentQ.chapter}:${currentQ.verse || 1}` : ''}
             </span>
           </div>
-
-          <div className="space-y-2">
-            {(langMode === 'both' || langMode === 'en') && (
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
-                {currentQ.question.en}
-              </h2>
-            )}
-            {(langMode === 'both' || langMode === 'ta') && (
-              <p className="text-base sm:text-lg text-slate-700 font-medium leading-relaxed">
-                {currentQ.question.ta}
-              </p>
-            )}
-          </div>
         </div>
 
-        {/* Options */}
+        {/* Question Text */}
         <div className="space-y-3">
+          {(langMode === 'both' || langMode === 'en') && (
+            <h2 className="text-xl sm:text-2xl font-black text-white leading-snug tracking-tight">
+              {currentQ.question.en}
+            </h2>
+          )}
+          {(langMode === 'both' || langMode === 'ta') && (
+            <p className="text-base sm:text-lg font-tamil font-semibold text-emerald-200/90 leading-relaxed">
+              {currentQ.question.ta}
+            </p>
+          )}
+        </div>
+
+        {/* Options List */}
+        <div className="space-y-3 pt-2">
           {currentQ.options.map((opt, idx) => {
             const isSelected = currentSelectedOption === opt.id;
+            const letter = String.fromCharCode(65 + idx);
+
             return (
               <button
                 key={opt.id}
                 onClick={() => handleSelectOption(opt.id)}
-                className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-start gap-3.5 ${
+                className={`w-full text-left p-4 sm:p-4.5 rounded-2xl border-2 transition-all flex items-start gap-4 ${
                   isSelected
-                    ? 'border-emerald-600 bg-emerald-50/60 shadow-sm'
-                    : 'border-slate-200 hover:border-slate-300 bg-white'
+                    ? 'border-emerald-500 bg-gradient-to-r from-emerald-950/60 to-[#0c1f28] shadow-lg shadow-emerald-500/15 scale-[1.01]'
+                    : 'border-slate-800 hover:border-slate-700 bg-slate-900/60 hover:bg-slate-900'
                 }`}
               >
+                {/* Option Letter Badge */}
                 <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0 transition-all ${
                     isSelected
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-100 text-slate-600'
+                      ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/40'
+                      : 'bg-slate-800 text-slate-300 border border-slate-700'
                   }`}
                 >
-                  {String.fromCharCode(65 + idx)}
+                  {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : letter}
                 </div>
 
-                <div className="space-y-0.5 pt-0.5">
+                {/* Option Content */}
+                <div className="space-y-1 pt-0.5 flex-1">
                   {(langMode === 'both' || langMode === 'en') && (
-                    <p className={`text-sm font-semibold ${isSelected ? 'text-emerald-950' : 'text-slate-800'}`}>
+                    <p
+                      className={`text-sm sm:text-base font-bold transition-colors ${
+                        isSelected ? 'text-white' : 'text-slate-200'
+                      }`}
+                    >
                       {opt.text.en}
                     </p>
                   )}
                   {(langMode === 'both' || langMode === 'ta') && (
-                    <p className={`text-xs ${isSelected ? 'text-emerald-800' : 'text-slate-600'}`}>
+                    <p
+                      className={`text-xs sm:text-sm font-tamil transition-colors ${
+                        isSelected ? 'text-emerald-300 font-semibold' : 'text-slate-400 font-medium'
+                      }`}
+                    >
                       {opt.text.ta}
                     </p>
                   )}
@@ -438,23 +527,30 @@ export default function QuizPlayPage() {
         </div>
 
         {/* Action Button */}
-        <div className="pt-2">
+        <div className="pt-3">
           <button
             onClick={() => handleNextQuestion(false)}
             disabled={!currentSelectedOption || submitting}
-            className="w-full py-3.5 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:pointer-events-none text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-xl transition-all flex items-center justify-center gap-2.5 ${
+              currentSelectedOption
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 shadow-emerald-500/30 hover:shadow-emerald-500/45 hover:scale-[1.01] cursor-pointer'
+                : 'bg-slate-800/80 text-slate-500 border border-slate-800 cursor-not-allowed'
+            }`}
           >
             {submitting ? (
-              <span>Submitting answers...</span>
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                <span>Verifying with Server...</span>
+              </span>
             ) : currentIndex + 1 < questions.length ? (
               <>
-                <span>Next Question</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Next Question (அடுத்த கேள்வி)</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
-                <span>Finish & View Score</span>
+                <Sparkles className="w-4 h-4 stroke-[2.5]" />
+                <span>Finish & View Score (முடிவுகளைக் காண்க)</span>
               </>
             )}
           </button>

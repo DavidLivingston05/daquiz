@@ -7,16 +7,24 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sans)', 'var(--font-tamil)', 'sans-serif'],
+        tamil: ['var(--font-tamil)', 'var(--font-sans)', 'sans-serif'],
+      },
       colors: {
+        dark: {
+          900: '#070a11',
+          800: '#0d1322',
+          700: '#141c30',
+          600: '#1e2942',
+        },
         brand: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          200: '#a7f3d0',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
         },
       },
     },
