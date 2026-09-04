@@ -24,9 +24,9 @@ import {
   GraduationCap,
   Flame,
   User,
+  Share2,
 } from 'lucide-react';
 import Link from 'next/link';
-import LanguageSelector from '@/components/LanguageSelector';
 import UserAuthModal from '@/components/UserAuthModal';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -59,7 +59,8 @@ export default function QuizPlayPage() {
   const [practiceRevealed, setPracticeRevealed] = useState(false);
 
   // Per-question timer (for competition mode)
-  const [questionTimeLeft, setQuestionTimeLeft] = useState(30);
+  const QUESTION_TIME_LIMIT = 30;
+  const [questionTimeLeft, setQuestionTimeLeft] = useState(QUESTION_TIME_LIMIT);
   const [questionTimeSpent, setQuestionTimeSpent] = useState(0);
   const totalQuizTimeRef = useRef(0);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -68,10 +69,11 @@ export default function QuizPlayPage() {
   const [submitting, setSubmitting] = useState(false);
   const [quizResult, setQuizResult] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showReviewList, setShowReviewList] = useState(false);
 
   // Load user session
   useEffect(() => {
-    const savedUser = localStorage.getItem('daquiz_user');
+    const savedUser = localStorage.getItem('daquiz_user') || sessionStorage.getItem('daquiz_user');
     if (savedUser) {
       try {
         setCurrentUser(JSON.parse(savedUser));
@@ -108,7 +110,7 @@ export default function QuizPlayPage() {
   useEffect(() => {
     if (loading || quizResult || questions.length === 0 || quizMode === 'practice') return;
 
-    setQuestionTimeLeft(30);
+    setQuestionTimeLeft(QUESTION_TIME_LIMIT);
     setQuestionTimeSpent(0);
 
     timerIntervalRef.current = setInterval(() => {
@@ -117,7 +119,7 @@ export default function QuizPlayPage() {
       setQuestionTimeLeft((prev) => {
         if (prev <= 1) {
           handleNextQuestion(true);
-          return 30;
+          return QUESTION_TIME_LIMIT;
         }
         return prev - 1;
       });
@@ -156,7 +158,6 @@ export default function QuizPlayPage() {
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      // Check if user has registered before final competition submission
       if (quizMode === 'competition' && !currentUser) {
         setIsAuthModalOpen(true);
       } else {
@@ -184,7 +185,6 @@ export default function QuizPlayPage() {
       const result = await verifyAndSubmitQuiz(payload);
       setQuizResult(result);
 
-      // Refresh local user score
       if (activeUser?.phone) {
         const updated = {
           ...activeUser,
@@ -206,21 +206,21 @@ export default function QuizPlayPage() {
     window.location.reload();
   };
 
-  const getTimerColor = () => {
-    if (questionTimeLeft > 15) return 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
-    if (questionTimeLeft > 7) return 'text-amber-400 border-amber-500/40 bg-amber-500/10';
-    return 'text-rose-400 border-rose-500/40 bg-rose-500/10 animate-pulse';
-  };
+  // Timer circle calculation
+  const timerRadius = 26;
+  const timerCircumference = 2 * Math.PI * timerRadius;
+  const timerStrokeDashoffset =
+    timerCircumference - (questionTimeLeft / QUESTION_TIME_LIMIT) * timerCircumference;
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[65vh] space-y-6">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-xl shadow-emerald-500/30 animate-pulse">
-          <BookOpen className="w-7 h-7 text-white" />
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[65vh] space-y-5">
+        <div className="w-12 h-12 rounded-full border-3 border-[#C5A059] border-t-transparent animate-spin" />
         <div className="text-center space-y-1">
-          <h3 className="text-lg font-bold text-white tracking-wide">Preparing {book} Quiz</h3>
-          <p className="text-xs text-slate-400 font-tamil">கேள்விகள் தயாராகின்றன...</p>
+          <h3 className="text-base font-extrabold text-slate-800">
+            {langMode === 'ta' ? `${book} வினாடி வினா தயாராகிறது...` : `Preparing ${book} Quiz...`}
+          </h3>
+          <p className="text-xs text-slate-500">Loading scripture questions</p>
         </div>
       </div>
     );
@@ -228,278 +228,311 @@ export default function QuizPlayPage() {
 
   if (errorMsg && !quizResult) {
     return (
-      <div className="max-w-lg mx-auto glass-panel p-8 rounded-3xl border border-red-500/30 text-center space-y-5 shadow-2xl mt-8">
-        <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 mx-auto flex items-center justify-center">
+      <div className="max-w-md mx-auto warm-card p-8 rounded-3xl text-center space-y-5 shadow-lg mt-8">
+        <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-[#8C6B1B] mx-auto flex items-center justify-center">
           <HelpCircle className="w-7 h-7" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-extrabold text-white">Questions Needed</h2>
-          <p className="text-sm text-slate-300">{errorMsg}</p>
+          <h2 className="text-xl font-black text-slate-800">Questions Needed</h2>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{errorMsg}</p>
         </div>
-        <div className="pt-3 flex items-center justify-center gap-3">
+        <div className="pt-2 flex items-center justify-center gap-3">
           <Link
             href="/"
-            className="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-semibold hover:bg-slate-700 transition-all"
+            className="px-5 py-2.5 rounded-xl bg-[#FBF8F4] border border-[#EAE0D0] text-slate-700 text-xs font-bold hover:bg-white transition-all"
           >
             Back to Books
           </Link>
           <Link
             href="/admin"
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 text-xs font-bold shadow-lg transition-all"
+            className="px-5 py-2.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-xs font-bold shadow-md transition-all"
           >
-            Add Questions in Admin
+            Add in Admin
           </Link>
         </div>
       </div>
     );
   }
 
-  // ================= RESULT & REVIEW VIEW =================
+  // ================= SCREEN 3: RESULTS CELEBRATION (MATCHING MOCKUP SCREEN 3) =================
   if (quizResult) {
+    const totalScorePossible = questions.length * 100;
+    const timeBonus = Math.max(0, quizResult.score - quizResult.correctCount * 100);
+    const xpGained = quizResult.score + 10;
+
     return (
-      <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950/80 via-[#0e1c2e] to-[#0a1220] border border-emerald-500/30 p-8 sm:p-10 text-center space-y-6 shadow-2xl glow-emerald">
-          <div className="inline-flex p-4 rounded-3xl bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 shadow-xl shadow-yellow-500/20">
-            <Trophy className="w-10 h-10 stroke-[2.2]" />
+      <div className="max-w-xl mx-auto space-y-6 animate-fadeIn pb-12">
+        <div className="warm-card rounded-3xl p-8 text-center space-y-6 shadow-xl">
+          {/* Trophy Icon */}
+          <div className="relative inline-block">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F3E5AB] flex items-center justify-center mx-auto shadow-lg shadow-[#D4AF37]/30 text-3xl">
+              🏆
+            </div>
+            <span className="absolute -top-1 -right-1 text-xl animate-bounce">✨</span>
           </div>
 
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-black text-white">
-              {quizMode === 'practice' ? 'Practice Completed!' : 'Competition Quiz Completed!'}
+          <div className="space-y-1.5">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+              {langMode === 'ta' ? 'வினாடி வினா முடிந்தது!' : 'Quiz Complete!'}
             </h1>
-            <p className="text-slate-300 text-sm">
-              Participant:{' '}
-              <span className="font-bold text-white">{currentUser?.name || 'Guest'}</span> •
-              Book: <span className="font-bold text-emerald-400">{book}</span> • Accuracy:{' '}
-              <span className="font-bold text-emerald-400">{quizResult.accuracy}%</span>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium">
+              {langMode === 'ta'
+                ? `புத்தகம்: ${book} • அருமையான முயற்சி!`
+                : `Book: ${book} • Outstanding Bible Knowledge!`}
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2 max-w-lg mx-auto">
-            <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
-              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Total Score</span>
-              <p className="text-2xl sm:text-3xl font-black text-amber-400 mt-1">{quizResult.score}</p>
+          {/* Primary Score Banner */}
+          <div className="bg-[#FAF3E0] border border-[#E8D8B8] rounded-2xl p-5 max-w-sm mx-auto">
+            <div className="text-xs uppercase font-extrabold text-[#8C6B1B] tracking-wider">
+              {langMode === 'ta' ? 'மொத்த மதிப்பெண்' : 'Score'}
             </div>
-            <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
-              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Correct</span>
-              <p className="text-2xl sm:text-3xl font-black text-emerald-400 mt-1">
-                {quizResult.correctCount} / {quizResult.totalQuestions}
+            <div className="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
+              {quizResult.score} <span className="text-base text-slate-400 font-bold">/ {totalScorePossible}</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white border border-[#E8D8B8] text-xs font-black text-[#8C6B1B]">
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>+{xpGained} XP Gained</span>
+            </div>
+          </div>
+
+          {/* Breakdown Metrics */}
+          <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
+            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
+              <span className="text-[10px] uppercase font-bold text-slate-500">Correct</span>
+              <p className="text-lg font-black text-slate-800 mt-0.5">
+                {quizResult.correctCount}/{quizResult.totalQuestions}
               </p>
             </div>
-            <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
-              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Accuracy</span>
-              <p className="text-2xl sm:text-3xl font-black text-white mt-1">{quizResult.accuracy}%</p>
+            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
+              <span className="text-[10px] uppercase font-bold text-slate-500">Accuracy</span>
+              <p className="text-lg font-black text-[#1B3B6F] mt-0.5">{quizResult.accuracy}%</p>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
+              <span className="text-[10px] uppercase font-bold text-slate-500">Speed Bonus</span>
+              <p className="text-lg font-black text-[#8C6B1B] mt-0.5">+{timeBonus}</p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          {/* Action Buttons */}
+          <div className="space-y-2.5 pt-2 max-w-md mx-auto">
             <button
-              onClick={handleRestart}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-xl transition-all"
+              onClick={() => setShowReviewList(!showReviewList)}
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
             >
-              <RotateCcw className="w-4 h-4 stroke-[2.5]" /> Try Again
+              <CheckCircle2 className="w-4 h-4" />
+              <span>{showReviewList ? 'Hide Review' : 'Review Answers'}</span>
             </button>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-800 text-slate-200 font-bold text-sm border border-slate-700 transition-all hover:bg-slate-700"
-            >
-              <BookOpen className="w-4 h-4 text-emerald-400" /> All Books
-            </Link>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                onClick={handleRestart}
+                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-700 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Try Again</span>
+              </button>
+              <Link
+                href="/"
+                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-700 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-[#8C6B1B]" />
+                <span>Back to Home</span>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Detailed Review List */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span>Review & Biblical Insights</span>
-            </h2>
-            <span className="text-xs font-tamil text-slate-400">விடைகளின் விளக்கம்</span>
-          </div>
+        {/* Detailed Scripture Review (Accordion) */}
+        {showReviewList && (
+          <div className="space-y-4 pt-2 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-2">
+              <h2 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#1B3B6F]" />
+                <span>Scripture Review & Explanations</span>
+              </h2>
+              <span className="text-xs text-slate-500 font-semibold">{quizResult.review?.length} Questions</span>
+            </div>
 
-          <div className="space-y-4">
-            {quizResult.review?.map((item: any, idx: number) => (
-              <div
-                key={idx}
-                className={`p-6 rounded-2xl border glass-panel transition-all ${
-                  item.isCorrect
-                    ? 'border-emerald-500/30 bg-emerald-950/20'
-                    : 'border-rose-500/30 bg-rose-950/20'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-7 h-7 rounded-xl bg-slate-800 text-slate-200 text-xs font-black flex items-center justify-center border border-slate-700">
-                      {idx + 1}
-                    </span>
-                    <span className="text-xs font-bold text-emerald-400 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                      {item.reference}
-                    </span>
-                  </div>
-                  <div>
+            <div className="space-y-3">
+              {quizResult.review?.map((item: any, idx: number) => (
+                <div
+                  key={idx}
+                  className={`warm-card rounded-2xl p-5 border space-y-3 ${
+                    item.isCorrect ? 'border-emerald-300/80' : 'border-rose-300/80'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-[#FAF3E0] text-[#8C6B1B] text-xs font-black flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md">
+                        {item.reference}
+                      </span>
+                    </div>
                     {item.isCorrect ? (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Correct
+                      <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                        <Check className="w-3 h-3" /> Correct
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1 rounded-full">
-                        <XCircle className="w-3.5 h-3.5" /> Incorrect
+                      <span className="text-xs font-black text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" /> Incorrect
                       </span>
                     )}
                   </div>
-                </div>
 
-                <div className="space-y-1.5 mb-3">
-                  {(langMode === 'both' || langMode === 'en') && item.question?.en && (
-                    <p className="font-bold text-white text-base leading-snug">{item.question.en}</p>
-                  )}
-                  {(langMode === 'both' || langMode === 'ta') && item.question?.ta && (
-                    <p className="text-sm font-tamil text-slate-300 leading-relaxed">{item.question.ta}</p>
-                  )}
-                </div>
-
-                {item.explanation && (
-                  <div className="border-t border-slate-800/80 pt-3 text-xs bg-black/20 p-3.5 rounded-xl space-y-1.5 border border-slate-800">
-                    <span className="font-extrabold text-amber-400 flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Scripture Context:
-                    </span>
-                    {(langMode === 'both' || langMode === 'en') && item.explanation.en && (
-                      <p className="text-slate-300 leading-relaxed">{item.explanation.en}</p>
+                  <div className="space-y-1">
+                    {(langMode === 'both' || langMode === 'en') && item.question?.en && (
+                      <p className="text-sm font-bold text-slate-900 leading-snug">{item.question.en}</p>
                     )}
-                    {(langMode === 'both' || langMode === 'ta') && item.explanation.ta && (
-                      <p className="text-slate-400 font-tamil leading-relaxed">{item.explanation.ta}</p>
+                    {(langMode === 'both' || langMode === 'ta') && item.question?.ta && (
+                      <p className="text-xs font-tamil text-slate-700 leading-relaxed">{item.question.ta}</p>
                     )}
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {item.explanation && (
+                    <div className="bg-[#FAF3E0]/70 border border-[#E8D8B8] rounded-xl p-3 text-xs space-y-1">
+                      <span className="font-extrabold text-[#8C6B1B] flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" /> Scripture Insight:
+                      </span>
+                      {(langMode === 'both' || langMode === 'en') && item.explanation.en && (
+                        <p className="text-slate-700 leading-relaxed">{item.explanation.en}</p>
+                      )}
+                      {(langMode === 'both' || langMode === 'ta') && item.explanation.ta && (
+                        <p className="text-slate-700 font-tamil leading-relaxed">{item.explanation.ta}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }
 
-  // ================= ACTIVE PLAY VIEW =================
+  // ================= SCREEN 2: ACTIVE QUIZ PLAY (MATCHING MOCKUP SCREEN 2) =================
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Top Header Controls */}
+    <div className="max-w-xl mx-auto space-y-6 pb-12 animate-fadeIn">
+      {/* 1. Header with Back Button and Mode */}
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#EAE0D0] text-xs font-extrabold text-slate-700 hover:text-slate-950 transition-all shadow-sm"
         >
-          <ChevronLeft className="w-4 h-4 text-emerald-400" />
-          <span>All Books</span>
+          <ChevronLeft className="w-4 h-4 text-[#8C6B1B]" />
+          <span>{book}</span>
         </Link>
 
-        {/* Mode Selector (Competition / Practice) */}
-        <div className="inline-flex p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-bold">
+        {/* Competition / Practice Mode Pill */}
+        <div className="inline-flex p-1 rounded-2xl bg-[#F4EDE2] border border-[#E5DAC8] text-xs font-extrabold">
           <button
             onClick={() => setQuizMode('competition')}
-            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+            className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all ${
               quizMode === 'competition'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#1B3B6F] text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <Trophy className="w-3.5 h-3.5 text-yellow-300" />
             <span>Competition</span>
           </button>
           <button
             onClick={() => setQuizMode('practice')}
-            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+            className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all ${
               quizMode === 'practice'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#1B3B6F] text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Practice Test</span>
+            <GraduationCap className="w-3.5 h-3.5 text-[#C5A059]" />
+            <span>Practice</span>
           </button>
         </div>
       </div>
 
-      {/* Progress & Live Bar */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-800/90 space-y-2.5">
-        <div className="flex items-center justify-between text-xs font-extrabold">
-          <div className="flex items-center gap-2">
-            <span className="text-emerald-400">QUESTION {currentIndex + 1}</span>
-            <span className="text-slate-500">/</span>
-            <span className="text-slate-400">{questions.length}</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {quizMode === 'competition' ? (
-              <>
-                {questionTimeLeft > 15 && (
-                  <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold">
-                    <Zap className="w-3 h-3 text-amber-400" /> Speed Bonus Active
-                  </span>
-                )}
-                <span
-                  className={`inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-1 rounded-lg border font-bold transition-all ${getTimerColor()}`}
-                >
-                  <Clock className="w-3.5 h-3.5" /> {questionTimeLeft}s
-                </span>
-              </>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg font-bold">
-                <GraduationCap className="w-3.5 h-3.5" /> Untimed Learning
-              </span>
-            )}
+      {/* 2. Circular Timer & Question Header */}
+      <div className="flex items-center justify-between px-1">
+        <div>
+          <span className="text-[11px] font-black uppercase text-[#8C6B1B] tracking-wider">
+            QUESTION {currentIndex + 1} OF {questions.length}
+          </span>
+          <div className="h-1.5 w-36 bg-[#EAE0D0] rounded-full overflow-hidden mt-1">
+            <div
+              className="h-full bg-[#1B3B6F] rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
 
-        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
-          <div
-            className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 rounded-full transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
+        {/* Circular Countdown Ring (Mockup Screen 2) */}
+        {quizMode === 'competition' && (
+          <div className="relative w-14 h-14 flex items-center justify-center">
+            <svg className="w-14 h-14 transform -rotate-90">
+              <circle
+                cx="28"
+                cy="28"
+                r={timerRadius}
+                stroke="#EAE0D0"
+                strokeWidth="4"
+                fill="transparent"
+              />
+              <circle
+                cx="28"
+                cy="28"
+                r={timerRadius}
+                stroke={questionTimeLeft <= 7 ? '#E11D48' : '#C5A059'}
+                strokeWidth="4"
+                fill="transparent"
+                strokeDasharray={timerCircumference}
+                strokeDashoffset={timerStrokeDashoffset}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-linear"
+              />
+            </svg>
+            <span
+              className={`absolute text-xs font-mono font-black ${
+                questionTimeLeft <= 7 ? 'text-rose-600 animate-pulse' : 'text-slate-800'
+              }`}
+            >
+              0:{questionTimeLeft < 10 ? `0${questionTimeLeft}` : questionTimeLeft}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Question Card */}
-      <div className="relative overflow-hidden rounded-3xl glass-panel border border-slate-700/60 p-6 sm:p-8 shadow-2xl space-y-6">
-        {/* Badges Header */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-black px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase">
-              {currentQ.difficulty}
-            </span>
-            {currentQ.category && (
-              <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
-                {currentQ.category}
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300/90 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-xl">
-            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-            <span>
-              {currentQ.book} {currentQ.chapter ? `${currentQ.chapter}:${currentQ.verse || 1}` : ''}
-            </span>
-          </div>
+      {/* 3. Question Card */}
+      <div className="warm-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        {/* Scripture Reference Tag */}
+        <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-3">
+          <span className="text-xs font-bold text-[#8C6B1B] bg-[#FAF3E0] border border-[#E8D8B8] px-3 py-1 rounded-full">
+            {currentQ.book} {currentQ.chapter ? `${currentQ.chapter}:${currentQ.verse || 1}` : ''}
+          </span>
+          <span className="text-[11px] font-bold text-slate-500 uppercase">
+            {currentQ.difficulty || 'General'}
+          </span>
         </div>
 
         {/* Question Text */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {(langMode === 'both' || langMode === 'en') && currentQ.question?.en && (
-            <h2 className="text-xl sm:text-2xl font-black text-white leading-snug tracking-tight">
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
               {currentQ.question.en}
             </h2>
           )}
           {(langMode === 'both' || langMode === 'ta') && currentQ.question?.ta && (
-            <p className="text-base sm:text-lg font-tamil font-semibold text-emerald-200/90 leading-relaxed">
+            <p className="text-base sm:text-lg font-tamil font-bold text-slate-800 leading-relaxed">
               {currentQ.question.ta}
             </p>
           )}
         </div>
 
-        {/* Options List */}
-        <div className="space-y-3 pt-2">
+        {/* 4. Options List (Mockup Screen 2 Pill Options) */}
+        <div className="space-y-3 pt-1">
           {currentQ.options.map((opt, idx) => {
             const isSelected = currentSelectedOption === opt.id;
             const letter = String.fromCharCode(65 + idx);
@@ -508,36 +541,32 @@ export default function QuizPlayPage() {
               <button
                 key={opt.id}
                 onClick={() => handleSelectOption(opt.id)}
-                className={`w-full text-left p-4 sm:p-4.5 rounded-2xl border-2 transition-all flex items-start gap-4 ${
+                className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-3.5 ${
                   isSelected
-                    ? 'border-emerald-500 bg-gradient-to-r from-emerald-950/60 to-[#0c1f28] shadow-lg shadow-emerald-500/15 scale-[1.01]'
-                    : 'border-slate-800 hover:border-slate-700 bg-slate-900/60 hover:bg-slate-900'
+                    ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/25 scale-[1.01]'
+                    : 'bg-[#FBF8F4] border-[#EAE0D0] hover:border-[#C5A059]/60 hover:bg-white text-slate-800'
                 }`}
               >
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0 transition-all ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-all ${
                     isSelected
-                      ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/40'
-                      : 'bg-slate-800 text-slate-300 border border-slate-700'
+                      ? 'bg-[#C5A059] text-white shadow-sm'
+                      : 'bg-[#EAE0D0] text-slate-700'
                   }`}
                 >
                   {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : letter}
                 </div>
 
-                <div className="space-y-1 pt-0.5 flex-1">
+                <div className="space-y-0.5 flex-1">
                   {(langMode === 'both' || langMode === 'en') && opt.text?.en && (
-                    <p
-                      className={`text-sm sm:text-base font-bold transition-colors ${
-                        isSelected ? 'text-white' : 'text-slate-200'
-                      }`}
-                    >
+                    <p className={`text-sm font-bold ${isSelected ? 'text-[#3D2F14]' : 'text-slate-800'}`}>
                       {opt.text.en}
                     </p>
                   )}
                   {(langMode === 'both' || langMode === 'ta') && opt.text?.ta && (
                     <p
-                      className={`text-xs sm:text-sm font-tamil transition-colors ${
-                        isSelected ? 'text-emerald-300 font-semibold' : 'text-slate-400 font-medium'
+                      className={`text-xs font-tamil ${
+                        isSelected ? 'text-[#8C6B1B] font-bold' : 'text-slate-600 font-medium'
                       }`}
                     >
                       {opt.text.ta}
@@ -551,44 +580,44 @@ export default function QuizPlayPage() {
 
         {/* Practice Mode Instant Explanation */}
         {quizMode === 'practice' && practiceRevealed && currentQ.explanation && (
-          <div className="p-4 rounded-2xl bg-black/30 border border-slate-800 space-y-1.5 animate-fadeIn">
-            <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Explanation & Insight:
+          <div className="p-4 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] space-y-1.5 animate-fadeIn">
+            <span className="text-xs font-extrabold text-[#8C6B1B] flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" /> Scripture Insight:
             </span>
             {(langMode === 'both' || langMode === 'en') && currentQ.explanation.en && (
-              <p className="text-xs text-slate-300 leading-relaxed">{currentQ.explanation.en}</p>
+              <p className="text-xs text-slate-700 leading-relaxed">{currentQ.explanation.en}</p>
             )}
             {(langMode === 'both' || langMode === 'ta') && currentQ.explanation.ta && (
-              <p className="text-xs font-tamil text-slate-400 leading-relaxed">{currentQ.explanation.ta}</p>
+              <p className="text-xs font-tamil text-slate-700 leading-relaxed">{currentQ.explanation.ta}</p>
             )}
           </div>
         )}
 
-        {/* Action Button */}
+        {/* Action Button: Next Question (Royal Navy #1B3B6F) */}
         <div className="pt-2">
           <button
             onClick={() => handleNextQuestion(false)}
             disabled={!currentSelectedOption || submitting}
-            className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-xl transition-all flex items-center justify-center gap-2.5 ${
+            className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all flex items-center justify-center gap-2 ${
               currentSelectedOption
-                ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 shadow-emerald-500/30 hover:scale-[1.01] cursor-pointer'
-                : 'bg-slate-800/80 text-slate-500 border border-slate-800 cursor-not-allowed'
+                ? 'bg-[#1B3B6F] hover:bg-[#142C54] text-white hover:scale-[1.01] cursor-pointer'
+                : 'bg-[#EAE0D0] text-slate-400 cursor-not-allowed'
             }`}
           >
             {submitting ? (
               <span className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 <span>Saving Quiz Attempt...</span>
               </span>
             ) : currentIndex + 1 < questions.length ? (
               <>
-                <span>Next Question (அடுத்த கேள்வி)</span>
-                <ArrowRight className="w-4 h-4 stroke-[3]" />
+                <span>{langMode === 'ta' ? 'அடுத்த கேள்வி' : 'Next Question'}</span>
+                <ArrowRight className="w-4 h-4" />
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 stroke-[2.5]" />
-                <span>Finish & View Score</span>
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <span>{langMode === 'ta' ? 'முடிவுகளைக் காண்க' : 'Finish & View Score'}</span>
               </>
             )}
           </button>
@@ -611,3 +640,4 @@ export default function QuizPlayPage() {
     </div>
   );
 }
+

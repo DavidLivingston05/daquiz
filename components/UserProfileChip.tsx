@@ -80,7 +80,7 @@ export default function UserProfileChip() {
         {isAdmin && (
           <Link
             href="/admin"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 hover:bg-amber-500/25 text-xs font-bold transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#916B16] hover:bg-[#D4AF37]/25 text-xs font-bold transition-all shadow-sm"
             title="Admin Control Center"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
@@ -92,16 +92,16 @@ export default function UserProfileChip() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-emerald-500/40 text-xs font-semibold text-slate-200 transition-all group"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#EAE0D0] hover:border-[#D4AF37] text-xs font-semibold text-slate-800 transition-all shadow-sm group"
             >
-              <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[11px] border border-emerald-500/30">
+              <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/20 text-[#8C6B1B] flex items-center justify-center font-bold text-[11px] border border-[#D4AF37]/30">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="text-left hidden sm:block">
-                <span className="block text-white font-bold leading-tight truncate max-w-[100px]">
+                <span className="block text-slate-800 font-bold leading-tight truncate max-w-[100px]">
                   {user.name}
                 </span>
-                <span className="text-[10px] text-amber-400 font-extrabold flex items-center gap-0.5">
+                <span className="text-[10px] text-[#A87B1D] font-extrabold flex items-center gap-0.5">
                   <Trophy className="w-2.5 h-2.5" /> {user.totalScore || 0} {ptsLabel}
                 </span>
               </div>
@@ -109,7 +109,7 @@ export default function UserProfileChip() {
 
             <button
               onClick={handleLogout}
-              className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-slate-700/60 transition-colors"
+              className="p-1.5 rounded-xl bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-[#EAE0D0] transition-colors shadow-sm"
               title={signOutTitle}
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -119,7 +119,7 @@ export default function UserProfileChip() {
           !isAdmin && (
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 text-xs font-black shadow-md shadow-emerald-500/20 hover:scale-105 transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-xs font-bold shadow-md shadow-[#1B3B6F]/20 hover:scale-105 transition-all"
             >
               <LogIn className="w-3.5 h-3.5 stroke-[2.5]" />
               <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{signInLabel}</span>

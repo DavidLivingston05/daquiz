@@ -4,60 +4,93 @@
 
 @layer base {
   body {
-    @apply bg-[#0b0f19] text-slate-100 antialiased selection:bg-emerald-500 selection:text-white;
+    @apply bg-[#FBF8F4] text-slate-800 antialiased selection:bg-[#D4AF37] selection:text-white;
   }
 }
 
-/* Glassmorphism utility cards */
-.glass-panel {
-  background: rgba(17, 24, 39, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Warm Parchment & Gold Theme Styles */
+.bg-parchment {
+  background-color: #FBF8F4;
 }
 
-.glass-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #E2BA55 0%, #C59A3F 50%, #A97A1E 100%);
 }
 
-.glass-card-hover {
+.bg-gold-soft {
+  background: linear-gradient(135deg, #FFF9EB 0%, #FBF2DE 100%);
+}
+
+.bg-navy-btn {
+  background-color: #1B3B6F;
+}
+
+.bg-navy-btn:hover {
+  background-color: #142C54;
+}
+
+/* Elevated Warm Cards */
+.warm-card {
+  background: #FFFFFF;
+  border: 1px solid #EFE8DC;
+  box-shadow: 0 4px 20px -4px rgba(180, 150, 100, 0.08);
+}
+
+.warm-card-hover {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-card-hover:hover {
+.warm-card-hover:hover {
   transform: translateY(-2px);
-  border-color: rgba(16, 185, 129, 0.4);
-  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);
+  border-color: #D4AF37;
+  box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.18);
 }
 
-/* Custom glowing borders */
-.glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+/* Option Cards for Quizzes */
+.quiz-option-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E8DFCF;
+  color: #2D3748;
+  transition: all 0.2s ease-in-out;
 }
 
-.glow-amber {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.3);
+.quiz-option-card:hover {
+  border-color: #D4AF37;
+  background-color: #FFFDF9;
+}
+
+.quiz-option-card-selected {
+  background-color: #FAF3E0 !important;
+  border-color: #C5A059 !important;
+  color: #3D2F14 !important;
+  box-shadow: 0 4px 14px -2px rgba(197, 160, 89, 0.25);
+}
+
+/* Golden & Amber Glows */
+.glow-gold {
+  box-shadow: 0 0 25px -4px rgba(212, 175, 55, 0.35);
+}
+
+.glow-navy {
+  box-shadow: 0 8px 20px -4px rgba(27, 59, 111, 0.3);
 }
 
 /* Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-5px); }
 }
 
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
 
-@keyframes pulse-ring {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 0.4; }
-  100% { transform: scale(0.95); opacity: 0.8; }
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.98); }
 }
 
-.animate-pulse-ring {
-  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
 }
+

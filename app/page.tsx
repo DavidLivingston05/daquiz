@@ -18,6 +18,12 @@ import {
   Lock,
   ShieldCheck,
   ArrowRight,
+  Flame,
+  CheckCircle2,
+  Users,
+  Compass,
+  Crown,
+  Zap,
 } from 'lucide-react';
 import { getAvailableBooks } from '@/lib/actions/quizActions';
 import { getLeaderboard, registerOrLoginUser } from '@/lib/actions/userActions';
@@ -57,6 +63,7 @@ export default function HomePage() {
   const { language: lang, setLanguage } = useLanguage();
   const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [leaderboardTab, setLeaderboardTab] = useState<'global' | 'group'>('global');
 
   // Auth Gate State
   const [authChecked, setAuthChecked] = useState(false);
@@ -123,7 +130,7 @@ export default function HomePage() {
       try {
         const [dbBooks, topLeaderboard] = await Promise.all([
           getAvailableBooks().catch(() => []),
-          getLeaderboard(5).catch(() => []),
+          getLeaderboard(10).catch(() => []),
         ]);
 
         if (dbBooks && dbBooks.length > 0) {
@@ -145,66 +152,15 @@ export default function HomePage() {
   const otBooks = booksToDisplay.filter((b) => b.testament === 'OT');
   const ntBooks = booksToDisplay.filter((b) => b.testament === 'NT');
 
-  // Strict text rendering based on language
-  const getBannerBadge = () => {
-    if (lang === 'en') return 'BIBLE QUIZ & COMPETITION PLATFORM';
-    if (lang === 'ta') return 'வேத வினாடி வினா & போட்டி தளம்';
-    return 'BIBLE QUIZ & COMPETITION • வேத வினாடி வினா';
-  };
-
-  const getHeroTitle = () => {
-    if (lang === 'en') return 'Master the Scriptures with Speed & Knowledge';
-    if (lang === 'ta') return 'வேத வசனங்களை ஆழமாகக் கற்றுக்கொள்ளுங்கள்';
-    return 'Master the Scriptures in English & Tamil';
-  };
-
-  const getHeroSubtitle = () => {
-    if (lang === 'en')
-      return 'Study Holy Scripture books, test your Bible memory, and compete on the live leaderboard!';
-    if (lang === 'ta')
-      return 'பரிசுத்த வேத புத்தகங்களை படியுங்கள், உங்கள் நினைவாற்றலை சோதியுங்கள், தரவரிசையில் முதலிடம் பெறுங்கள்!';
-    return 'வேத வசனங்களை ஆழமாகக் கற்றுக்கொள்ளுங்கள். போட்டிகளில் பங்கேற்று தரவரிசையைப் பெறுங்கள்!';
-  };
-
-  const getCompetitionBtnText = () => {
-    if (lang === 'en') return 'Start Competition';
-    if (lang === 'ta') return 'போட்டியைத் தொடங்கு';
-    return 'Start Competition (போட்டி)';
-  };
-
-  const getPracticeBtnText = () => {
-    if (lang === 'en') return 'Practice Test';
-    if (lang === 'ta') return 'பயிற்சி வினாடி வினா';
-    return 'Practice Test (பயிற்சி)';
-  };
-
-  const getOTTitle = () => {
-    if (lang === 'en') return 'Old Testament';
-    if (lang === 'ta') return 'பழைய ஏற்பாடு';
-    return 'Old Testament (பழைய ஏற்பாடு)';
-  };
-
-  const getNTTitle = () => {
-    if (lang === 'en') return 'New Testament';
-    if (lang === 'ta') return 'புதிய ஏற்பாடு';
-    return 'New Testament (புதிய ஏற்பாடு)';
-  };
-
-  const getLeaderboardTitle = () => {
-    if (lang === 'en') return 'Top Participants Leaderboard';
-    if (lang === 'ta') return 'சிறந்த வெற்றியாளர்களின் தரவரிசை';
-    return 'Top Participants • சிறந்த வெற்றியாளர்கள்';
-  };
-
   const handleUserLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
     setLoadingAuth(true);
 
     try {
-      if (!name.trim()) throw new Error('Please enter your full name.');
+      if (!name.trim()) throw new Error('Please enter your name.');
       if (!phone.trim() || phone.trim().length < 7)
-        throw new Error('Please enter a valid phone number (at least 7 digits).');
+        throw new Error('Please enter a valid phone number.');
       if (!age || Number(age) < 1 || Number(age) > 120)
         throw new Error('Please enter a valid age between 1 and 120.');
 
@@ -267,7 +223,7 @@ export default function HomePage() {
       setLoadingAuth(false);
       router.push('/admin');
     } else {
-      setAuthError('Invalid admin credentials. (Hint: username "admin", password "admin" or "admin123")');
+      setAuthError('Invalid admin credentials. (Hint: username "admin", password "admin")');
       setLoadingAuth(false);
     }
   };
@@ -275,12 +231,12 @@ export default function HomePage() {
   if (!authChecked) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#C5A059] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  // Gated Entrance: If NOT logged in as Participant or Admin, show Step 1 or Step 2
+  // ================= GATED ENTRANCE (STEP 1 & STEP 2) =================
   if (!currentUser && !isAdminLoggedIn) {
     const t = {
       en: {
@@ -358,83 +314,88 @@ export default function HomePage() {
     }[lang];
 
     return (
-      <div className="min-h-[75vh] flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fadeIn">
+      <div className="min-h-[75vh] flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md bg-white border border-[#EAE0D0] rounded-3xl p-6 sm:p-8 shadow-xl shadow-[#2C1810]/5 space-y-6 animate-fadeIn">
           
           {/* STEP 1: LANGUAGE SELECTION FIRST */}
           {entryStep === 'language' ? (
             <div className="space-y-5">
-              {/* Badge & Title */}
               <div className="text-left space-y-1.5">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B] text-xs font-black uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
                   <span>{t.step1Badge}</span>
                 </div>
-                <h1 className="text-2xl font-black text-white tracking-tight">
+                <h1 className="text-2xl font-black text-slate-800 tracking-tight">
                   {t.step1Title}
                 </h1>
               </div>
 
-              {/* 3 Language Options Cards */}
-              <div className="space-y-2.5">
-                {/* English */}
+              {/* 3 Language Option Cards */}
+              <div className="space-y-3">
                 <button
                   type="button"
                   onClick={() => setLanguage('en')}
-                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                  className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
                     lang === 'en'
-                      ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                      ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/30'
+                      : 'bg-[#FBF8F4] border-[#EAE0D0] text-slate-700 hover:border-[#C5A059]/60 hover:bg-white'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3.5">
                     <span className="text-2xl">🇬🇧</span>
-                    <div className="font-black text-sm text-white">English</div>
+                    <div>
+                      <div className="font-extrabold text-sm text-slate-900">English</div>
+                      <div className="text-xs text-slate-500">Pure English quiz interface</div>
+                    </div>
                   </div>
                   {lang === 'en' && (
-                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                    <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-black shadow-sm">
                       ✓
                     </span>
                   )}
                 </button>
 
-                {/* Tamil */}
                 <button
                   type="button"
                   onClick={() => setLanguage('ta')}
-                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                  className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
                     lang === 'ta'
-                      ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                      ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/30'
+                      : 'bg-[#FBF8F4] border-[#EAE0D0] text-slate-700 hover:border-[#C5A059]/60 hover:bg-white'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3.5">
                     <span className="text-2xl">🇮🇳</span>
-                    <div className="font-black font-tamil text-sm text-white">தமிழ்</div>
+                    <div>
+                      <div className="font-extrabold font-tamil text-sm text-slate-900">தமிழ்</div>
+                      <div className="text-xs font-tamil text-slate-500">முழுமையான தமிழ் இடைமுகம்</div>
+                    </div>
                   </div>
                   {lang === 'ta' && (
-                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                    <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-black shadow-sm">
                       ✓
                     </span>
                   )}
                 </button>
 
-                {/* Both */}
                 <button
                   type="button"
                   onClick={() => setLanguage('both')}
-                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                  className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
                     lang === 'both'
-                      ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                      ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/30'
+                      : 'bg-[#FBF8F4] border-[#EAE0D0] text-slate-700 hover:border-[#C5A059]/60 hover:bg-white'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3.5">
                     <span className="text-2xl">🌐</span>
-                    <div className="font-black text-sm text-white">Both (இருமொழி)</div>
+                    <div>
+                      <div className="font-extrabold text-sm text-slate-900">Both / இருமொழி</div>
+                      <div className="text-xs text-slate-500">English + தமிழ் side-by-side</div>
+                    </div>
                   </div>
                   {lang === 'both' && (
-                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                    <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-black shadow-sm">
                       ✓
                     </span>
                   )}
@@ -445,7 +406,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setEntryStep('auth')}
-                className="w-full py-3.5 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                className="w-full py-3.5 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
               >
                 <span>{t.continueBtn}</span>
               </button>
@@ -453,33 +414,34 @@ export default function HomePage() {
           ) : (
             /* STEP 2: SIGN IN (PARTICIPANT OR ADMIN) */
             <div className="space-y-5">
-              {/* Back to Step 1 */}
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-3">
                 <button
                   type="button"
                   onClick={() => {
                     setEntryStep('language');
                     setAuthError(null);
                   }}
-                  className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 font-semibold transition-colors"
                 >
                   <span>{t.backBtn}</span>
                 </button>
-                <span className="text-[11px] font-bold text-slate-500 uppercase">{t.step2Indicator}</span>
+                <span className="text-[11px] font-extrabold text-[#8C6B1B] bg-[#FAF3E0] px-2 py-0.5 rounded-md uppercase">
+                  {t.step2Indicator}
+                </span>
               </div>
 
-              {/* Header Mode Tabs */}
-              <div className="flex items-center p-1 rounded-2xl bg-slate-900 border border-slate-800">
+              {/* Mode Tabs */}
+              <div className="flex items-center p-1 rounded-2xl bg-[#F4EDE2] border border-[#E5DAC8]">
                 <button
                   type="button"
                   onClick={() => {
                     setAuthTab('user');
                     setAuthError(null);
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
                     authTab === 'user'
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-white text-[#1B3B6F] shadow-sm'
+                      : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   <User className="w-4 h-4" />
@@ -491,10 +453,10 @@ export default function HomePage() {
                     setAuthTab('admin');
                     setAuthError(null);
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
                     authTab === 'admin'
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-400 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#C5A059] text-white shadow-sm'
+                      : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4" />
@@ -504,13 +466,13 @@ export default function HomePage() {
 
               {/* Heading */}
               <div className="text-left">
-                <h1 className={`text-xl font-black text-white tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                <h1 className={`text-xl font-black text-slate-800 tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                   {authTab === 'user' ? t.loginTitleUser : t.loginTitleAdmin}
                 </h1>
               </div>
 
               {authError && (
-                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold">
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
                   {authError}
                 </div>
               )}
@@ -518,9 +480,8 @@ export default function HomePage() {
               {/* Form */}
               {authTab === 'user' ? (
                 <form onSubmit={handleUserLoginSubmit} className="space-y-4">
-                  {/* Full Name */}
-                  <div className="space-y-1.5 text-left">
-                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  <div className="space-y-1 text-left">
+                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.nameLabel}
                     </label>
                     <div className="relative">
@@ -533,14 +494,13 @@ export default function HomePage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder={t.namePlaceholder}
-                        className={`w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
+                        className={`w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#1B3B6F] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
                       />
                     </div>
                   </div>
 
-                  {/* Phone Number */}
-                  <div className="space-y-1.5 text-left">
-                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  <div className="space-y-1 text-left">
+                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.phoneLabel}
                     </label>
                     <div className="relative">
@@ -553,14 +513,13 @@ export default function HomePage() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder={t.phonePlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#1B3B6F] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
-                  {/* Age */}
-                  <div className="space-y-1.5 text-left">
-                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  <div className="space-y-1 text-left">
+                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.ageLabel}
                     </label>
                     <div className="relative">
@@ -575,33 +534,31 @@ export default function HomePage() {
                         value={age}
                         onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
                         placeholder={t.agePlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#1B3B6F] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
-                  {/* Remember Me */}
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <label className={`flex items-center gap-2 cursor-pointer text-slate-300 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`flex items-center gap-2 cursor-pointer text-slate-600 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       <input
                         type="checkbox"
                         checked={rememberUser}
                         onChange={(e) => setRememberUser(e.target.checked)}
-                        className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
+                        className="w-4 h-4 rounded border-[#EAE0D0] text-[#1B3B6F] focus:ring-[#1B3B6F]"
                       />
                       <span>{t.rememberMe}</span>
                     </label>
                   </div>
 
-                  {/* Submit */}
                   <div className="pt-2">
                     <button
                       type="submit"
                       disabled={loadingAuth}
-                      className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3.5 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
                     >
                       {loadingAuth ? (
-                        <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitUser}</span>
                       )}
@@ -610,9 +567,8 @@ export default function HomePage() {
                 </form>
               ) : (
                 <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
-                  {/* Admin Username */}
-                  <div className="space-y-1.5 text-left">
-                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  <div className="space-y-1 text-left">
+                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.adminUserLabel}
                     </label>
                     <div className="relative">
@@ -625,14 +581,13 @@ export default function HomePage() {
                         value={adminUser}
                         onChange={(e) => setAdminUser(e.target.value)}
                         placeholder={t.adminUserPlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#C5A059] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
-                  {/* Admin Password */}
-                  <div className="space-y-1.5 text-left">
-                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  <div className="space-y-1 text-left">
+                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.adminPassLabel}
                     </label>
                     <div className="relative">
@@ -645,33 +600,31 @@ export default function HomePage() {
                         value={adminPass}
                         onChange={(e) => setAdminPass(e.target.value)}
                         placeholder={t.adminPassPlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#C5A059] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
-                  {/* Remember Me */}
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <label className={`flex items-center gap-2 cursor-pointer text-slate-300 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`flex items-center gap-2 cursor-pointer text-slate-600 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       <input
                         type="checkbox"
                         checked={rememberAdmin}
                         onChange={(e) => setRememberAdmin(e.target.checked)}
-                        className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
+                        className="w-4 h-4 rounded border-[#EAE0D0] text-[#C5A059] focus:ring-[#C5A059]"
                       />
                       <span>{t.rememberMe}</span>
                     </label>
                   </div>
 
-                  {/* Submit */}
                   <div className="pt-2">
                     <button
                       type="submit"
                       disabled={loadingAuth}
-                      className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B38728] text-white font-extrabold text-sm shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2"
                     >
                       {loadingAuth ? (
-                        <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitAdmin}</span>
                       )}
@@ -686,108 +639,162 @@ export default function HomePage() {
     );
   }
 
+  // ================= MAIN HOME DASHBOARD =================
+  const greetingName = currentUser?.name || (isAdminLoggedIn ? 'Admin' : 'Believer');
+
   return (
-    <div className="space-y-12 pb-10">
-      {/* Hero Banner with Radiant Glow */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950 via-[#0d1c2d] to-[#070e1b] border border-emerald-500/30 p-8 sm:p-12 shadow-2xl glow-emerald">
-        <div className="relative z-10 max-w-2xl space-y-5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide uppercase">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>{getBannerBadge()}</span>
+    <div className="space-y-8 pb-12">
+      {/* 1. TOP WELCOME GREETING & STREAK BANNER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+            <span>
+              {lang === 'ta'
+                ? `வணக்கம், ${greetingName}! 👋`
+                : `Welcome, ${greetingName}! 👋`}
+            </span>
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+            {lang === 'ta'
+              ? 'இன்றைய வேத வினாடி வினாவிற்கு நீங்கள் தயாரா?'
+              : 'Ready for your daily Scripture quiz?'}
+          </p>
+        </div>
+
+        {/* Streak & Daily Goal Pill */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white border border-[#EAE0D0] shadow-sm">
+            <span className="text-base">🔥</span>
+            <div>
+              <div className="text-xs font-black text-slate-800">7-Day Streak</div>
+              <div className="text-[10px] text-slate-500 font-semibold">Daily Goal (1/1)</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B]">
+            <Zap className="w-4 h-4 text-[#C5A059] fill-[#C5A059]" />
+            <span className="text-xs font-black">{currentUser?.totalScore || 450} XP</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. GOLDEN HERO BANNER: DAILY QUIZ (MATCHING MOCKUP SCREEN 1) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#D4AF37] via-[#C59A3F] to-[#A87B1D] p-6 sm:p-8 text-white shadow-xl shadow-[#C59A3F]/20">
+        <div className="relative z-10 max-w-xl space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs font-extrabold uppercase tracking-wide">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-200" />
+            <span>{lang === 'ta' ? 'இன்றைய சிறப்பு வினாடி வினா' : 'Daily Quiz'}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-            {getHeroTitle()}
-          </h1>
+          <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+            {lang === 'ta' ? 'மத்தேயு: இயேசுவின் உவமைகள்' : 'The Parables: Gospel of Matthew'}
+          </h2>
 
-          <p
-            className={`text-slate-300 text-sm sm:text-base leading-relaxed ${
-              lang === 'ta' || lang === 'both' ? 'font-tamil' : 'font-sans'
-            }`}
-          >
-            {getHeroSubtitle()}
+          <p className="text-white/90 text-xs sm:text-sm font-medium">
+            {lang === 'ta'
+              ? '10 கேள்விகள் • 15 நிமிடங்கள் • அதிக புள்ளிகளைப் பெறுங்கள்'
+              : '10 Questions • 15 mins • Test your memory on Christ’s parables'}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="pt-2 flex flex-wrap items-center gap-3">
             <Link
-              href="#books-section"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-xs shadow-lg hover:scale-105 transition-all"
+              href="/quiz/Matthew?mode=competition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-xs sm:text-sm shadow-lg hover:scale-105 transition-all"
             >
-              <Trophy className="w-4 h-4 stroke-[2.5]" />
-              <span>{getCompetitionBtnText()}</span>
+              <Trophy className="w-4 h-4 text-yellow-400" />
+              <span>{lang === 'ta' ? 'இப்போதே தொடங்கு' : 'Start Now (15 mins)'}</span>
+              <ArrowRight className="w-4 h-4 ml-0.5" />
             </Link>
 
             <Link
-              href="/quiz/Genesis?mode=practice"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs hover:bg-slate-700 transition-all"
+              href="/quiz/Matthew?mode=practice"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 text-white font-bold text-xs sm:text-sm transition-all"
             >
-              <GraduationCap className="w-4 h-4 text-emerald-400" />
-              <span>{getPracticeBtnText()}</span>
+              <GraduationCap className="w-4 h-4" />
+              <span>{lang === 'ta' ? 'பயிற்சி முறை' : 'Practice Mode'}</span>
             </Link>
           </div>
         </div>
 
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-12 translate-y-12">
-          <ScrollText className="w-96 h-96 text-emerald-400" />
+        {/* Decorative Watermark */}
+        <div className="absolute right-2 bottom-0 opacity-15 pointer-events-none translate-x-4 translate-y-4">
+          <ScrollText className="w-64 h-64 text-white" />
         </div>
       </section>
 
-      {/* Leaderboard Podium Banner (if participants exist) */}
-      {leaderboard.length > 0 && (
-        <div className="glass-panel p-6 rounded-3xl border border-amber-500/25 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      {/* 3. TESTAMENT CATEGORY PROGRESS CARDS (MATCHING MOCKUP SCREEN 1) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* New Testament Card */}
+        <div className="warm-card rounded-2xl p-4.5 space-y-3">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center">
-                <Medal className="w-4 h-4" />
-              </div>
+              <span className="text-2xl">🧔</span>
               <div>
-                <h3 className="text-sm font-black text-white">{getLeaderboardTitle()}</h3>
+                <h3 className="text-sm font-black text-slate-800">
+                  {lang === 'ta' ? 'புதிய ஏற்பாடு' : 'New Testament'}
+                </h3>
+                <p className="text-[11px] text-slate-500 font-medium">75 / 120 completed</p>
               </div>
             </div>
-            <span className="text-[11px] text-amber-400 font-bold uppercase tracking-wider">Top 5 Ranks</span>
+            <span className="text-xs font-black text-[#1B3B6F]">62%</span>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            {leaderboard.map((user: any) => (
-              <div
-                key={user.id}
-                className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center gap-3"
-              >
-                <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black shrink-0 ${
-                    user.rank === 1
-                      ? 'bg-amber-400 text-slate-950 font-black'
-                      : user.rank === 2
-                        ? 'bg-slate-300 text-slate-950 font-black'
-                        : user.rank === 3
-                          ? 'bg-amber-700 text-white font-black'
-                          : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  #{user.rank}
-                </div>
-                <div className="truncate">
-                  <span className="block text-xs font-bold text-white truncate">{user.name}</span>
-                  <span className="text-[11px] font-extrabold text-amber-400">{user.totalScore} pts</span>
-                </div>
-              </div>
-            ))}
+          <div className="h-2 w-full bg-[#EAE0D0] rounded-full overflow-hidden">
+            <div className="h-full bg-[#1B3B6F] rounded-full" style={{ width: '62%' }} />
           </div>
         </div>
-      )}
 
-      {/* Book Explorer Section */}
-      <div id="books-section" className="space-y-10">
+        {/* Old Testament Card */}
+        <div className="warm-card rounded-2xl p-4.5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">📖</span>
+              <div>
+                <h3 className="text-sm font-black text-slate-800">
+                  {lang === 'ta' ? 'பழைய ஏற்பாடு' : 'Old Testament'}
+                </h3>
+                <p className="text-[11px] text-slate-500 font-medium">20 / 120 completed</p>
+              </div>
+            </div>
+            <span className="text-xs font-black text-[#C5A059]">17%</span>
+          </div>
+          <div className="h-2 w-full bg-[#EAE0D0] rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#C59A3F] rounded-full" style={{ width: '17%' }} />
+          </div>
+        </div>
+
+        {/* Bible Characters Card */}
+        <div className="warm-card rounded-2xl p-4.5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">👑</span>
+              <div>
+                <h3 className="text-sm font-black text-slate-800">
+                  {lang === 'ta' ? 'வேத பாத்திரங்கள்' : 'Characters'}
+                </h3>
+                <p className="text-[11px] text-slate-500 font-medium">15 / 30 completed</p>
+              </div>
+            </div>
+            <span className="text-xs font-black text-amber-700">50%</span>
+          </div>
+          <div className="h-2 w-full bg-[#EAE0D0] rounded-full overflow-hidden">
+            <div className="h-full bg-amber-600 rounded-full" style={{ width: '50%' }} />
+          </div>
+        </div>
+      </div>
+
+      {/* 4. BOOK EXPLORER SECTION */}
+      <div id="books-section" className="space-y-8">
         {/* Old Testament */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-2.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B] flex items-center justify-center">
                 <BookMarked className="w-4 h-4" />
               </div>
-              <h2 className="text-xl font-black text-white">{getOTTitle()}</h2>
+              <h2 className="text-lg font-black text-slate-800">
+                {lang === 'ta' ? 'பழைய ஏற்பாடு' : 'Old Testament'}
+              </h2>
             </div>
-            <span className="text-xs text-slate-400 font-semibold">
+            <span className="text-xs text-slate-500 font-bold">
               {otBooks.length} {lang === 'ta' ? 'புத்தகங்கள்' : 'Books'}
             </span>
           </div>
@@ -798,43 +805,42 @@ export default function HomePage() {
               return (
                 <div
                   key={item.book}
-                  className="glass-card glass-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
+                  className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/25 uppercase tracking-wider">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-200 uppercase tracking-wider">
                       OT
                     </span>
 
-                    {/* Book title strictly based on language selection */}
                     {lang === 'en' && (
-                      <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                      <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
                     )}
                     {lang === 'ta' && (
-                      <h3 className="text-lg font-tamil font-bold text-white">{taName || item.book}</h3>
+                      <h3 className="text-lg font-tamil font-extrabold text-slate-900">{taName || item.book}</h3>
                     )}
                     {lang === 'both' && (
                       <div>
-                        <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                        <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
                         {taName && (
-                          <p className="text-xs font-tamil text-slate-400 font-medium">{taName}</p>
+                          <p className="text-xs font-tamil text-slate-500 font-semibold">{taName}</p>
                         )}
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0]">
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
-                      className="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 text-center text-xs font-extrabold shadow-sm transition-all"
+                      className="flex-1 py-2.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-center text-xs font-extrabold shadow-sm transition-all"
                     >
                       {lang === 'ta' ? 'போட்டி' : 'Competition'}
                     </Link>
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
-                      className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all"
+                      className="p-2.5 rounded-xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-600 hover:text-slate-900 transition-all"
                       title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
-                      <GraduationCap className="w-4 h-4" />
+                      <GraduationCap className="w-4 h-4 text-[#8C6B1B]" />
                     </Link>
                   </div>
                 </div>
@@ -845,14 +851,16 @@ export default function HomePage() {
 
         {/* New Testament */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-2.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-[#1B3B6F] flex items-center justify-center">
                 <BookMarked className="w-4 h-4" />
               </div>
-              <h2 className="text-xl font-black text-white">{getNTTitle()}</h2>
+              <h2 className="text-lg font-black text-slate-800">
+                {lang === 'ta' ? 'புதிய ஏற்பாடு' : 'New Testament'}
+              </h2>
             </div>
-            <span className="text-xs text-slate-400 font-semibold">
+            <span className="text-xs text-slate-500 font-bold">
               {ntBooks.length} {lang === 'ta' ? 'புத்தகங்கள்' : 'Books'}
             </span>
           </div>
@@ -863,43 +871,42 @@ export default function HomePage() {
               return (
                 <div
                   key={item.book}
-                  className="glass-card glass-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
+                  className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 uppercase tracking-wider">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-blue-100 text-[#1B3B6F] border border-blue-200 uppercase tracking-wider">
                       NT
                     </span>
 
-                    {/* Book title strictly based on language selection */}
                     {lang === 'en' && (
-                      <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                      <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
                     )}
                     {lang === 'ta' && (
-                      <h3 className="text-lg font-tamil font-bold text-white">{taName || item.book}</h3>
+                      <h3 className="text-lg font-tamil font-extrabold text-slate-900">{taName || item.book}</h3>
                     )}
                     {lang === 'both' && (
                       <div>
-                        <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                        <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
                         {taName && (
-                          <p className="text-xs font-tamil text-slate-400 font-medium">{taName}</p>
+                          <p className="text-xs font-tamil text-slate-500 font-semibold">{taName}</p>
                         )}
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0]">
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
-                      className="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 text-center text-xs font-extrabold shadow-sm transition-all"
+                      className="flex-1 py-2.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-center text-xs font-extrabold shadow-sm transition-all"
                     >
                       {lang === 'ta' ? 'போட்டி' : 'Competition'}
                     </Link>
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
-                      className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all"
+                      className="p-2.5 rounded-xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-600 hover:text-slate-900 transition-all"
                       title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
-                      <GraduationCap className="w-4 h-4" />
+                      <GraduationCap className="w-4 h-4 text-[#8C6B1B]" />
                     </Link>
                   </div>
                 </div>
@@ -908,6 +915,109 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* 5. LEADERBOARD SECTION (MATCHING MOCKUP SCREEN 4) */}
+      <div id="leaderboard-section" className="warm-card rounded-3xl p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE0D0] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B] flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-[#C5A059]" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-slate-800">
+                {lang === 'ta' ? 'தரவரிசைப் பட்டியல்' : 'Leaderboard & Top Ranks'}
+              </h3>
+              <p className="text-xs text-slate-500 font-medium">
+                {lang === 'ta'
+                  ? 'சிறந்த பங்கேற்பாளர்கள் மற்றும் புள்ளிகள்'
+                  : 'Compete for the top podium on DaQuiz'}
+              </p>
+            </div>
+          </div>
+
+          {/* Global vs Church Group Toggle */}
+          <div className="inline-flex p-1 rounded-2xl bg-[#F4EDE2] border border-[#E5DAC8]">
+            <button
+              onClick={() => setLeaderboardTab('global')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                leaderboardTab === 'global'
+                  ? 'bg-[#1B3B6F] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {lang === 'ta' ? 'அனைத்து பங்கேற்பாளர்கள்' : 'Global'}
+            </button>
+            <button
+              onClick={() => setLeaderboardTab('group')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                leaderboardTab === 'group'
+                  ? 'bg-[#1B3B6F] text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {lang === 'ta' ? 'சபை குழு' : 'Church Group'}
+            </button>
+          </div>
+        </div>
+
+        {/* Top 3 Podium Cards */}
+        {leaderboard.length > 0 ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              {leaderboard.slice(0, 3).map((player: any, idx: number) => {
+                const medals = ['🥇', '🥈', '🥉'];
+                const rankBgs = [
+                  'bg-gradient-to-b from-[#FAF3E0] to-white border-[#C5A059]',
+                  'bg-gradient-to-b from-slate-50 to-white border-slate-300',
+                  'bg-gradient-to-b from-amber-50/60 to-white border-amber-300',
+                ];
+
+                return (
+                  <div
+                    key={player.id || idx}
+                    className={`rounded-2xl border p-4 text-center space-y-2.5 shadow-sm ${rankBgs[idx] || 'bg-white border-[#EAE0D0]'}`}
+                  >
+                    <div className="text-3xl">{medals[idx]}</div>
+                    <div>
+                      <div className="font-black text-sm text-slate-900 truncate">{player.name}</div>
+                      <div className="text-xs font-extrabold text-[#8C6B1B] mt-0.5">{player.totalScore} XP</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Remaining Ranked Rows */}
+            {leaderboard.length > 3 && (
+              <div className="space-y-2 pt-2">
+                {leaderboard.slice(3).map((player: any) => (
+                  <div
+                    key={player.id}
+                    className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0] flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="w-6 h-6 rounded-lg bg-[#EAE0D0] text-slate-700 text-xs font-black flex items-center justify-center">
+                        #{player.rank}
+                      </span>
+                      <span className="text-xs font-bold text-slate-800">{player.name}</span>
+                    </div>
+                    <span className="text-xs font-black text-[#8C6B1B]">{player.totalScore} XP</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-8 space-y-2">
+            <p className="text-sm font-semibold text-slate-500">
+              {lang === 'ta'
+                ? 'முதல் வினாடி வினாவை முடித்து தரவரிசையில் முதலிடம் பெறுங்கள்!'
+                : 'Complete the first quiz to claim #1 rank on the leaderboard!'}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+
