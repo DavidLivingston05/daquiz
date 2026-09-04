@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, Phone, Calendar, Sparkles, X, CheckCircle2, ArrowRight } from 'lucide-react';
+import { User, Phone, Calendar, Sparkles, X, ArrowRight } from 'lucide-react';
 import { registerOrLoginUser } from '@/lib/actions/userActions';
 
 interface UserAuthModalProps {
@@ -17,7 +17,7 @@ export default function UserAuthModal({
   onClose,
   onSuccess,
   title = 'Join Bible Quiz & Save Scores',
-  subtitle = 'Enter your details once to track your competition rank and practice history.',
+  subtitle = 'Enter your details to track your competition rank and practice history.',
 }: UserAuthModalProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -47,7 +47,6 @@ export default function UserAuthModal({
 
       if (result.success && result.user) {
         localStorage.setItem('daquiz_user', JSON.stringify(result.user));
-        // Broadcast user update
         window.dispatchEvent(new CustomEvent('daquiz-user-updated', { detail: result.user }));
         onSuccess(result.user);
         onClose();
@@ -61,23 +60,29 @@ export default function UserAuthModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl glass-panel border border-emerald-500/30 p-6 sm:p-8 shadow-2xl shadow-emerald-500/10 space-y-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
+      {/* Click outside backdrop */}
+      <div className="fixed inset-0" onClick={onClose} />
+
+      <div className="relative z-10 w-full max-w-md my-auto overflow-hidden rounded-3xl bg-[#0f172a] border border-emerald-500/40 p-6 sm:p-8 shadow-2xl shadow-emerald-500/20 space-y-6 animate-fadeIn">
         {/* Close Button */}
         <button
+          type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800/90 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Header */}
-        <div className="space-y-2 text-center sm:text-left">
+        <div className="space-y-2 text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold uppercase tracking-wide">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>Participant Profile</span>
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">{title}</h2>
+          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug">
+            {title}
+          </h2>
           <p className="text-xs text-slate-400 leading-relaxed font-tamil">
             {subtitle} • உங்கள் பெயர், தொலைபேசி எண், வயதை உள்ளிடவும்.
           </p>
@@ -92,7 +97,7 @@ export default function UserAuthModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-left">
             <label className="block text-xs font-bold text-slate-300">
               Full Name (முழு பெயர்) *
             </label>
@@ -106,13 +111,13 @@ export default function UserAuthModal({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. David Livingston"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
               />
             </div>
           </div>
 
           {/* Phone */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-left">
             <label className="block text-xs font-bold text-slate-300">
               Phone Number (தொலைபேசி எண்) *
             </label>
@@ -126,13 +131,13 @@ export default function UserAuthModal({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="e.g. +91 9876543210"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
               />
             </div>
           </div>
 
           {/* Age */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-left">
             <label className="block text-xs font-bold text-slate-300">
               Age (வயது) *
             </label>
@@ -148,7 +153,7 @@ export default function UserAuthModal({
                 value={age}
                 onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
                 placeholder="e.g. 24"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
               />
             </div>
           </div>

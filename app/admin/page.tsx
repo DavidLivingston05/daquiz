@@ -801,8 +801,8 @@ export default function AdminPage() {
 
       {/* ================= EDIT QUESTION MODAL ================= */}
       {editingQuestion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-2xl glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/30 space-y-6 my-8">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="relative z-10 w-full max-w-2xl my-auto glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/40 space-y-6">
             <button
               onClick={() => setEditingQuestion(null)}
               className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white"
