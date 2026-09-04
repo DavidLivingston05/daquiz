@@ -282,6 +282,96 @@ export default function HomePage() {
 
   // Gated Entrance: If NOT logged in as Participant or Admin, show Step 1 or Step 2
   if (!currentUser && !isAdminLoggedIn) {
+    const t = {
+      en: {
+        step1Badge: 'Step 1 of 2 • Language Selection',
+        step1Title: 'Choose Preferred Language',
+        step1Subtitle: 'Select how you would like to view Bible questions and scripture.',
+        langFlexTitle: 'Language is always flexible',
+        langFlexDesc: 'You can change your language anytime later from the top navigation bar!',
+        continueBtn: 'Continue to Sign In →',
+        backBtn: '← Change Language (English)',
+        step2Indicator: 'Step 2 of 2',
+        tabParticipant: 'Participant',
+        tabAdmin: 'Admin',
+        loginTitleUser: 'Login to your account',
+        loginSubUser: 'Enter your details to take Bible quizzes and track your competition score.',
+        loginTitleAdmin: 'Admin Console Login',
+        loginSubAdmin: 'Enter admin credentials to manage questions and participants.',
+        nameLabel: 'Full Name *',
+        namePlaceholder: 'e.g. David Livingston',
+        phoneLabel: 'Phone Number *',
+        phonePlaceholder: 'e.g. +91 9876543210',
+        ageLabel: 'Age *',
+        agePlaceholder: 'e.g. 24',
+        adminUserLabel: 'Username *',
+        adminUserPlaceholder: 'admin',
+        adminPassLabel: 'Password *',
+        adminPassPlaceholder: '••••••••',
+        rememberMe: 'Remember me',
+        submitUser: 'Login & Enter Quiz',
+        submitAdmin: 'Login as Admin',
+      },
+      ta: {
+        step1Badge: 'படி 1 / 2 • மொழி தேர்வு',
+        step1Title: 'விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்',
+        step1Subtitle: 'வேத வினாடி வினா மற்றும் வசனங்களுக்கான மொழியைத் தேர்வு செய்க.',
+        langFlexTitle: 'மொழி எப்போதும் மாற்றக்கூடியது',
+        langFlexDesc: 'கவலைப்பட வேண்டாம்! நீங்கள் எப்போது வேண்டுமானாலும் மேல் பகுதியில் உள்ள பொத்தானைப் பயன்படுத்தி மொழியை மாற்றிக்கொள்ளலாம்.',
+        continueBtn: 'உள்நுழைவுக்குத் தொடர்க →',
+        backBtn: '← மொழியை மாற்றவும் (தமிழ்)',
+        step2Indicator: 'படி 2 / 2',
+        tabParticipant: 'பங்கேற்பாளர்',
+        tabAdmin: 'நிர்வாகி',
+        loginTitleUser: 'உங்கள் கணக்கில் உள்நுழையவும்',
+        loginSubUser: 'வேத வினாடி வினாவில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.',
+        loginTitleAdmin: 'நிர்வாகி உள்நுழைவு',
+        loginSubAdmin: 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.',
+        nameLabel: 'முழு பெயர் *',
+        namePlaceholder: 'எ.கா. தாவீது லிவிங்ஸ்டன்',
+        phoneLabel: 'தொலைபேசி எண் *',
+        phonePlaceholder: 'எ.கா. +91 9876543210',
+        ageLabel: 'வயது *',
+        agePlaceholder: 'எ.கா. 24',
+        adminUserLabel: 'பயனர்பெயர் *',
+        adminUserPlaceholder: 'நிர்வாகி பெயர்',
+        adminPassLabel: 'கடவுச்சொல் *',
+        adminPassPlaceholder: '••••••••',
+        rememberMe: 'என்னை நினைவில் கொள்',
+        submitUser: 'உள்நுழையவும்',
+        submitAdmin: 'நிர்வாகியாக உள்நுழையவும்',
+      },
+      both: {
+        step1Badge: 'Step 1 of 2 • மொழி தேர்வு',
+        step1Title: 'Choose Language • மொழியைத் தேர்ந்தெடுக்கவும்',
+        step1Subtitle: 'Select language • உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்.',
+        langFlexTitle: 'Language is flexible • மொழி மாற்றக்கூடியது',
+        langFlexDesc: 'You can change language anytime from top bar • எப்போது வேண்டுமானாலும் மேல் பகுதியில் மொழியை மாற்றலாம்.',
+        continueBtn: 'Continue to Sign In → (தொடர்க)',
+        backBtn: '← Change Language (மொழி மாற்றம்)',
+        step2Indicator: 'Step 2 of 2 • படி 2 / 2',
+        tabParticipant: 'Participant (பயனர்)',
+        tabAdmin: 'Admin (நிர்வாகி)',
+        loginTitleUser: 'Login to your account • உள்நுழையவும்',
+        loginSubUser: 'Enter your details • உங்கள் விவரங்களை உள்ளிட்டு தொடரவும்.',
+        loginTitleAdmin: 'Admin Login • நிர்வாகி உள்நுழைவு',
+        loginSubAdmin: 'Enter credentials • நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.',
+        nameLabel: 'Full Name (முழு பெயர்) *',
+        namePlaceholder: 'e.g. David Livingston / உங்கள் பெயர்',
+        phoneLabel: 'Phone Number (தொலைபேசி எண்) *',
+        phonePlaceholder: 'e.g. +91 9876543210',
+        ageLabel: 'Age (வயது) *',
+        agePlaceholder: 'e.g. 24',
+        adminUserLabel: 'Username (பயனர்பெயர்) *',
+        adminUserPlaceholder: 'admin / நிர்வாகி',
+        adminPassLabel: 'Password (கடவுச்சொல்) *',
+        adminPassPlaceholder: '••••••••',
+        rememberMe: 'Remember me (நினைவில் கொள்)',
+        submitUser: 'Login & Enter (உள்நுழையவும்)',
+        submitAdmin: 'Login as Admin (நிர்வாகி உள்நுழைவு)',
+      },
+    }[lang];
+
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-6">
         <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fadeIn">
@@ -293,13 +383,13 @@ export default function HomePage() {
               <div className="text-left space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Step 1 of 2 • Language Selection</span>
+                  <span>{t.step1Badge}</span>
                 </div>
                 <h1 className="text-2xl font-black text-white tracking-tight">
-                  Choose Preferred Language
+                  {t.step1Title}
                 </h1>
-                <p className="text-xs text-slate-400 font-tamil leading-relaxed">
-                  உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்.
+                <p className={`text-xs text-slate-400 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  {t.step1Subtitle}
                 </p>
               </div>
 
@@ -382,13 +472,10 @@ export default function HomePage() {
               <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/25 space-y-1 text-left">
                 <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold">
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                  <span>Language is always flexible</span>
+                  <span>{t.langFlexTitle}</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed font-tamil">
-                  கவலைப்பட வேண்டாம்! நீங்கள் எப்போது வேண்டுமானாலும் மேல் பகுதியில் உள்ள பொத்தானைப் பயன்படுத்தி மொழியை மாற்றிக்கொள்ளலாம்.
-                </p>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  (You can change your language anytime later from the top navigation bar!)
+                <p className={`text-[11px] text-slate-300 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  {t.langFlexDesc}
                 </p>
               </div>
 
@@ -398,7 +485,7 @@ export default function HomePage() {
                 onClick={() => setEntryStep('auth')}
                 className="w-full py-3.5 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
               >
-                <span>Continue to Sign In → (தொடர்க)</span>
+                <span>{t.continueBtn}</span>
               </button>
             </div>
           ) : (
@@ -414,10 +501,9 @@ export default function HomePage() {
                   }}
                   className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
                 >
-                  <span>← Change Language</span>
-                  <span className="font-bold text-emerald-400 capitalize">({lang === 'both' ? 'Both' : lang === 'ta' ? 'தமிழ்' : 'English'})</span>
+                  <span>{t.backBtn}</span>
                 </button>
-                <span className="text-[11px] font-bold text-slate-500 uppercase">Step 2 of 2</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase">{t.step2Indicator}</span>
               </div>
 
               {/* Header Mode Tabs */}
@@ -435,7 +521,7 @@ export default function HomePage() {
                   }`}
                 >
                   <User className="w-4 h-4" />
-                  <span>Participant (பயனர்)</span>
+                  <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.tabParticipant}</span>
                 </button>
                 <button
                   type="button"
@@ -450,19 +536,17 @@ export default function HomePage() {
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Admin (நிர்வாகி)</span>
+                  <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.tabAdmin}</span>
                 </button>
               </div>
 
               {/* Heading */}
               <div className="text-left space-y-1.5">
-                <h1 className="text-2xl font-black text-white tracking-tight">
-                  {authTab === 'user' ? 'Login to your account' : 'Admin Login'}
+                <h1 className={`text-2xl font-black text-white tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  {authTab === 'user' ? t.loginTitleUser : t.loginTitleAdmin}
                 </h1>
-                <p className="text-xs text-slate-400 font-tamil">
-                  {authTab === 'user'
-                    ? 'வேத வினாடி வினாவில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.'
-                    : 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.'}
+                <p className={`text-xs text-slate-400 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                  {authTab === 'user' ? t.loginSubUser : t.loginSubAdmin}
                 </p>
               </div>
 
@@ -477,8 +561,8 @@ export default function HomePage() {
                 <form onSubmit={handleUserLoginSubmit} className="space-y-4">
                   {/* Full Name */}
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Full Name (முழு பெயர்) *
+                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                      {t.nameLabel}
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -489,16 +573,16 @@ export default function HomePage() {
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. Jackob blonde"
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                        placeholder={t.namePlaceholder}
+                        className={`w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
                       />
                     </div>
                   </div>
 
                   {/* Phone Number */}
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Phone Number (தொலைபேசி எண்) *
+                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                      {t.phoneLabel}
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -509,7 +593,7 @@ export default function HomePage() {
                         required
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="e.g. +91 9876543210"
+                        placeholder={t.phonePlaceholder}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
                       />
                     </div>
@@ -517,8 +601,8 @@ export default function HomePage() {
 
                   {/* Age */}
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Age (வயது) *
+                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                      {t.ageLabel}
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -531,7 +615,7 @@ export default function HomePage() {
                         max={120}
                         value={age}
                         onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
-                        placeholder="e.g. 24"
+                        placeholder={t.agePlaceholder}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
                       />
                     </div>
@@ -539,14 +623,14 @@ export default function HomePage() {
 
                   {/* Remember Me */}
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+                    <label className={`flex items-center gap-2 cursor-pointer text-slate-300 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       <input
                         type="checkbox"
                         checked={rememberUser}
                         onChange={(e) => setRememberUser(e.target.checked)}
                         className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
                       />
-                      <span>Remember me</span>
+                      <span>{t.rememberMe}</span>
                     </label>
                   </div>
 
@@ -560,7 +644,7 @@ export default function HomePage() {
                       {loadingAuth ? (
                         <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        <span>login</span>
+                        <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitUser}</span>
                       )}
                     </button>
                   </div>
@@ -569,8 +653,8 @@ export default function HomePage() {
                 <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
                   {/* Admin Username */}
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Username
+                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                      {t.adminUserLabel}
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -581,7 +665,7 @@ export default function HomePage() {
                         required
                         value={adminUser}
                         onChange={(e) => setAdminUser(e.target.value)}
-                        placeholder="admin"
+                        placeholder={t.adminUserPlaceholder}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                     </div>
@@ -589,8 +673,8 @@ export default function HomePage() {
 
                   {/* Admin Password */}
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Password
+                    <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                      {t.adminPassLabel}
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -601,7 +685,7 @@ export default function HomePage() {
                         required
                         value={adminPass}
                         onChange={(e) => setAdminPass(e.target.value)}
-                        placeholder="••••••••"
+                        placeholder={t.adminPassPlaceholder}
                         className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                     </div>
@@ -609,14 +693,14 @@ export default function HomePage() {
 
                   {/* Remember Me */}
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+                    <label className={`flex items-center gap-2 cursor-pointer text-slate-300 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       <input
                         type="checkbox"
                         checked={rememberAdmin}
                         onChange={(e) => setRememberAdmin(e.target.checked)}
                         className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
                       />
-                      <span>Remember me</span>
+                      <span>{t.rememberMe}</span>
                     </label>
                   </div>
 
@@ -630,7 +714,7 @@ export default function HomePage() {
                       {loadingAuth ? (
                         <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        <span>login</span>
+                        <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitAdmin}</span>
                       )}
                     </button>
                   </div>

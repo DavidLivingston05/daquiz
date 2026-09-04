@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { registerOrLoginUser } from '@/lib/actions/userActions';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface UserAuthModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export default function UserAuthModal({
   initialMode = 'user',
 }: UserAuthModalProps) {
   const router = useRouter();
+  const { language: lang } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [authMode, setAuthMode] = useState<'user' | 'admin'>(initialMode);
 
@@ -136,6 +138,72 @@ export default function UserAuthModal({
     }
   };
 
+  const t = {
+    en: {
+      tabUser: 'Participant',
+      tabAdmin: 'Admin',
+      loginTitleUser: title || 'Login to your account',
+      loginSubUser: subtitle || 'Enter your details to participate and save scores.',
+      loginTitleAdmin: 'Admin Portal Login',
+      loginSubAdmin: 'Enter admin credentials to manage questions and participants.',
+      nameLabel: 'Full Name *',
+      namePlaceholder: 'e.g. David Livingston',
+      phoneLabel: 'Phone Number *',
+      phonePlaceholder: 'e.g. +91 9876543210',
+      ageLabel: 'Age *',
+      agePlaceholder: 'e.g. 24',
+      adminUserLabel: 'Admin Username *',
+      adminUserPlaceholder: 'admin',
+      adminPassLabel: 'Admin Password *',
+      adminPassPlaceholder: '••••••••',
+      rememberMe: 'Remember me',
+      submitUser: 'Save & Continue',
+      submitAdmin: 'Login as Admin',
+    },
+    ta: {
+      tabUser: 'பங்கேற்பாளர்',
+      tabAdmin: 'நிர்வாகி',
+      loginTitleUser: title || 'உங்கள் கணக்கில் உள்நுழையவும்',
+      loginSubUser: subtitle || 'போட்டியில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.',
+      loginTitleAdmin: 'நிர்வாகி உள்நுழைவு',
+      loginSubAdmin: 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.',
+      nameLabel: 'முழு பெயர் *',
+      namePlaceholder: 'எ.கா. தாவீது லிவிங்ஸ்டன்',
+      phoneLabel: 'தொலைபேசி எண் *',
+      phonePlaceholder: 'எ.கா. +91 9876543210',
+      ageLabel: 'வயது *',
+      agePlaceholder: 'எ.கா. 24',
+      adminUserLabel: 'பயனர்பெயர் *',
+      adminUserPlaceholder: 'நிர்வாகி பெயர்',
+      adminPassLabel: 'கடவுச்சொல் *',
+      adminPassPlaceholder: '••••••••',
+      rememberMe: 'என்னை நினைவில் கொள்',
+      submitUser: 'உள்நுழையவும்',
+      submitAdmin: 'நிர்வாகியாக உள்நுழையவும்',
+    },
+    both: {
+      tabUser: 'Participant (பயனர்)',
+      tabAdmin: 'Admin (நிர்வாகி)',
+      loginTitleUser: title || 'Login to your account • உள்நுழையவும்',
+      loginSubUser: subtitle || 'Enter details • உங்கள் விவரங்களை உள்ளிடவும்.',
+      loginTitleAdmin: 'Admin Login • நிர்வாகி உள்நுழைவு',
+      loginSubAdmin: 'Enter credentials • நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.',
+      nameLabel: 'Full Name (முழு பெயர்) *',
+      namePlaceholder: 'e.g. David Livingston / உங்கள் பெயர்',
+      phoneLabel: 'Phone Number (தொலைபேசி எண்) *',
+      phonePlaceholder: 'e.g. +91 9876543210',
+      ageLabel: 'Age (வயது) *',
+      agePlaceholder: 'e.g. 24',
+      adminUserLabel: 'Admin Username (பயனர்பெயர்) *',
+      adminUserPlaceholder: 'admin',
+      adminPassLabel: 'Admin Password (கடவுச்சொல்) *',
+      adminPassPlaceholder: '••••••••',
+      rememberMe: 'Remember me (நினைவில் கொள்)',
+      submitUser: 'Save & Continue (தொடர்க)',
+      submitAdmin: 'Login as Admin (நிர்வாகி உள்நுழைவு)',
+    },
+  }[lang];
+
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
       {/* Click outside backdrop */}
@@ -166,7 +234,7 @@ export default function UserAuthModal({
             }`}
           >
             <User className="w-4 h-4" />
-            <span>Participant (பங்கேற்பாளர்)</span>
+            <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.tabUser}</span>
           </button>
           <button
             type="button"
@@ -181,21 +249,17 @@ export default function UserAuthModal({
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Admin (நிர்வாகி)</span>
+            <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.tabAdmin}</span>
           </button>
         </div>
 
         {/* Header */}
         <div className="space-y-1.5 text-left">
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug">
-            {authMode === 'user'
-              ? title || 'Login to your account'
-              : 'Admin Portal Login'}
+          <h2 className={`text-xl sm:text-2xl font-black text-white tracking-tight leading-snug ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+            {authMode === 'user' ? t.loginTitleUser : t.loginTitleAdmin}
           </h2>
-          <p className="text-xs text-slate-400 leading-relaxed font-tamil">
-            {authMode === 'user'
-              ? subtitle || 'உங்கள் விவரங்களை உள்ளிட்டு போட்டியில் பங்கேற்கவும்.'
-              : 'நிர்வாக அணுகலுக்கு பயனர் பெயர் மற்றும் கடவுச்சொல்லை உள்ளிடவும்.'}
+          <p className={`text-xs text-slate-400 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+            {authMode === 'user' ? t.loginSubUser : t.loginSubAdmin}
           </p>
         </div>
 
@@ -210,8 +274,8 @@ export default function UserAuthModal({
           <form onSubmit={handleUserSubmit} className="space-y-4">
             {/* Name */}
             <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-bold text-slate-300">
-                Full Name (முழு பெயர்) *
+              <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                {t.nameLabel}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -222,16 +286,16 @@ export default function UserAuthModal({
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Jackob blonde"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  placeholder={t.namePlaceholder}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
                 />
               </div>
             </div>
 
             {/* Phone */}
             <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-bold text-slate-300">
-                Phone Number (தொலைபேசி எண்) *
+              <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                {t.phoneLabel}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -242,7 +306,7 @@ export default function UserAuthModal({
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="e.g. +91 9876543210"
+                  placeholder={t.phonePlaceholder}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
                 />
               </div>
@@ -250,8 +314,8 @@ export default function UserAuthModal({
 
             {/* Age */}
             <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-bold text-slate-300">
-                Age (வயது) *
+              <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                {t.ageLabel}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -264,7 +328,7 @@ export default function UserAuthModal({
                   max={120}
                   value={age}
                   onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
-                  placeholder="e.g. 24"
+                  placeholder={t.agePlaceholder}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
                 />
               </div>
@@ -272,14 +336,14 @@ export default function UserAuthModal({
 
             {/* Remember Me */}
             <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+              <label className={`flex items-center gap-2 cursor-pointer text-slate-300 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 <input
                   type="checkbox"
                   checked={rememberUser}
                   onChange={(e) => setRememberUser(e.target.checked)}
                   className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
                 />
-                <span>Remember me</span>
+                <span>{t.rememberMe}</span>
               </label>
             </div>
 
@@ -294,7 +358,7 @@ export default function UserAuthModal({
                   <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>Enter Quiz & Save (உள்நுழை)</span>
+                    <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitUser}</span>
                     <ArrowRight className="w-4 h-4 stroke-[3]" />
                   </>
                 )}
@@ -306,8 +370,8 @@ export default function UserAuthModal({
           <form onSubmit={handleAdminSubmit} className="space-y-4">
             {/* Admin Username */}
             <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-bold text-slate-300">
-                Admin Username (பயனர்பெயர்) *
+              <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                {t.adminUserLabel}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -318,7 +382,7 @@ export default function UserAuthModal({
                   required
                   value={adminUser}
                   onChange={(e) => setAdminUser(e.target.value)}
-                  placeholder="admin"
+                  placeholder={t.adminUserPlaceholder}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
                 />
               </div>
@@ -326,8 +390,8 @@ export default function UserAuthModal({
 
             {/* Admin Password */}
             <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-bold text-slate-300">
-                Admin Password (கடவுச்சொல்) *
+              <label className={`block text-xs font-bold text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                {t.adminPassLabel}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -338,7 +402,7 @@ export default function UserAuthModal({
                   required
                   value={adminPass}
                   onChange={(e) => setAdminPass(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={t.adminPassPlaceholder}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
                 />
               </div>
@@ -346,14 +410,14 @@ export default function UserAuthModal({
 
             {/* Remember Me */}
             <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+              <label className={`flex items-center gap-2 cursor-pointer text-slate-300 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 <input
                   type="checkbox"
                   checked={rememberAdmin}
                   onChange={(e) => setRememberAdmin(e.target.checked)}
                   className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
                 />
-                <span>Remember me</span>
+                <span>{t.rememberMe}</span>
               </label>
             </div>
 
@@ -368,17 +432,17 @@ export default function UserAuthModal({
                   <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>Login as Admin (நிர்வாகி உள்நுழைவு)</span>
+                    <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitAdmin}</span>
                     <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
                   </>
                 )}
               </button>
             </div>
-          </form>
-        )}
+            </form>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
 
-  return createPortal(modalContent, document.body);
-}
+    return createPortal(modalContent, document.body);
+  }
