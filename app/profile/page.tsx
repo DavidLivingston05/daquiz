@@ -169,8 +169,8 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 3. Overall Statistics Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+        {/* 3. Overall Statistics Grid (3 Cards: Competition, Practice, Chapters) */}
+        <div className="grid grid-cols-3 gap-3 pt-2">
           <div className="p-4 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] text-center space-y-1">
             <span className="text-[11px] uppercase font-bold text-slate-500 dark:text-slate-400 block">
               {lang === 'ta' ? 'போட்டிகள்' : 'Competition'}
@@ -186,15 +186,6 @@ export default function ProfilePage() {
             </span>
             <p className="text-2xl font-black text-slate-900 dark:text-white">
               {stats.practiceAttempts}
-            </p>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] text-center space-y-1">
-            <span className="text-[11px] uppercase font-bold text-slate-500 dark:text-slate-400 block">
-              {lang === 'ta' ? 'துல்லியம்' : 'Accuracy'}
-            </span>
-            <p className="text-2xl font-black text-[#D49020] dark:text-amber-400">
-              {stats.overallAccuracy}%
             </p>
           </div>
 
@@ -259,8 +250,8 @@ export default function ProfilePage() {
                       </h3>
                     </div>
                     <div className="w-12 h-12 rounded-full border-2 border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 flex flex-col items-center justify-center shrink-0">
-                      <span className="text-xs font-black text-emerald-700 dark:text-emerald-300">
-                        {item.bestAccuracy}%
+                      <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-300">
+                        {item.bestCorrect}/{item.totalQuestions}
                       </span>
                     </div>
                   </div>
@@ -330,8 +321,8 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-3.5">
                     {/* Circle Score Ring */}
                     <div className="w-14 h-14 rounded-full border-3 border-blue-300 dark:border-blue-700 bg-blue-50/70 dark:bg-blue-950/30 flex items-center justify-center shrink-0">
-                      <span className="text-base font-black text-blue-600 dark:text-blue-400">
-                        {attempt.accuracy}%
+                      <span className="text-xs font-black text-blue-600 dark:text-blue-400">
+                        {attempt.correctAnswers}/{attempt.totalQuestions}
                       </span>
                     </div>
 
