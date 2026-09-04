@@ -63,20 +63,11 @@ export default function RootLayout({
                 </div>
               </Link>
 
-              {/* Middle Language Switcher */}
-              <div className="hidden md:block">
-                <LanguageSelector />
-              </div>
-
               {/* Right side controls */}
               <div className="flex items-center gap-2 sm:gap-3 text-sm font-semibold">
+                <LanguageSelector />
                 <UserProfileChip />
               </div>
-            </div>
-
-            {/* Mobile Language Bar */}
-            <div className="md:hidden px-4 pb-2.5 flex justify-center border-t border-slate-800/60 pt-2">
-              <LanguageSelector />
             </div>
           </header>
 
