@@ -54,7 +54,7 @@ const tamilBookNames: Record<string, string> = {
 
 export default function HomePage() {
   const router = useRouter();
-  const { language: lang } = useLanguage();
+  const { language: lang, setLanguage } = useLanguage();
   const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
@@ -62,6 +62,7 @@ export default function HomePage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [currentUser, setCurrentUser] = useState<any | null>(null);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [entryStep, setEntryStep] = useState<'language' | 'auth'>('language');
 
   // Login form state
   const [authTab, setAuthTab] = useState<'user' | 'admin'>('user');
@@ -279,226 +280,363 @@ export default function HomePage() {
     );
   }
 
-  // Gated Entrance: If NOT logged in as Participant or Admin, show Login Card
+  // Gated Entrance: If NOT logged in as Participant or Admin, show Step 1 or Step 2
   if (!currentUser && !isAdminLoggedIn) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-6">
         <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fadeIn">
-          {/* Header Mode Tabs */}
-          <div className="flex items-center p-1 rounded-2xl bg-slate-900 border border-slate-800">
-            <button
-              type="button"
-              onClick={() => {
-                setAuthTab('user');
-                setAuthError(null);
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
-                authTab === 'user'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <User className="w-4 h-4" />
-              <span>Participant (பயனர்)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setAuthTab('admin');
-                setAuthError(null);
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
-                authTab === 'admin'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-400 text-slate-950 shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Admin (நிர்வாகி)</span>
-            </button>
-          </div>
+          
+          {/* STEP 1: LANGUAGE SELECTION FIRST */}
+          {entryStep === 'language' ? (
+            <div className="space-y-6">
+              {/* Badge & Title */}
+              <div className="text-left space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Step 1 of 2 • Language Selection</span>
+                </div>
+                <h1 className="text-2xl font-black text-white tracking-tight">
+                  Choose Preferred Language
+                </h1>
+                <p className="text-xs text-slate-400 font-tamil leading-relaxed">
+                  உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்.
+                </p>
+              </div>
 
-          {/* Heading */}
-          <div className="text-left space-y-1.5">
-            <h1 className="text-2xl font-black text-white tracking-tight">
-              {authTab === 'user' ? 'Login to your account' : 'Admin Login'}
-            </h1>
-            <p className="text-xs text-slate-400 font-tamil">
-              {authTab === 'user'
-                ? 'வேத வினாடி வினாவில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.'
-                : 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.'}
-            </p>
-          </div>
+              {/* 3 Language Options Cards */}
+              <div className="space-y-2.5">
+                {/* English */}
+                <button
+                  type="button"
+                  onClick={() => setLanguage('en')}
+                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                    lang === 'en'
+                      ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
+                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🇬🇧</span>
+                    <div>
+                      <div className="font-black text-sm text-white">English</div>
+                      <div className="text-xs text-slate-400">Pure English Bible Quiz</div>
+                    </div>
+                  </div>
+                  {lang === 'en' && (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                      ✓
+                    </span>
+                  )}
+                </button>
 
-          {authError && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold">
-              {authError}
+                {/* Tamil */}
+                <button
+                  type="button"
+                  onClick={() => setLanguage('ta')}
+                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                    lang === 'ta'
+                      ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
+                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🇮🇳</span>
+                    <div>
+                      <div className="font-black font-tamil text-sm text-white">தமிழ் (Tamil)</div>
+                      <div className="text-xs font-tamil text-slate-400">தூய தமிழ் வேத வினாடி வினா</div>
+                    </div>
+                  </div>
+                  {lang === 'ta' && (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                      ✓
+                    </span>
+                  )}
+                </button>
+
+                {/* Both */}
+                <button
+                  type="button"
+                  onClick={() => setLanguage('both')}
+                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                    lang === 'both'
+                      ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500'
+                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🌐</span>
+                    <div>
+                      <div className="font-black text-sm text-white">Both (இருமொழி)</div>
+                      <div className="text-xs text-slate-400">English & தமிழ் side-by-side</div>
+                    </div>
+                  </div>
+                  {lang === 'both' && (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                      ✓
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Informative Notice that Language can be changed anytime */}
+              <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/25 space-y-1 text-left">
+                <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                  <span>Language is always flexible</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed font-tamil">
+                  கவலைப்பட வேண்டாம்! நீங்கள் எப்போது வேண்டுமானாலும் மேல் பகுதியில் உள்ள பொத்தானைப் பயன்படுத்தி மொழியை மாற்றிக்கொள்ளலாம்.
+                </p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  (You can change your language anytime later from the top navigation bar!)
+                </p>
+              </div>
+
+              {/* Continue to Step 2 Button */}
+              <button
+                type="button"
+                onClick={() => setEntryStep('auth')}
+                className="w-full py-3.5 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+              >
+                <span>Continue to Sign In → (தொடர்க)</span>
+              </button>
             </div>
-          )}
-
-          {/* Form */}
-          {authTab === 'user' ? (
-            <form onSubmit={handleUserLoginSubmit} className="space-y-4">
-              {/* Full Name */}
-              <div className="space-y-1.5 text-left">
-                <label className="block text-xs font-bold text-slate-300">
-                  Full Name (முழு பெயர்) *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Jackob blonde"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Phone Number */}
-              <div className="space-y-1.5 text-left">
-                <label className="block text-xs font-bold text-slate-300">
-                  Phone Number (தொலைபேசி எண்) *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Phone className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g. +91 9876543210"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Age */}
-              <div className="space-y-1.5 text-left">
-                <label className="block text-xs font-bold text-slate-300">
-                  Age (வயது) *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Calendar className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    max={120}
-                    value={age}
-                    onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
-                    placeholder="e.g. 24"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Remember Me */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberUser}
-                    onChange={(e) => setRememberUser(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
-                  />
-                  <span>Remember me</span>
-                </label>
-              </div>
-
-              {/* Submit */}
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={loadingAuth}
-                  className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
-                >
-                  {loadingAuth ? (
-                    <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <span>login</span>
-                  )}
-                </button>
-              </div>
-            </form>
           ) : (
-            <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
-              {/* Admin Username */}
-              <div className="space-y-1.5 text-left">
-                <label className="block text-xs font-bold text-slate-300">
-                  Username
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={adminUser}
-                    onChange={(e) => setAdminUser(e.target.value)}
-                    placeholder="admin"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Admin Password */}
-              <div className="space-y-1.5 text-left">
-                <label className="block text-xs font-bold text-slate-300">
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Lock className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    value={adminPass}
-                    onChange={(e) => setAdminPass(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              {/* Remember Me */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberAdmin}
-                    onChange={(e) => setRememberAdmin(e.target.checked)}
-                    className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
-                  />
-                  <span>Remember me</span>
-                </label>
-              </div>
-
-              {/* Submit */}
-              <div className="pt-2">
+            /* STEP 2: SIGN IN (PARTICIPANT OR ADMIN) */
+            <div className="space-y-6">
+              {/* Back to Step 1 */}
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <button
-                  type="submit"
-                  disabled={loadingAuth}
-                  className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                  type="button"
+                  onClick={() => {
+                    setEntryStep('language');
+                    setAuthError(null);
+                  }}
+                  className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
                 >
-                  {loadingAuth ? (
-                    <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <span>login</span>
-                  )}
+                  <span>← Change Language</span>
+                  <span className="font-bold text-emerald-400 capitalize">({lang === 'both' ? 'Both' : lang === 'ta' ? 'தமிழ்' : 'English'})</span>
+                </button>
+                <span className="text-[11px] font-bold text-slate-500 uppercase">Step 2 of 2</span>
+              </div>
+
+              {/* Header Mode Tabs */}
+              <div className="flex items-center p-1 rounded-2xl bg-slate-900 border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthTab('user');
+                    setAuthError(null);
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                    authTab === 'user'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <User className="w-4 h-4" />
+                  <span>Participant (பயனர்)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthTab('admin');
+                    setAuthError(null);
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                    authTab === 'admin'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-400 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Admin (நிர்வாகி)</span>
                 </button>
               </div>
-            </form>
+
+              {/* Heading */}
+              <div className="text-left space-y-1.5">
+                <h1 className="text-2xl font-black text-white tracking-tight">
+                  {authTab === 'user' ? 'Login to your account' : 'Admin Login'}
+                </h1>
+                <p className="text-xs text-slate-400 font-tamil">
+                  {authTab === 'user'
+                    ? 'வேத வினாடி வினாவில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.'
+                    : 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.'}
+                </p>
+              </div>
+
+              {authError && (
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold">
+                  {authError}
+                </div>
+              )}
+
+              {/* Form */}
+              {authTab === 'user' ? (
+                <form onSubmit={handleUserLoginSubmit} className="space-y-4">
+                  {/* Full Name */}
+                  <div className="space-y-1.5 text-left">
+                    <label className="block text-xs font-bold text-slate-300">
+                      Full Name (முழு பெயர்) *
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <User className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. Jackob blonde"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="space-y-1.5 text-left">
+                    <label className="block text-xs font-bold text-slate-300">
+                      Phone Number (தொலைபேசி எண்) *
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Phone className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="e.g. +91 9876543210"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Age */}
+                  <div className="space-y-1.5 text-left">
+                    <label className="block text-xs font-bold text-slate-300">
+                      Age (வயது) *
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Calendar className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="number"
+                        required
+                        min={1}
+                        max={120}
+                        value={age}
+                        onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
+                        placeholder="e.g. 24"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Remember Me */}
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+                      <input
+                        type="checkbox"
+                        checked={rememberUser}
+                        onChange={(e) => setRememberUser(e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
+                      />
+                      <span>Remember me</span>
+                    </label>
+                  </div>
+
+                  {/* Submit */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={loadingAuth}
+                      className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                    >
+                      {loadingAuth ? (
+                        <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <span>login</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
+                  {/* Admin Username */}
+                  <div className="space-y-1.5 text-left">
+                    <label className="block text-xs font-bold text-slate-300">
+                      Username
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <User className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={adminUser}
+                        onChange={(e) => setAdminUser(e.target.value)}
+                        placeholder="admin"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Admin Password */}
+                  <div className="space-y-1.5 text-left">
+                    <label className="block text-xs font-bold text-slate-300">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <Lock className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="password"
+                        required
+                        value={adminPass}
+                        onChange={(e) => setAdminPass(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Remember Me */}
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+                      <input
+                        type="checkbox"
+                        checked={rememberAdmin}
+                        onChange={(e) => setRememberAdmin(e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
+                      />
+                      <span>Remember me</span>
+                    </label>
+                  </div>
+
+                  {/* Submit */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={loadingAuth}
+                      className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                    >
+                      {loadingAuth ? (
+                        <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <span>login</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           )}
         </div>
       </div>
