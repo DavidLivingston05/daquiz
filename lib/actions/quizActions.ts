@@ -3,6 +3,7 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import { Question } from '@/models/Question';
 import { QuizAttempt } from '@/models/QuizAttempt';
+import { User } from '@/models/User';
 import {
   quizSubmissionLimiter,
   quizLoadLimiter,
@@ -32,10 +33,14 @@ export interface SanitizedQuestion {
   category?: string;
   question: { en: string; ta: string };
   options: { id: string; text: { en: string; ta: string } }[];
+  explanation?: { en: string; ta: string }; // Provided in practice mode
 }
 
 export interface SubmissionPayload {
-  guestIdentifier: string;
+  guestIdentifier?: string;
+  userPhone?: string;
+  userName?: string;
+  mode?: 'competition' | 'practice' | 'book';
   book: string;
   totalTime: number;
   answers: {
@@ -47,7 +52,6 @@ export interface SubmissionPayload {
 
 /**
  * Get distinct books and question counts available
- * Safe for Server Components with try/catch fallback
  */
 export async function getAvailableBooks() {
   try {
@@ -81,50 +85,60 @@ export async function getAvailableBooks() {
 
 /**
  * Get quiz questions for a specific book
- * - Rate limited
- * - Cached in Redis
- * - Optimized with .lean()
+ * If mode === 'practice', includes explanations for instant study.
  */
-export async function getQuizSession(book: string, count = 10): Promise<SanitizedQuestion[]> {
+export async function getQuizSession(
+  book: string,
+  count = 10,
+  mode: 'competition' | 'practice' = 'competition'
+): Promise<SanitizedQuestion[]> {
   let clientIp = 'unknown';
   try {
     const headersList = headers();
     clientIp = getClientIp(headersList);
-  } catch (e) {
-    // Non-fatal if headers() is unavailable
-  }
+  } catch (e) {}
 
-  // Rate limit check (gracefully fails open if Redis not configured)
   await enforceRateLimit(quizLoadLimiter, clientIp, 'Too many quiz requests');
 
-  // Validate input
   const validated = validateInput(QuizSessionSchema, { book, count });
 
-  // Fetch cached or fresh sanitized questions
+  if (mode === 'practice') {
+    // For practice mode, return questions with explanation
+    await connectToDatabase();
+    const questions = await Question.find({ book: validated.book, isActive: true })
+      .limit(validated.count || 10)
+      .select('-options.isCorrect')
+      .lean();
+
+    return questions.map((q: any) => ({
+      id: q._id.toString(),
+      book: q.book,
+      chapter: q.chapter,
+      verse: q.verse,
+      difficulty: q.difficulty,
+      category: q.category,
+      question: q.question,
+      options: q.options,
+      explanation: q.explanation,
+    }));
+  }
+
+  // Standard cached session for competition / regular quiz
   return getCachedQuizQuestions(validated.book, validated.count);
 }
 
 /**
  * Submit quiz and verify answers server-side
- * - Rate limited
- * - Calculates score server-side with difficulty weighting & speed bonus
- * - Prevents client tampering
+ * Links attempt to registered user if phone is provided
  */
 export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
-  // Rate limit check
-  await enforceRateLimit(
-    quizSubmissionLimiter,
-    payload.guestIdentifier,
-    'Too many quiz submissions'
-  );
+  const identifier = payload.userPhone || payload.guestIdentifier || 'anonymous_guest';
 
-  // Validate input
-  const validPayload = validateInput(QuizSubmissionSchema, payload);
+  await enforceRateLimit(quizSubmissionLimiter, identifier, 'Too many quiz submissions');
 
   await connectToDatabase();
 
-  // Fetch ONLY from database
-  const questionIds = validPayload.answers.map((a) => a.questionId);
+  const questionIds = payload.answers.map((a) => a.questionId);
   const fullQuestions = await getQuestionsForVerification(questionIds);
 
   if (fullQuestions.length !== questionIds.length) {
@@ -134,7 +148,7 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
   let totalScore = 0;
   let correctCount = 0;
 
-  const reviewedAnswers = validPayload.answers.map((ans) => {
+  const reviewedAnswers = payload.answers.map((ans) => {
     const original = fullQuestions.find((q: any) => q._id.toString() === ans.questionId);
     if (!original) {
       return {
@@ -153,7 +167,6 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
     if (isCorrect) {
       correctCount += 1;
 
-      // Difficulty-weighted scoring
       const basePoints =
         (original as any).difficulty === 'hard'
           ? 200
@@ -161,9 +174,8 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
             ? 150
             : 100;
 
-      // Speed bonus: 0-50 points for answering within 15 seconds
+      // Speed bonus
       const speedBonus = Math.max(0, Math.round(50 * ((15 - Math.min(ans.timeSpent, 15)) / 15)));
-
       totalScore += basePoints + speedBonus;
     }
 
@@ -179,15 +191,18 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
     };
   });
 
-  // Store attempt in database
+  // Store attempt
   const attempt = await QuizAttempt.create({
-    guestIdentifier: validPayload.guestIdentifier,
+    userPhone: payload.userPhone,
+    userName: payload.userName,
+    guestIdentifier: payload.guestIdentifier || (payload.userPhone ? undefined : 'guest_anon'),
     quizType: 'book',
-    book: validPayload.book,
-    totalQuestions: validPayload.answers.length,
+    mode: payload.mode || 'competition',
+    book: payload.book,
+    totalQuestions: payload.answers.length,
     correctAnswers: correctCount,
     scoreEarned: totalScore,
-    timeTakenSeconds: validPayload.totalTime,
+    timeTakenSeconds: payload.totalTime,
     answers: reviewedAnswers.map((r) => ({
       questionId: r.questionId,
       selectedOptionId: r.selectedOptionId,
@@ -196,29 +211,120 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
     })),
   });
 
-  console.log('[QUIZ_COMPLETE]', {
-    attemptId: attempt._id.toString(),
-    guest: validPayload.guestIdentifier,
-    book: validPayload.book,
-    score: totalScore,
-    accuracy: Math.round((correctCount / validPayload.answers.length) * 100),
-  });
+  // If user is logged in with phone, update User document
+  if (payload.userPhone) {
+    try {
+      const user = await User.findOne({ phone: payload.userPhone });
+      if (user) {
+        user.totalScore += totalScore;
+        if (payload.mode === 'practice') {
+          user.practiceCount = (user.practiceCount || 0) + 1;
+        } else {
+          user.quizzesTaken = (user.quizzesTaken || 0) + 1;
+        }
+        user.lastActive = new Date();
+        await user.save();
+      }
+    } catch (err: any) {
+      console.warn('[USER_SCORE_UPDATE_WARN]', err.message);
+    }
+  }
 
   return {
     attemptId: attempt._id.toString(),
     score: totalScore,
     correctCount,
-    totalQuestions: validPayload.answers.length,
-    accuracy: Math.round((correctCount / validPayload.answers.length) * 100),
+    totalQuestions: payload.answers.length,
+    accuracy: Math.round((correctCount / payload.answers.length) * 100),
     review: reviewedAnswers,
   };
 }
 
 /**
- * Create new question (admin only)
- * - Protected by ADMIN_SECRET_KEY
- * - Rate limited
- * - Invalidates cache
+ * Admin: Get all questions with filters, search, and pagination
+ */
+export async function getAllQuestionsAdmin(params: {
+  search?: string;
+  book?: string;
+  difficulty?: string;
+  testament?: string;
+  page?: number;
+  limit?: number;
+  adminKeyProvided?: string;
+}) {
+  const adminKey = process.env.ADMIN_SECRET_KEY;
+  let key = params.adminKeyProvided;
+
+  if (!key) {
+    try {
+      const headersList = headers();
+      key = headersList.get('x-admin-key') || undefined;
+    } catch (e) {}
+  }
+
+  if (!adminKey || key !== adminKey) {
+    throw new Error('Unauthorized: Invalid Admin Secret Key');
+  }
+
+  await connectToDatabase();
+
+  const query: any = {};
+
+  if (params.book && params.book !== 'ALL') {
+    query.book = params.book;
+  }
+  if (params.difficulty && params.difficulty !== 'ALL') {
+    query.difficulty = params.difficulty;
+  }
+  if (params.testament && params.testament !== 'ALL') {
+    query.testament = params.testament;
+  }
+
+  if (params.search && params.search.trim()) {
+    const s = params.search.trim();
+    query.$or = [
+      { 'question.en': { $regex: s, $options: 'i' } },
+      { 'question.ta': { $regex: s, $options: 'i' } },
+      { book: { $regex: s, $options: 'i' } },
+      { category: { $regex: s, $options: 'i' } },
+    ];
+  }
+
+  const page = Math.max(1, params.page || 1);
+  const limit = Math.min(100, Math.max(5, params.limit || 20));
+  const skip = (page - 1) * limit;
+
+  const total = await Question.countDocuments(query);
+  const questions = await Question.find(query)
+    .select('+options.isCorrect')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  return {
+    questions: questions.map((q: any) => ({
+      id: q._id.toString(),
+      testament: q.testament,
+      book: q.book,
+      chapter: q.chapter,
+      verse: q.verse,
+      difficulty: q.difficulty,
+      category: q.category,
+      question: q.question,
+      options: q.options,
+      explanation: q.explanation,
+      isActive: q.isActive,
+      createdAt: q.createdAt,
+    })),
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
+/**
+ * Admin: Create new question
  */
 export async function createQuestion(formData: {
   testament: 'OT' | 'NT';
@@ -242,19 +348,14 @@ export async function createQuestion(formData: {
     try {
       const headersList = headers();
       providedKey = headersList.get('x-admin-key') || undefined;
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
   }
 
   if (!adminKey || providedKey !== adminKey) {
     throw new Error('Unauthorized: Invalid Admin Secret Key');
   }
 
-  // Rate limit
   await enforceRateLimit(questionCreationLimiter, 'admin', 'Too many questions created');
-
-  // Validate input
   const validated = validateInput(QuestionCreationSchema, formData);
 
   await connectToDatabase();
@@ -278,66 +379,109 @@ export async function createQuestion(formData: {
       en: validated.explanation_en || '',
       ta: validated.explanation_ta || '',
     },
+    isActive: true,
   });
 
-  // Invalidate cache
   await invalidateQuizCache(validated.book);
-
-  console.log('[QUESTION_CREATED]', {
-    id: created._id.toString(),
-    book: validated.book,
-    difficulty: validated.difficulty,
-  });
 
   return { success: true, id: created._id.toString() };
 }
 
 /**
- * Get quiz statistics for a guest
+ * Admin: Update an existing question (CRUD - Update)
  */
-export async function getGuestStatistics(guestIdentifier: string) {
-  try {
-    await connectToDatabase();
+export async function updateQuestion(payload: {
+  id: string;
+  testament: 'OT' | 'NT';
+  book: string;
+  chapter: number;
+  verse: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  category: string;
+  question_en: string;
+  question_ta: string;
+  options: { id?: string; text_en: string; text_ta: string; isCorrect: boolean }[];
+  explanation_en?: string;
+  explanation_ta?: string;
+  adminKeyProvided?: string;
+}) {
+  const adminKey = process.env.ADMIN_SECRET_KEY;
+  let key = payload.adminKeyProvided;
 
-    const attempts = await QuizAttempt.find({ guestIdentifier })
-      .sort({ createdAt: -1 })
-      .select('correctAnswers totalQuestions scoreEarned book createdAt')
-      .lean();
-
-    if (!attempts || attempts.length === 0) {
-      return {
-        totalAttempts: 0,
-        averageScore: 0,
-        averageAccuracy: 0,
-        bestScore: 0,
-        history: [],
-      };
-    }
-
-    const totalAttempts = attempts.length;
-    const averageScore = Math.round(
-      attempts.reduce((sum, a) => sum + a.scoreEarned, 0) / totalAttempts
-    );
-    const averageAccuracy = Math.round(
-      attempts.reduce((sum, a) => sum + (a.correctAnswers / a.totalQuestions) * 100, 0) / totalAttempts
-    );
-    const bestScore = Math.max(...attempts.map((a) => a.scoreEarned));
-
-    return {
-      totalAttempts,
-      averageScore,
-      averageAccuracy,
-      bestScore,
-      history: attempts.slice(0, 10),
-    };
-  } catch (error: any) {
-    console.error('[GET_GUEST_STATS_ERROR]', error.message);
-    return {
-      totalAttempts: 0,
-      averageScore: 0,
-      averageAccuracy: 0,
-      bestScore: 0,
-      history: [],
-    };
+  if (!key) {
+    try {
+      const headersList = headers();
+      key = headersList.get('x-admin-key') || undefined;
+    } catch (e) {}
   }
+
+  if (!adminKey || key !== adminKey) {
+    throw new Error('Unauthorized: Invalid Admin Secret Key');
+  }
+
+  await connectToDatabase();
+
+  const formattedOptions = payload.options.map((opt, idx) => ({
+    id: opt.id || `opt_${idx + 1}`,
+    text: { en: opt.text_en, ta: opt.text_ta },
+    isCorrect: opt.isCorrect,
+  }));
+
+  const updated = await Question.findByIdAndUpdate(
+    payload.id,
+    {
+      testament: payload.testament,
+      book: payload.book.trim(),
+      chapter: Number(payload.chapter) || 1,
+      verse: Number(payload.verse) || 1,
+      difficulty: payload.difficulty,
+      category: payload.category.trim(),
+      question: { en: payload.question_en.trim(), ta: payload.question_ta.trim() },
+      options: formattedOptions,
+      explanation: {
+        en: payload.explanation_en || '',
+        ta: payload.explanation_ta || '',
+      },
+    },
+    { new: true }
+  );
+
+  if (!updated) {
+    throw new Error('Question not found');
+  }
+
+  await invalidateQuizCache(payload.book);
+
+  return { success: true, id: updated._id.toString() };
+}
+
+/**
+ * Admin: Delete a question (CRUD - Delete)
+ */
+export async function deleteQuestion(id: string, adminKeyProvided?: string) {
+  const adminKey = process.env.ADMIN_SECRET_KEY;
+  let key = adminKeyProvided;
+
+  if (!key) {
+    try {
+      const headersList = headers();
+      key = headersList.get('x-admin-key') || undefined;
+    } catch (e) {}
+  }
+
+  if (!adminKey || key !== adminKey) {
+    throw new Error('Unauthorized: Invalid Admin Secret Key');
+  }
+
+  await connectToDatabase();
+
+  const question = await Question.findByIdAndDelete(id);
+
+  if (!question) {
+    throw new Error('Question not found');
+  }
+
+  await invalidateQuizCache((question as any).book);
+
+  return { success: true, id };
 }

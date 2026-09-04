@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
   getQuizSession,
   verifyAndSubmitQuiz,
@@ -15,25 +15,31 @@ import {
   ArrowRight,
   RotateCcw,
   BookOpen,
-  Languages,
   Sparkles,
   ChevronLeft,
-  Flame,
+  Zap,
   Check,
   HelpCircle,
   Trophy,
-  Zap,
+  GraduationCap,
+  Flame,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
-
-type LanguageMode = 'both' | 'en' | 'ta';
+import LanguageSelector, { LanguagePreference } from '@/components/LanguageSelector';
+import UserAuthModal from '@/components/UserAuthModal';
 
 export default function QuizPlayPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
+
   const rawBook = params?.book;
   const bookParam = Array.isArray(rawBook) ? rawBook[0] : rawBook;
   const book = bookParam ? decodeURIComponent(bookParam) : 'Genesis';
+
+  const initialMode = searchParams.get('mode') === 'practice' ? 'practice' : 'competition';
+  const [quizMode, setQuizMode] = useState<'competition' | 'practice'>(initialMode);
 
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<SanitizedQuestion[]>([]);
@@ -42,10 +48,16 @@ export default function QuizPlayPage() {
     { questionId: string; selectedOptionId: string; timeSpent: number }[]
   >([]);
   const [currentSelectedOption, setCurrentSelectedOption] = useState<string | null>(null);
-  const [langMode, setLangMode] = useState<LanguageMode>('both');
-  const [guestId, setGuestId] = useState('');
+  const [langMode, setLangMode] = useState<LanguagePreference>('both');
 
-  // Per-question timer
+  // Active User Profile
+  const [currentUser, setCurrentUser] = useState<any | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Practice mode instant feedback state
+  const [practiceRevealed, setPracticeRevealed] = useState(false);
+
+  // Per-question timer (for competition mode)
   const [questionTimeLeft, setQuestionTimeLeft] = useState(30);
   const [questionTimeSpent, setQuestionTimeSpent] = useState(0);
   const totalQuizTimeRef = useRef(0);
@@ -56,22 +68,37 @@ export default function QuizPlayPage() {
   const [quizResult, setQuizResult] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Initialize Guest ID and load questions
+  // Load language preference and user session
   useEffect(() => {
-    let gid = localStorage.getItem('daquiz_guest_id');
-    if (!gid) {
-      gid = `guest_${Math.random().toString(36).substring(2, 12)}_${Date.now().toString(36)}`;
-      localStorage.setItem('daquiz_guest_id', gid);
-    }
-    setGuestId(gid);
+    const savedLang = localStorage.getItem('daquiz_lang') as LanguagePreference;
+    if (savedLang) setLangMode(savedLang);
 
+    const handleLangChange = (e: any) => {
+      if (e.detail) setLangMode(e.detail);
+    };
+    window.addEventListener('daquiz-lang-changed', handleLangChange);
+
+    const savedUser = localStorage.getItem('daquiz_user');
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {}
+    }
+
+    return () => window.removeEventListener('daquiz-lang-changed', handleLangChange);
+  }, []);
+
+  // Load questions
+  useEffect(() => {
     async function loadQuiz() {
       try {
         setLoading(true);
         setErrorMsg(null);
-        const data = await getQuizSession(book, 10);
+        const data = await getQuizSession(book, 10, quizMode);
         if (!data || data.length === 0) {
-          setErrorMsg(`No active questions found for ${book}. You can add questions in the Admin portal or choose another book.`);
+          setErrorMsg(
+            `No active questions found for ${book}. You can add questions in the Admin portal or try another book.`
+          );
         } else {
           setQuestions(data);
         }
@@ -84,11 +111,11 @@ export default function QuizPlayPage() {
     }
 
     loadQuiz();
-  }, [book]);
+  }, [book, quizMode]);
 
-  // Timer effect
+  // Timer effect (Competition mode only)
   useEffect(() => {
-    if (loading || quizResult || questions.length === 0) return;
+    if (loading || quizResult || questions.length === 0 || quizMode === 'practice') return;
 
     setQuestionTimeLeft(30);
     setQuestionTimeSpent(0);
@@ -108,12 +135,15 @@ export default function QuizPlayPage() {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [currentIndex, loading, quizResult, questions]);
+  }, [currentIndex, loading, quizResult, questions, quizMode]);
 
   const currentQ = questions[currentIndex];
 
   const handleSelectOption = (optionId: string) => {
     setCurrentSelectedOption(optionId);
+    if (quizMode === 'practice') {
+      setPracticeRevealed(true);
+    }
   };
 
   const handleNextQuestion = (forcedByTimeout = false) => {
@@ -130,20 +160,29 @@ export default function QuizPlayPage() {
     const nextAnswers = [...selectedAnswers, answer];
     setSelectedAnswers(nextAnswers);
     setCurrentSelectedOption(null);
+    setPracticeRevealed(false);
 
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      submitQuiz(nextAnswers);
+      // Check if user has registered before final competition submission
+      if (quizMode === 'competition' && !currentUser) {
+        setIsAuthModalOpen(true);
+      } else {
+        submitQuiz(nextAnswers, currentUser);
+      }
     }
   };
 
-  const submitQuiz = async (answersToSubmit: typeof selectedAnswers) => {
+  const submitQuiz = async (answersToSubmit: typeof selectedAnswers, userObj?: any) => {
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     setSubmitting(true);
     try {
+      const activeUser = userObj || currentUser;
       const payload = {
-        guestIdentifier: guestId || 'anonymous_guest',
+        userPhone: activeUser?.phone,
+        userName: activeUser?.name,
+        mode: quizMode,
         book,
         totalTime: totalQuizTimeRef.current || 1,
         answers: answersToSubmit.filter(
@@ -153,6 +192,17 @@ export default function QuizPlayPage() {
 
       const result = await verifyAndSubmitQuiz(payload);
       setQuizResult(result);
+
+      // Refresh local user score
+      if (activeUser?.phone) {
+        const updated = {
+          ...activeUser,
+          totalScore: (activeUser.totalScore || 0) + result.score,
+        };
+        localStorage.setItem('daquiz_user', JSON.stringify(updated));
+        setCurrentUser(updated);
+        window.dispatchEvent(new CustomEvent('daquiz-user-updated', { detail: updated }));
+      }
     } catch (err: any) {
       console.error('Submission failed:', err);
       setErrorMsg(err.message || 'Failed to verify quiz submission.');
@@ -165,7 +215,6 @@ export default function QuizPlayPage() {
     window.location.reload();
   };
 
-  // Timer color indicator
   const getTimerColor = () => {
     if (questionTimeLeft > 15) return 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
     if (questionTimeLeft > 7) return 'text-amber-400 border-amber-500/40 bg-amber-500/10';
@@ -175,17 +224,12 @@ export default function QuizPlayPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[65vh] space-y-6">
-        <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-xl shadow-emerald-500/30 animate-pulse">
-            <BookOpen className="w-8 h-8 text-white" />
-          </div>
-          <div className="absolute -inset-2 rounded-2xl border-2 border-emerald-500/30 animate-ping pointer-events-none" />
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-xl shadow-emerald-500/30 animate-pulse">
+          <BookOpen className="w-7 h-7 text-white" />
         </div>
         <div className="text-center space-y-1">
-          <h3 className="text-lg font-bold text-white tracking-wide">Loading Questions</h3>
-          <p className="text-xs text-slate-400 font-tamil">
-            {book} புத்தகத்தின் கேள்விகள் தயாராகின்றன...
-          </p>
+          <h3 className="text-lg font-bold text-white tracking-wide">Preparing {book} Quiz</h3>
+          <p className="text-xs text-slate-400 font-tamil">கேள்விகள் தயாராகின்றன...</p>
         </div>
       </div>
     );
@@ -198,21 +242,21 @@ export default function QuizPlayPage() {
           <HelpCircle className="w-7 h-7" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-extrabold text-white">Quiz Unavailable</h2>
+          <h2 className="text-xl font-extrabold text-white">Questions Needed</h2>
           <p className="text-sm text-slate-300">{errorMsg}</p>
         </div>
         <div className="pt-3 flex items-center justify-center gap-3">
           <Link
             href="/"
-            className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all"
+            className="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-semibold hover:bg-slate-700 transition-all"
           >
             Back to Books
           </Link>
           <Link
             href="/admin"
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 text-xs font-bold shadow-lg transition-all"
           >
-            Open Admin Portal
+            Add Questions in Admin
           </Link>
         </div>
       </div>
@@ -223,25 +267,23 @@ export default function QuizPlayPage() {
   if (quizResult) {
     return (
       <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
-        {/* Glowing Score Hero Card */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950/80 via-[#0e1c2e] to-[#0a1220] border border-emerald-500/30 p-8 sm:p-10 text-center space-y-6 shadow-2xl glow-emerald">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
-
-          <div className="inline-flex p-4 rounded-3xl bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 shadow-xl shadow-yellow-500/20 animate-float">
+          <div className="inline-flex p-4 rounded-3xl bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 shadow-xl shadow-yellow-500/20">
             <Trophy className="w-10 h-10 stroke-[2.2]" />
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-              Quiz Completed!
+            <h1 className="text-3xl sm:text-4xl font-black text-white">
+              {quizMode === 'practice' ? 'Practice Completed!' : 'Competition Quiz Completed!'}
             </h1>
             <p className="text-slate-300 text-sm">
+              Participant:{' '}
+              <span className="font-bold text-white">{currentUser?.name || 'Guest'}</span> •
               Book: <span className="font-bold text-emerald-400">{book}</span> • Accuracy:{' '}
               <span className="font-bold text-emerald-400">{quizResult.accuracy}%</span>
             </p>
           </div>
 
-          {/* Metric Stats Cards */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2 max-w-lg mx-auto">
             <div className="glass-panel rounded-2xl p-4 border border-emerald-500/20">
               <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Total Score</span>
@@ -259,29 +301,28 @@ export default function QuizPlayPage() {
             </div>
           </div>
 
-          {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               onClick={handleRestart}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/25 transition-all hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-xl transition-all"
             >
-              <RotateCcw className="w-4 h-4 stroke-[2.5]" /> Try Again (மீண்டும் விளையாடு)
+              <RotateCcw className="w-4 h-4 stroke-[2.5]" /> Try Again
             </button>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-slate-700 transition-all hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-800 text-slate-200 font-bold text-sm border border-slate-700 transition-all hover:bg-slate-700"
             >
-              <BookOpen className="w-4 h-4 text-emerald-400" /> Explore Other Books
+              <BookOpen className="w-4 h-4 text-emerald-400" /> All Books
             </Link>
           </div>
         </div>
 
-        {/* Detailed Question Review List */}
+        {/* Detailed Review List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span>Answer Review & Explanations</span>
+              <span>Review & Biblical Insights</span>
             </h2>
             <span className="text-xs font-tamil text-slate-400">விடைகளின் விளக்கம்</span>
           </div>
@@ -293,7 +334,7 @@ export default function QuizPlayPage() {
                 className={`p-6 rounded-2xl border glass-panel transition-all ${
                   item.isCorrect
                     ? 'border-emerald-500/30 bg-emerald-950/20'
-                    : 'border-red-500/30 bg-red-950/20'
+                    : 'border-rose-500/30 bg-rose-950/20'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4 mb-3">
@@ -301,14 +342,14 @@ export default function QuizPlayPage() {
                     <span className="w-7 h-7 rounded-xl bg-slate-800 text-slate-200 text-xs font-black flex items-center justify-center border border-slate-700">
                       {idx + 1}
                     </span>
-                    <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase px-2.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                    <span className="text-xs font-bold text-emerald-400 px-2.5 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                       {item.reference}
                     </span>
                   </div>
                   <div>
                     {item.isCorrect ? (
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Correct (+pts)
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Correct
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1 rounded-full">
@@ -318,14 +359,12 @@ export default function QuizPlayPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  {item.question?.en && (
+                <div className="space-y-1.5 mb-3">
+                  {(langMode === 'both' || langMode === 'en') && item.question?.en && (
                     <p className="font-bold text-white text-base leading-snug">{item.question.en}</p>
                   )}
-                  {item.question?.ta && (
-                    <p className="text-sm font-tamil text-slate-300 leading-relaxed">
-                      {item.question.ta}
-                    </p>
+                  {(langMode === 'both' || langMode === 'ta') && item.question?.ta && (
+                    <p className="text-sm font-tamil text-slate-300 leading-relaxed">{item.question.ta}</p>
                   )}
                 </div>
 
@@ -334,13 +373,11 @@ export default function QuizPlayPage() {
                     <span className="font-extrabold text-amber-400 flex items-center gap-1">
                       <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Scripture Context:
                     </span>
-                    {item.explanation.en && (
+                    {(langMode === 'both' || langMode === 'en') && item.explanation.en && (
                       <p className="text-slate-300 leading-relaxed">{item.explanation.en}</p>
                     )}
-                    {item.explanation.ta && (
-                      <p className="text-slate-400 font-tamil leading-relaxed">
-                        {item.explanation.ta}
-                      </p>
+                    {(langMode === 'both' || langMode === 'ta') && item.explanation.ta && (
+                      <p className="text-slate-400 font-tamil leading-relaxed">{item.explanation.ta}</p>
                     )}
                   </div>
                 )}
@@ -352,85 +389,82 @@ export default function QuizPlayPage() {
     );
   }
 
-  // ================= ACTIVE QUIZ PLAY VIEW =================
+  // ================= ACTIVE PLAY VIEW =================
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Top Header Bar */}
-      <div className="flex items-center justify-between gap-4">
+      {/* Top Header Controls */}
+      <div className="flex items-center justify-between gap-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all"
         >
           <ChevronLeft className="w-4 h-4 text-emerald-400" />
           <span>All Books</span>
         </Link>
 
-        {/* Language segmented control */}
-        <div className="inline-flex p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold shadow-inner">
+        {/* Mode Selector (Competition / Practice) */}
+        <div className="inline-flex p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-bold">
           <button
-            onClick={() => setLangMode('both')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              langMode === 'both'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
+            onClick={() => setQuizMode('competition')}
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+              quizMode === 'competition'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            Both (இருமொழி)
+            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <span>Competition</span>
           </button>
           <button
-            onClick={() => setLangMode('en')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              langMode === 'en'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
+            onClick={() => setQuizMode('practice')}
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+              quizMode === 'practice'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            English
-          </button>
-          <button
-            onClick={() => setLangMode('ta')}
-            className={`px-3 py-1.5 rounded-lg font-tamil transition-all ${
-              langMode === 'ta'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            தமிழ்
+            <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Practice Test</span>
           </button>
         </div>
       </div>
 
-      {/* Progress & Live Timer Bar */}
+      {/* Progress & Live Bar */}
       <div className="glass-panel p-4 rounded-2xl border border-slate-800/90 space-y-2.5">
         <div className="flex items-center justify-between text-xs font-extrabold">
           <div className="flex items-center gap-2">
-            <span className="text-emerald-400">
-              QUESTION {currentIndex + 1}
-            </span>
+            <span className="text-emerald-400">QUESTION {currentIndex + 1}</span>
             <span className="text-slate-500">/</span>
             <span className="text-slate-400">{questions.length}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            {questionTimeLeft > 15 && (
-              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold">
-                <Zap className="w-3 h-3 text-amber-400" /> Speed Bonus Active
+            {quizMode === 'competition' ? (
+              <>
+                {questionTimeLeft > 15 && (
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold">
+                    <Zap className="w-3 h-3 text-amber-400" /> Speed Bonus Active
+                  </span>
+                )}
+                <span
+                  className={`inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-1 rounded-lg border font-bold transition-all ${getTimerColor()}`}
+                >
+                  <Clock className="w-3.5 h-3.5" /> {questionTimeLeft}s
+                </span>
+              </>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg font-bold">
+                <GraduationCap className="w-3.5 h-3.5" /> Untimed Learning
               </span>
             )}
-            <span
-              className={`inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-1 rounded-lg border font-bold transition-all ${getTimerColor()}`}
-            >
-              <Clock className="w-3.5 h-3.5" /> {questionTimeLeft}s
-            </span>
           </div>
         </div>
 
-        {/* Progress bar with glow */}
         <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 rounded-full transition-all duration-300 shadow-sm shadow-emerald-400/50"
+            className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -438,10 +472,10 @@ export default function QuizPlayPage() {
 
       {/* Question Card */}
       <div className="relative overflow-hidden rounded-3xl glass-panel border border-slate-700/60 p-6 sm:p-8 shadow-2xl space-y-6">
-        {/* Card Header Badges */}
+        {/* Badges Header */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-black px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
+            <span className="text-[11px] font-black px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase">
               {currentQ.difficulty}
             </span>
             {currentQ.category && (
@@ -461,12 +495,12 @@ export default function QuizPlayPage() {
 
         {/* Question Text */}
         <div className="space-y-3">
-          {(langMode === 'both' || langMode === 'en') && (
+          {(langMode === 'both' || langMode === 'en') && currentQ.question?.en && (
             <h2 className="text-xl sm:text-2xl font-black text-white leading-snug tracking-tight">
               {currentQ.question.en}
             </h2>
           )}
-          {(langMode === 'both' || langMode === 'ta') && (
+          {(langMode === 'both' || langMode === 'ta') && currentQ.question?.ta && (
             <p className="text-base sm:text-lg font-tamil font-semibold text-emerald-200/90 leading-relaxed">
               {currentQ.question.ta}
             </p>
@@ -489,7 +523,6 @@ export default function QuizPlayPage() {
                     : 'border-slate-800 hover:border-slate-700 bg-slate-900/60 hover:bg-slate-900'
                 }`}
               >
-                {/* Option Letter Badge */}
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0 transition-all ${
                     isSelected
@@ -500,9 +533,8 @@ export default function QuizPlayPage() {
                   {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : letter}
                 </div>
 
-                {/* Option Content */}
                 <div className="space-y-1 pt-0.5 flex-1">
-                  {(langMode === 'both' || langMode === 'en') && (
+                  {(langMode === 'both' || langMode === 'en') && opt.text?.en && (
                     <p
                       className={`text-sm sm:text-base font-bold transition-colors ${
                         isSelected ? 'text-white' : 'text-slate-200'
@@ -511,7 +543,7 @@ export default function QuizPlayPage() {
                       {opt.text.en}
                     </p>
                   )}
-                  {(langMode === 'both' || langMode === 'ta') && (
+                  {(langMode === 'both' || langMode === 'ta') && opt.text?.ta && (
                     <p
                       className={`text-xs sm:text-sm font-tamil transition-colors ${
                         isSelected ? 'text-emerald-300 font-semibold' : 'text-slate-400 font-medium'
@@ -526,21 +558,36 @@ export default function QuizPlayPage() {
           })}
         </div>
 
+        {/* Practice Mode Instant Explanation */}
+        {quizMode === 'practice' && practiceRevealed && currentQ.explanation && (
+          <div className="p-4 rounded-2xl bg-black/30 border border-slate-800 space-y-1.5 animate-fadeIn">
+            <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Explanation & Insight:
+            </span>
+            {(langMode === 'both' || langMode === 'en') && currentQ.explanation.en && (
+              <p className="text-xs text-slate-300 leading-relaxed">{currentQ.explanation.en}</p>
+            )}
+            {(langMode === 'both' || langMode === 'ta') && currentQ.explanation.ta && (
+              <p className="text-xs font-tamil text-slate-400 leading-relaxed">{currentQ.explanation.ta}</p>
+            )}
+          </div>
+        )}
+
         {/* Action Button */}
-        <div className="pt-3">
+        <div className="pt-2">
           <button
             onClick={() => handleNextQuestion(false)}
             disabled={!currentSelectedOption || submitting}
             className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-xl transition-all flex items-center justify-center gap-2.5 ${
               currentSelectedOption
-                ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 shadow-emerald-500/30 hover:shadow-emerald-500/45 hover:scale-[1.01] cursor-pointer'
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 shadow-emerald-500/30 hover:scale-[1.01] cursor-pointer'
                 : 'bg-slate-800/80 text-slate-500 border border-slate-800 cursor-not-allowed'
             }`}
           >
             {submitting ? (
               <span className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                <span>Verifying with Server...</span>
+                <span>Saving Quiz Attempt...</span>
               </span>
             ) : currentIndex + 1 < questions.length ? (
               <>
@@ -550,12 +597,28 @@ export default function QuizPlayPage() {
             ) : (
               <>
                 <Sparkles className="w-4 h-4 stroke-[2.5]" />
-                <span>Finish & View Score (முடிவுகளைக் காண்க)</span>
+                <span>Finish & View Score</span>
               </>
             )}
           </button>
         </div>
       </div>
+
+      {/* User Login/Register Modal before saving scores */}
+      <UserAuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => {
+          setIsAuthModalOpen(false);
+          submitQuiz(selectedAnswers, null);
+        }}
+        onSuccess={(newUser) => {
+          setCurrentUser(newUser);
+          setIsAuthModalOpen(false);
+          submitQuiz(selectedAnswers, newUser);
+        }}
+        title="Record Your Competition Score"
+        subtitle="Enter your name, phone number, and age to save your rank on the leaderboard."
+      />
     </div>
   );
 }

@@ -8,8 +8,11 @@ export interface IAttemptAnswer {
 }
 
 export interface IQuizAttempt extends Document {
-  guestIdentifier: string;
+  userPhone?: string;
+  userName?: string;
+  guestIdentifier?: string;
   quizType: string;
+  mode: 'competition' | 'practice' | 'book';
   book: string;
   totalQuestions: number;
   correctAnswers: number;
@@ -32,15 +35,29 @@ const AttemptAnswerSchema = new Schema<IAttemptAnswer>(
 
 const QuizAttemptSchema = new Schema<IQuizAttempt>(
   {
+    userPhone: {
+      type: String,
+      index: true,
+      trim: true,
+    },
+    userName: {
+      type: String,
+      trim: true,
+    },
     guestIdentifier: {
       type: String,
-      required: true,
       index: true,
       trim: true,
     },
     quizType: {
       type: String,
       default: 'book',
+      index: true,
+    },
+    mode: {
+      type: String,
+      enum: ['competition', 'practice', 'book'],
+      default: 'competition',
       index: true,
     },
     book: {
@@ -76,7 +93,7 @@ const QuizAttemptSchema = new Schema<IQuizAttempt>(
 );
 
 // Indexes for analytics and leaderboards
-QuizAttemptSchema.index({ guestIdentifier: 1, createdAt: -1 });
+QuizAttemptSchema.index({ userPhone: 1, createdAt: -1 });
 QuizAttemptSchema.index({ book: 1, createdAt: -1 });
 QuizAttemptSchema.index({ scoreEarned: -1 });
 
