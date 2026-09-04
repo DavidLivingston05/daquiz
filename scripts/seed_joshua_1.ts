@@ -15,8 +15,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Leadership',
     question: {
-      en: 'Who was the father of Joshua according to Joshua 1:1?',
-      ta: 'யோசுவா 1:1-ன் படி, யோசுவாவின் தகப்பனார் யார்?',
+      en: 'Who was the father of Joshua?',
+      ta: 'யோசுவாவின் தகப்பனார் யார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Nun', ta: 'நூன்' }, isCorrect: true },
@@ -36,8 +36,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Leadership',
     question: {
-      en: 'In Joshua 1:1, what was Joshua\'s role before becoming leader?',
-      ta: 'யோசுவா 1:1-ல், தலைவராவதற்கு முன்பு யோசுவா என்ன பணியில் இருந்தார்?',
+      en: 'What was Joshua\'s role before becoming the leader of Israel?',
+      ta: 'தலைவராவதற்கு முன்பு யோசுவா என்ன பணியில் இருந்தார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Moses\' assistant / minister', ta: 'மோசேயின் ஊழியக்காரன்' }, isCorrect: true },
@@ -57,14 +57,14 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'History',
     question: {
-      en: 'When did the Lord speak to Joshua the son of Nun in Joshua 1:1?',
-      ta: 'யோசுவா 1:1-ல், கர்த்தர் நூனின் குமாரனாகிய யோசுவாவிடம் எப்போது பேசினார்?',
+      en: 'After whose death did the Lord speak to Joshua the son of Nun?',
+      ta: 'யார் மரித்தபின்பு கர்த்தர் நூனின் குமாரனாகிய யோசுவாவிடம் பேசினார்?',
     },
     options: [
-      { id: 'opt_1', text: { en: 'During the crossing of the Red Sea', ta: 'செங்கடலைக் கடக்கும் போது' }, isCorrect: false },
-      { id: 'opt_2', text: { en: 'After the death of Moses', ta: 'மோசே மரித்தபின்பு' }, isCorrect: true },
-      { id: 'opt_3', text: { en: 'At Mount Sinai', ta: 'சீனாய் மலையடிவாரத்தில்' }, isCorrect: false },
-      { id: 'opt_4', text: { en: 'After taking Jericho', ta: 'எரிகோவை பிடித்தபின்பு' }, isCorrect: false },
+      { id: 'opt_1', text: { en: 'Moses', ta: 'மோசே' }, isCorrect: true },
+      { id: 'opt_2', text: { en: 'Aaron', ta: 'ஆரோன்' }, isCorrect: false },
+      { id: 'opt_3', text: { en: 'Hur', ta: 'ஊர்' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'Miriam', ta: 'மிரியாம்' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -78,8 +78,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Commands',
     question: {
-      en: 'What title did the Lord give to Moses in Joshua 1:2?',
-      ta: 'யோசுவா 1:2-ல், கர்த்தர் மோசேக்கு என்ன பட்டம் கொடுத்துக் குறிப்பிட்டார்?',
+      en: 'What title did the Lord use when referring to Moses?',
+      ta: 'கர்த்தர் மோசேயைக் குறித்துப் பேசும்போது என்ன பட்டம் கொடுத்துக் குறிப்பிட்டார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'My King', ta: 'என் ராஜா' }, isCorrect: false },
@@ -99,8 +99,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Geography',
     question: {
-      en: 'Which river did the Lord command Joshua and all the people to cross in Joshua 1:2?',
-      ta: 'யோசுவா 1:2-ல், யோசுவாவும் சகல ஜனங்களும் கடந்து போகும்படி கர்த்தர் கட்டளையிட்ட நதி எது?',
+      en: 'Which river did the Lord command Joshua and all the people to cross?',
+      ta: 'யோசுவாவும் சகல ஜனங்களும் கடந்து போகும்படி கர்த்தர் கட்டளையிட்ட நதி எது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Jordan', ta: 'யோர்தான் நதி' }, isCorrect: true },
@@ -120,14 +120,14 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Commands',
     question: {
-      en: 'In Joshua 1:2, who was commanded to cross over the Jordan into the Promised Land?',
-      ta: 'யோசுவா 1:2-ல், யோர்தானைக் கடந்து வாக்குத்தத்த தேசத்திற்குள் செல்லும்படி கட்டளையிடப்பட்டது யார்?',
+      en: 'Who was instructed to arise and go over the Jordan into the Promised Land?',
+      ta: 'எழுந்து யோர்தானைக் கடந்து வாக்குத்தத்த தேசத்திற்குள் செல்லும்படி கட்டளையிடப்பட்டது யார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Only Joshua and Caleb', ta: 'யோசுவாவும் காலேபும் மட்டும்' }, isCorrect: false },
-      { id: 'opt_2', text: { en: 'Joshua and all the people', ta: 'நீயும் இந்த ஜனங்கள் எல்லாரும்' }, isCorrect: true },
+      { id: 'opt_2', text: { en: 'Joshua and all this people', ta: 'நீயும் இந்த ஜனங்கள் எல்லாரும்' }, isCorrect: true },
       { id: 'opt_3', text: { en: 'Only the priests and Levites', ta: 'ஆசாரியர்களும் லேவியர்களும் மட்டும்' }, isCorrect: false },
-      { id: 'opt_4', text: { en: 'Only the soldiers', ta: 'யுத்த வீரர்கள் மட்டும்' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'Only the army soldiers', ta: 'யுத்த வீரர்கள் மட்டும்' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -141,14 +141,14 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Promises',
     question: {
-      en: 'What did God promise to give Joshua in Joshua 1:3?',
-      ta: 'யோசுவா 1:3-ல், யோசுவாவுக்கு என்ன தருவதாக தேவன் வாக்குப்பண்ணினார்?',
+      en: 'What did God promise to give Joshua and the people regarding the land?',
+      ta: 'தேசத்தைக் குறித்து யோசுவாவுக்கும் ஜனங்களுக்கும் தேவன் கொடுத்த வாக்குத்தத்தம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'All the silver and gold of Egypt', ta: 'எகிப்தின் வெள்ளி பொன்கள் அனைத்தையும்' }, isCorrect: false },
       { id: 'opt_2', text: { en: 'A throne in Jerusalem', ta: 'எருசலேமில் ஒரு சிங்காசனத்தை' }, isCorrect: false },
       { id: 'opt_3', text: { en: 'Every place the sole of your foot will tread upon', ta: 'உங்கள் காலடி மிதிக்கும் இடத்தையெல்லாம்' }, isCorrect: true },
-      { id: 'opt_4', text: { en: 'Ten thousand chariots', ta: 'பதினாயிரம் இரதங்களை' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'Ten thousand chariots of iron', ta: 'பதினாயிரம் இரும்பு இரதங்களை' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -162,8 +162,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Promises',
     question: {
-      en: 'Complete Joshua 1:3: "Every place that the sole of your foot will tread upon I have given to you, just as I ______."',
-      ta: 'யோசுவா 1:3-ஐ நிறைவு செய்க: "நான் ______ சொன்னபடி, உங்கள் காலடி மிதிக்கும் இடத்தையெல்லாம் உங்களுக்குக் கொடுத்தேன்."',
+      en: 'Complete the divine promise: "Every place that the sole of your foot will tread upon I have given to you, just as I ______."',
+      ta: 'வாக்குத்தத்த வசனத்தை நிறைவு செய்க: "நான் ______ சொன்னபடி, உங்கள் காலடி மிதிக்கும் இடத்தையெல்லாம் உங்களுக்குக் கொடுத்தேன்."',
     },
     options: [
       { id: 'opt_1', text: { en: 'promised to Moses', ta: 'மோசேக்குச் சொன்னபடி' }, isCorrect: true },
@@ -183,8 +183,8 @@ export const joshua1Questions = [
     difficulty: 'hard',
     category: 'Geography',
     question: {
-      en: 'Which great river is specifically named as an eastern boundary in Joshua 1:4?',
-      ta: 'யோசுவா 1:4-ல், எல்லையாகக் குறிப்பிடப்பட்டுள்ள பெரிய நதி எது?',
+      en: 'Which great river is specifically named as the eastern boundary of the Promised Land?',
+      ta: 'வாக்குத்தத்த தேசத்தின் எல்லையாகக் குறிப்பிடப்பட்டுள்ள பெரிய நதி எது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'River Tigris', ta: 'இதெக்கேல் நதி' }, isCorrect: false },
@@ -204,8 +204,8 @@ export const joshua1Questions = [
     difficulty: 'hard',
     category: 'Geography',
     question: {
-      en: 'Whose entire land is mentioned in the boundaries in Joshua 1:4?',
-      ta: 'யோசுவா 1:4-ல் சொல்லப்பட்டுள்ள எல்லைகளில் யாருடைய தேசம் முழுவதும் அடங்கியுள்ளது?',
+      en: 'Whose whole territory is specifically mentioned within the promised boundaries?',
+      ta: 'சுதந்தரிக்கப்படும் எல்லைகளில் யாருடைய தேசம் முழுவதும் அடங்கியிருப்பதாகக் கூறப்பட்டது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'All the land of the Hittites', ta: 'ஏத்தியரின் தேசம் முழுவதும்' }, isCorrect: true },
@@ -225,8 +225,8 @@ export const joshua1Questions = [
     difficulty: 'hard',
     category: 'Geography',
     question: {
-      en: 'In Joshua 1:4, which sea toward the going down of the sun is designated as the western boundary?',
-      ta: 'யோசுவா 1:4-ல், சூரியன் அஸ்தமிக்கிற திசையான எந்த சமுத்திரம் எல்லையாகக் கூறப்பட்டுள்ளது?',
+      en: 'Which body of water toward the going down of the sun forms the western border?',
+      ta: 'சூரியன் அஸ்தமிக்கிற திசையான எந்த சமுத்திரம் எல்லையாகக் கூறப்பட்டுள்ளது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'The Red Sea', ta: 'செங்கடல்' }, isCorrect: false },
@@ -246,8 +246,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Geography',
     question: {
-      en: 'Which mountain region is mentioned alongside the wilderness in Joshua 1:4?',
-      ta: 'யோசுவா 1:4-ல், வனாந்தரத்தோடு கூட குறிப்பிடப்பட்ட மலை பிரதேசம் எது?',
+      en: 'Which mountain region is mentioned together with the wilderness in the territorial boundaries?',
+      ta: 'எல்லைகளில் வனாந்தரத்தோடு கூட குறிப்பிடப்பட்ட பிரதேசம் எது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Mount Carmel', ta: 'கர்மேல் மலை' }, isCorrect: false },
@@ -267,8 +267,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Promises',
     question: {
-      en: 'What assurance of victory did God give Joshua in Joshua 1:5?',
-      ta: 'யோசுவா 1:5-ல், யோசுவாவுக்கு தேவன் கொடுத்த வெற்றி வாக்குறுதி என்ன?',
+      en: 'What assurance of unshakeable victory did God give to Joshua?',
+      ta: 'யோசுவாவுக்கு தேவன் கொடுத்த அசைக்க முடியாத வெற்றி வாக்குறுதி என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'No man shall be able to stand before you all the days of your life', ta: 'நீ உயிரோடிருக்கும் நாளெல்லாம் ஒருவனும் உனக்கு முன்பாக எதிர்த்து நிற்பதில்லை' }, isCorrect: true },
@@ -288,8 +288,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Promises',
     question: {
-      en: 'Fill in the blank from Joshua 1:5: "Just as I was with Moses, so ______."',
-      ta: 'யோசுவா 1:5-ஐ நிறைவு செய்க: "நான் மோசேயோடு இருந்ததுபோல, ______."',
+      en: 'Complete the promise: "Just as I was with Moses, so ______."',
+      ta: 'வாக்குத்தத்தத்தை நிறைவு செய்க: "நான் மோசேயோடு இருந்ததுபோல, ______."',
     },
     options: [
       { id: 'opt_1', text: { en: 'I will punish the nations', ta: 'ஜாதிகளை தண்டிப்பேன்' }, isCorrect: false },
@@ -309,8 +309,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Promises',
     question: {
-      en: 'What twin promise of God\'s constant presence concludes Joshua 1:5?',
-      ta: 'யோசுவா 1:5-ன் இறுதியில் தேவனின் பிரசன்னத்தைக் குறித்துக் கூறப்பட்ட இரட்டை வாக்குத்தத்தம் என்ன?',
+      en: 'What powerful promise of God\'s constant presence and faithfulness was given to Joshua?',
+      ta: 'யோசுவாவுக்குக் கூறப்பட்ட தேவனின் மாறாத பிரசன்னத்தின் இரட்டை வாக்குத்தத்தம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'I will give you riches and honor', ta: 'நான் உனக்கு ஐசுவரியத்தையும் கனத்தையும் தருவேன்' }, isCorrect: false },
@@ -330,8 +330,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Commands',
     question: {
-      en: 'What did God command Joshua at the beginning of Joshua 1:6?',
-      ta: 'யோசுவா 1:6-ன் துவக்கத்தில் தேவன் யோசுவாவுக்கு என்ன கட்டளையிட்டார்?',
+      en: 'What command did God repeatedly give to strengthen Joshua\'s spirit?',
+      ta: 'யோசுவாவை திடப்படுத்த தேவன் மீண்டும் மீண்டும் அளித்த கட்டளை என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Be strong and courageous', ta: 'திடன்கொண்டு தைரியமாயிரு' }, isCorrect: true },
@@ -351,8 +351,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Prophecy',
     question: {
-      en: 'According to Joshua 1:6, why was Joshua to be strong and courageous?',
-      ta: 'யோசுவா 1:6-ன் படி, யோசுவா திடன்கொண்டு தைரியமாயிருக்க வேண்டியதன் நோக்கம் என்ன?',
+      en: 'Why was Joshua commanded to be strong and courageous?',
+      ta: 'யோசுவா திடன்கொண்டு தைரியமாயிருக்க வேண்டியதன் முக்கிய நோக்கம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'To conquer Egypt', ta: 'எகிப்தை ஜெயிக்க' }, isCorrect: false },
@@ -372,8 +372,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Covenants',
     question: {
-      en: 'To whom did the Lord swear to give the land mentioned in Joshua 1:6?',
-      ta: 'யோசுவா 1:6-ல் கூறப்பட்ட தேசத்தைக் கொடுப்பேன் என்று கர்த்தர் யாருக்கு ஆணையிட்டிருந்தார்?',
+      en: 'To whom had the Lord sworn that He would give the Promised Land?',
+      ta: 'வாக்குத்தத்தம் பண்ணப்பட்ட தேசத்தைக் கொடுப்பேன் என்று கர்த்தர் யாருக்கு ஆணையிட்டிருந்தார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'The elders of Midian', ta: 'மீதியானியரின் மூப்பர்களுக்கு' }, isCorrect: false },
@@ -393,8 +393,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Commands',
     question: {
-      en: 'What intensified word did God add to His exhortation in Joshua 1:7?',
-      ta: 'யோசுவா 1:7-ல், தைரியத்தைக் குறித்து தேவன் எந்த வார்த்தையை கூடுதலாகச் சொன்னார்?',
+      en: 'With what emphasis did God charge Joshua regarding strength and courage?',
+      ta: 'தைரியத்தைக் குறித்து தேவன் எந்த அழுத்தமான வார்த்தையைச் சொன்னார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Be slightly courageous', ta: 'கொஞ்சம் தைரியமாயிரு' }, isCorrect: false },
@@ -414,14 +414,14 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Law',
     question: {
-      en: 'According to Joshua 1:7, what was Joshua commanded to be careful to observe?',
-      ta: 'யோசுவா 1:7-ன் படி, எதன்படி செய்ய யோசுவா கவனமாயிருக்க வேண்டும்?',
+      en: 'What was Joshua commanded to observe carefully and obey completely?',
+      ta: 'முழுமையாகக் கீழ்ப்படிந்து செய்யும்படி யோசுவாவுக்குக் கட்டளையிடப்பட்டது எது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'The military advice of Egypt', ta: 'எகிப்தியரின் போர் தந்திரங்கள்' }, isCorrect: false },
       { id: 'opt_2', text: { en: 'All the law that Moses commanded', ta: 'மோசே கட்டளையிட்ட நியாயப்பிரமாணத்தின்படியெல்லாம்' }, isCorrect: true },
       { id: 'opt_3', text: { en: 'The traditions of Canaan', ta: 'கானானியரின் பாரம்பரியங்கள்' }, isCorrect: false },
-      { id: 'opt_4', text: { en: 'His own thoughts and opinions', ta: 'அவனது சொந்த எண்ணங்கள்' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'His own personal preferences', ta: 'அவனது சொந்த விருப்பங்கள்' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -435,8 +435,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Law',
     question: {
-      en: 'What warning is given regarding the Law in Joshua 1:7?',
-      ta: 'யோசுவா 1:7-ல், நியாயப்பிரமாணத்தைக் குறித்து கொடுக்கப்பட்ட எச்சரிக்கை என்ன?',
+      en: 'What instruction was given concerning adherence to God\'s Law?',
+      ta: 'தேவனுடைய நியாயப்பிரமாணத்தைக் கைக்கொள்வதில் கொடுக்கப்பட்ட எச்சரிக்கை என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Do not turn from it to the right hand or to the left', ta: 'அதை விட்டு வலது இடதுபுறம் விலகாதிருப்பாயாக' }, isCorrect: true },
@@ -456,14 +456,14 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Promises',
     question: {
-      en: 'According to Joshua 1:7, what is the result of not turning from God\'s law to the right or left?',
-      ta: 'யோசுவா 1:7-ன் படி, தேவனுடைய நியாயப்பிரமாணத்தை விட்டு வலது இடதுபுறம் விலகாமல் நடப்பதன் பலன் என்ன?',
+      en: 'What is the promised blessing of not straying to the right or left from God\'s Law?',
+      ta: 'தேவனுடைய பிரமாணத்தை விட்டு வலது இடதுபுறம் விலகாமல் நடப்பதினால் கிடைக்கும் ஆசீர்வாதம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'That you may avoid all battles', ta: 'எல்லா யுத்தங்களையும் தவிர்த்துவிடலாம்' }, isCorrect: false },
       { id: 'opt_2', text: { en: 'That you may have good success wherever you go', ta: 'நீ போகும் இடமெல்லாம் புத்திமானாய் நடந்துகொள்ளும்படி' }, isCorrect: true },
-      { id: 'opt_3', text: { en: 'That no taxes will be paid', ta: 'வரிகள் செலுத்தவேண்டியதில்லை' }, isCorrect: false },
-      { id: 'opt_4', text: { en: 'That all nations will fear you instantly', ta: 'எல்லா ஜாதிகளும் உடனே பயப்படுவர்' }, isCorrect: false },
+      { id: 'opt_3', text: { en: 'That no taxes will ever be paid', ta: 'வரிகள் செலுத்தவேண்டியதில்லை' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'That all nations will surrender immediately', ta: 'எல்லா ஜாதிகளும் உடனே சரணடைவர்' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -477,8 +477,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Scripture',
     question: {
-      en: 'Which book is commanded never to depart from Joshua\'s mouth in Joshua 1:8?',
-      ta: 'யோசுவா 1:8-ல், வாயைவிட்டுப் பிரியாதிருக்க வேண்டும் என்று கட்டளையிடப்பட்ட புஸ்தகம் எது?',
+      en: 'Which book was never to depart from the mouth of the leader?',
+      ta: 'வாயைவிட்டுப் பிரியாதிருக்க வேண்டும் என்று கட்டளையிடப்பட்ட புஸ்தகம் எது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'The Book of Jasher', ta: 'யாசேரின் புஸ்தகம்' }, isCorrect: false },
@@ -498,8 +498,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Meditation',
     question: {
-      en: 'When was Joshua commanded to meditate on the Book of the Law in Joshua 1:8?',
-      ta: 'யோசுவா 1:8-ல், யோசுவா எப்போது நியாயப்பிரமாண புஸ்தகத்தைத் தியானிக்கக் கட்டளையிடப்பட்டான்?',
+      en: 'How frequently was the Book of the Law to be meditated upon?',
+      ta: 'நியாயப்பிரமாண புஸ்தகத்தை எப்போது தியானித்துக்கொண்டிருக்க வேண்டும்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Day and night', ta: 'இரவும் பகலும்' }, isCorrect: true },
@@ -519,13 +519,13 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Promises',
     question: {
-      en: 'According to Joshua 1:8, what are the two outcomes of meditating on and obeying God\'s Law?',
-      ta: 'யோசுவா 1:8-ன் படி, வேதத்தைத் தியானித்து அதன்படி நடப்பதினால் உண்டாகும் இரண்டு நன்மைகள் யாவை?',
+      en: 'What are the two assured results of meditating on and obeying God\'s Word?',
+      ta: 'வேதத்தைத் தியானித்து அதன்படி கவனமாய் நடப்பதினால் உண்டாகும் இரண்டு நன்மைகள் யாவை?',
     },
     options: [
-      { id: 'opt_1', text: { en: 'Great wealth and worldly honor', ta: 'பெரிய ஐசுவரியமும் உலகப் புகழும்' }, isCorrect: false },
+      { id: 'opt_1', text: { en: 'Great wealth and worldly praise', ta: 'பெரிய ஐசுவரியமும் உலகப் புகழும்' }, isCorrect: false },
       { id: 'opt_2', text: { en: 'Make your way prosperous, and have good success', ta: 'உன் வழியை வாய்க்கப்பண்ணுவாய், புத்திமானாயும் நடந்துகொள்வாய்' }, isCorrect: true },
-      { id: 'opt_3', text: { en: 'Becoming king and living forever', ta: 'ராஜாவாதலும் சாகாமலிருத்தலும்' }, isCorrect: false },
+      { id: 'opt_3', text: { en: 'Becoming a king and living forever', ta: 'ராஜாவாதலும் சாகாமலிருத்தலும்' }, isCorrect: false },
       { id: 'opt_4', text: { en: 'Defeating enemies without drawing a sword', ta: 'வாள் எடுக்காமல் சத்துருவை அழித்தல்' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
@@ -540,8 +540,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Commands',
     question: {
-      en: 'How does the Lord open His statement in Joshua 1:9?',
-      ta: 'யோசுவா 1:9-ல் கர்த்தர் தம்முடைய வாக்கியத்தை எவ்வாறு தொடங்குகிறார்?',
+      en: 'With what rhetorical question did the Lord affirm His divine mandate?',
+      ta: 'தேவன் தம்முடைய அதிகாரப்பூர்வமான கட்டளையை எந்தக் கேள்வியோடு உறுதிப்படுத்தினார்?',
     },
     options: [
       { id: 'opt_1', text: { en: '"Have I not commanded you?"', ta: '"நான் உனக்குக் கட்டளையிடவில்லையா?"' }, isCorrect: true },
@@ -561,8 +561,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Encouragement',
     question: {
-      en: 'What two negative emotions did God forbid Joshua to have in Joshua 1:9?',
-      ta: 'யோசுவா 1:9-ல், தேவன் யோசுவாவுக்கு வேண்டாம் என்று கட்டளையிட்ட இரண்டு எதிர்மறை உணர்வுகள் யாவை?',
+      en: 'Which two fears were explicitly commanded against?',
+      ta: 'எந்த இரண்டு காரியங்களுக்கு இடங்கொடுக்க வேண்டாம் என்று தேவன் திட்டவட்டமாகக் கட்டளையிட்டார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Do not be angry, and do not weep', ta: 'கோபப்படாதே, அழாதே' }, isCorrect: false },
@@ -582,8 +582,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Promises',
     question: {
-      en: 'What comforting reason did God give Joshua in Joshua 1:9?',
-      ta: 'யோசுவா 1:9-ல், யோசுவா கலங்காமல் இருப்பதற்கு தேவன் அளித்த ஆறுதலான காரணம் என்ன?',
+      en: 'What is the divine ground given for not being dismayed or afraid?',
+      ta: 'கலங்காமலும் திகையாமலும் இருப்பதற்கு தேவன் அருளிய வாக்குத்தத்தம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'For you have a mighty army of soldiers', ta: 'உன்னிடம் பராக்கிரமசாலிகள் நிறைந்த படை உள்ளது' }, isCorrect: false },
@@ -603,8 +603,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Leadership',
     question: {
-      en: 'Whom did Joshua command immediately after receiving God\'s word in Joshua 1:10?',
-      ta: 'யோசுவா 1:10-ல், தேவனுடைய வார்த்தையைப் பெற்ற பிறகு யோசுவா யாருக்கு கட்டளையிட்டான்?',
+      en: 'Whom did Joshua immediately summon and instruct after hearing God\'s voice?',
+      ta: 'தேவனுடைய சத்தத்தைக் கேட்டவுடன் யோசுவா உடனே யாரை அழைத்து கட்டளையிட்டான்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'The high priest Eleazar', ta: 'பிரதான ஆசாரியனாகிய எலெயாசாரை' }, isCorrect: false },
@@ -624,8 +624,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Instructions',
     question: {
-      en: 'In Joshua 1:11, where were the officers commanded to walk and proclaim the instruction?',
-      ta: 'யோசுவா 1:11-ல், தலைவர்கள் எங்கே நடந்துபோய் கட்டளையை அறிவிக்க வேண்டும் என்று கூறப்பட்டது?',
+      en: 'Where were the officers told to pass through to announce the proclamation?',
+      ta: 'கட்டளையை அறிவிக்கும்படி தலைவர்கள் எங்கே நடந்து செல்ல வேண்டும் என்று பணிக்கப்பட்டனர்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Pass through the midst of the camp', ta: 'பாளயத்தை உருவ நடந்துபோய்' }, isCorrect: true },
@@ -645,8 +645,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Instructions',
     question: {
-      en: 'What were the people commanded to prepare for themselves in Joshua 1:11?',
-      ta: 'யோசுவா 1:11-ல், ஜனங்கள் தங்களுக்கு எதை ஆயத்தம் பண்ணும்படி சொல்லப்பட்டது?',
+      en: 'What were the people instructed to prepare for the journey?',
+      ta: 'பிரயாணத்திற்காக ஜனங்கள் தங்களுக்கு எதை ஆயத்தம் பண்ணும்படி சொல்லப்பட்டது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Gold ornaments', ta: 'பொன் ஆபரணங்களை' }, isCorrect: false },
@@ -666,8 +666,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Numbers',
     question: {
-      en: 'Within how many days were the Israelites to cross over the Jordan according to Joshua 1:11?',
-      ta: 'யோசுவா 1:11-ன் படி, எத்தனை நாட்களுக்குள்ளே இஸ்ரவேலர் யோர்தானைக் கடந்துபோவார்கள் என்று அறிவிக்கப்பட்டது?',
+      en: 'Within how many days were the Israelites scheduled to cross the Jordan?',
+      ta: 'எத்தனை நாட்களுக்குள்ளே இஸ்ரவேலர் யோர்தானைக் கடந்துபோவார்கள் என்று அறிவிக்கப்பட்டது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Within seven days', ta: 'ஏழு நாளைக்குள்ளே' }, isCorrect: false },
@@ -687,8 +687,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Purpose',
     question: {
-      en: 'According to Joshua 1:11, what was the ultimate goal of crossing the Jordan?',
-      ta: 'யோசுவா 1:11-ன் படி, யோர்தானைக் கடந்து போவதன் முக்கிய நோக்கம் என்ன?',
+      en: 'What was the stated objective of crossing over the river Jordan?',
+      ta: 'யோர்தானைக் கடந்து செல்வதன் பிரதான நோக்கம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: 'To take possession of the land the LORD was giving them', ta: 'கர்த்தர் கொடுக்கிற தேசத்தைச் சுதந்தரித்துக் கொள்ளும்படிக்கு' }, isCorrect: true },
@@ -708,8 +708,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Tribes',
     question: {
-      en: 'Which three tribal groups did Joshua specifically address in Joshua 1:12?',
-      ta: 'யோசுவா 1:12-ல், யோசுவா குறிப்பாகப் பேசிய மூன்று கோத்திரப் பிரிவினர் யார்?',
+      en: 'Which three tribal groups received specific instructions about their armed men crossing over?',
+      ta: 'தங்கள் யுத்தவீரர்கள் கடந்துபோக வேண்டும் என்று குறிப்பாகப் பணிக்கப்பட்ட மூன்று கோத்திரப் பிரிவினர் யார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Judah, Benjamin, and Levi', ta: 'யூதா, பென்யமீன், லேவி' }, isCorrect: false },
@@ -729,8 +729,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Tribes',
     question: {
-      en: 'Which tribe among the Transjordan tribes had only HALF of its tribe receive land east of the Jordan?',
-      ta: 'யோர்தானுக்கு கிழக்கே நிலத்தைப் பெற்ற கோத்திரங்களில் எந்தக் கோத்திரத்தின் பாதிப் பகுதி மட்டும் அங்கே சுதந்தரம் பெற்றது?',
+      en: 'Which tribe had only HALF of its people settle east of the Jordan?',
+      ta: 'யோர்தானுக்கு கிழக்கே எந்தக் கோத்திரத்தின் பாதிப் பகுதி மட்டும் சுதந்தரம் பெற்றது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Half-tribe of Judah', ta: 'யூதாவின் பாதிக்கோத்திரம்' }, isCorrect: false },
@@ -750,8 +750,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Remembrance',
     question: {
-      en: 'In Joshua 1:13, whose commandment did Joshua ask the eastern tribes to remember?',
-      ta: 'யோசுவா 1:13-ல், யாருடைய கட்டளையை நினைவுகூரும்படி யோசுவா அந்த கோத்திரத்தாரைக் கேட்டுக்கொண்டான்?',
+      en: 'Whose previous commandment did Joshua remind the eastern tribes to remember?',
+      ta: 'யாருடைய பழைய கட்டளையை நினைவுகூரும்படி யோசுவா அந்த கோத்திரத்தாரைக் கேட்டுக்கொண்டான்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Moses the servant of the LORD', ta: 'கர்த்தரின் ஊழியக்காரனாகிய மோசே' }, isCorrect: true },
@@ -771,8 +771,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Promises',
     question: {
-      en: 'What did Moses say the LORD had granted to the eastern tribes in Joshua 1:13?',
-      ta: 'யோசுவா 1:13-ல், கர்த்தர் அந்த கோத்திரத்தாருக்கு எதைக் கட்டளையிட்டதாக மோசே கூறியிருந்தார்?',
+      en: 'What did Moses state that the LORD had provided for the eastern tribes?',
+      ta: 'கர்த்தர் அந்த இரண்டரை கோத்திரத்தாருக்கு எதைக் கட்டளையிட்டு தேசத்தைக் கொடுத்தார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'A golden crown', ta: 'பொன் முடி' }, isCorrect: false },
@@ -792,14 +792,14 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Instructions',
     question: {
-      en: 'According to Joshua 1:14, who was allowed to remain on the east side of Jordan?',
-      ta: 'யோசுவா 1:14-ன் படி, யோர்தானுக்கு இப்புறத்தில் தங்கியிருக்க அனுமதிக்கப்பட்டவர்கள் யார்?',
+      en: 'Who was permitted to stay behind in the land east of the Jordan?',
+      ta: 'யோர்தானுக்குக் கிழக்குப் பகுதியில் தங்கியிருக்க அனுமதிக்கப்பட்டவர்கள் யார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Wives, little ones (children), and livestock', ta: 'மனைவிகள், பிள்ளைகள், மிருகஜீவன்கள்' }, isCorrect: true },
       { id: 'opt_2', text: { en: 'All soldiers and generals', ta: 'எல்லா படைத்தலைவர்களும் வீரர்களும்' }, isCorrect: false },
       { id: 'opt_3', text: { en: 'The tribal leaders only', ta: 'கோத்திர தலைவர்கள் மட்டும்' }, isCorrect: false },
-      { id: 'opt_4', text: { en: 'The priests with the Ark', ta: 'பெட்டியோடு ஆசாரியர்கள்' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'The priests carrying the Ark', ta: 'பெட்டியோடு ஆசாரியர்கள்' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -813,12 +813,12 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Instructions',
     question: {
-      en: 'How were the men of valor from the 2.5 tribes commanded to cross over the Jordan in Joshua 1:14?',
-      ta: 'யோசுவா 1:14-ல், அந்த இரண்டரை கோத்திரத்து யுத்தவீரர்கள் எவ்வாறு யோர்தானைக் கடந்து செல்ல வேண்டும் என்று கட்டளையிடப்பட்டது?',
+      en: 'How were the fighting men of the 2.5 tribes commanded to march before their brethren?',
+      ta: 'இரண்டரை கோத்திரத்து யுத்தவீரர்கள் எவ்வாறு தங்கள் சகோதரருக்கு முன்பாகச் செல்ல வேண்டும்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Unarmed and following at the very rear', ta: 'ஆயுதங்களின்றி மிக பின்னாக நடந்து' }, isCorrect: false },
-      { id: 'opt_2', text: { en: 'Armed and marshaled in battle array before their brothers', ta: 'அணிஅணியாய் உங்கள் சகோதரருக்கு முன்பாக' }, isCorrect: true },
+      { id: 'opt_2', text: { en: 'Armed and arrayed before their brothers', ta: 'அணிஅணியாய் உங்கள் சகோதரருக்கு முன்பாக' }, isCorrect: true },
       { id: 'opt_3', text: { en: 'Disguised in foreign clothes', ta: 'அந்நிய உடை தரித்து' }, isCorrect: false },
       { id: 'opt_4', text: { en: 'Singing without weapons', ta: 'ஆயுதங்களின்றி பாட்டுப் பாடிக்கொண்டு' }, isCorrect: false },
     ],
@@ -834,14 +834,14 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Purpose',
     question: {
-      en: 'What was the mission of the men of valor who crossed over in Joshua 1:14?',
-      ta: 'யோசுவா 1:14-ல், யோர்தானைக் கடந்துசெல்லும் யுத்தவீரர்களின் நோக்கம் என்ன?',
+      en: 'What was the primary purpose of the armed men crossing over ahead of Israel?',
+      ta: 'முன்னதாக யோர்தானைக் கடந்துசெல்லும் யுத்தவீரர்களின் பிரதான நோக்கம் என்ன?',
     },
     options: [
-      { id: 'opt_1', text: { en: 'To conquer land for themselves', ta: 'தங்களுக்கு நிலம் கைப்பற்ற' }, isCorrect: false },
+      { id: 'opt_1', text: { en: 'To conquer additional land for themselves', ta: 'தங்களுக்கு நிலம் கைப்பற்ற' }, isCorrect: false },
       { id: 'opt_2', text: { en: 'To spy out Egypt', ta: 'எகிப்தை வேவுபார்க்க' }, isCorrect: false },
-      { id: 'opt_3', text: { en: 'To help their brothers', ta: 'அவர்களுக்கு (சகோதரருக்கு) உதவிசெய்ய' }, isCorrect: true },
-      { id: 'opt_4', text: { en: 'To build a wall around Jordan', ta: 'யோர்தானைச் சுற்றி மதில் கட்ட' }, isCorrect: false },
+      { id: 'opt_3', text: { en: 'To help their brothers', ta: 'தங்கள் சகோதரருக்கு உதவிசெய்ய' }, isCorrect: true },
+      { id: 'opt_4', text: { en: 'To build defensive walls around Jordan', ta: 'யோர்தானைச் சுற்றி மதில் கட்ட' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -855,13 +855,13 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Instructions',
     question: {
-      en: 'Until when were the 2.5 tribes required to fight alongside their brothers according to Joshua 1:15?',
-      ta: 'யோசுவா 1:15-ன் படி, எதுவரை அந்த இரண்டரை கோத்திரத்தார் தங்கள் சகோதரரோடு யுத்தம் செய்ய வேண்டும்?',
+      en: 'Until when were the eastern tribes obligated to battle alongside their brothers?',
+      ta: 'எதுவரை அந்த இரண்டரை கோத்திரத்தார் தங்கள் சகோதரரோடு போரிட்டு உதவி செய்ய வேண்டும்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Until the LORD gives rest to their brothers and they possess their land', ta: 'கர்த்தர் அவர்கள் சகோதரருக்கும் இளைப்பாறுதல் அளித்து, அவர்களும் தேசத்தைச் சுதந்தரிக்கும் வரை' }, isCorrect: true },
       { id: 'opt_2', text: { en: 'Until the end of the first year only', ta: 'முதல் வருட முடிவு வரை மட்டும்' }, isCorrect: false },
-      { id: 'opt_3', text: { en: 'Until Jericho alone is taken', ta: 'எரிகோ பட்டணம் பிடிபடும் வரை மட்டும்' }, isCorrect: false },
+      { id: 'opt_3', text: { en: 'Until Jericho alone is captured', ta: 'எரிகோ பட்டணம் பிடிபடும் வரை மட்டும்' }, isCorrect: false },
       { id: 'opt_4', text: { en: 'Until they capture 100 chariots', ta: '100 இரதங்களைக் கைப்பற்றும் வரை' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
@@ -876,8 +876,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Geography',
     question: {
-      en: 'In Joshua 1:15, on which side of the Jordan was the inheritance of the 2.5 tribes located?',
-      ta: 'யோசுவா 1:15-ல், இரண்டரை கோத்திரத்தாரின் சுதந்தரம் யோர்தானின் எந்தத் திசையில் அமைந்திருந்தது?',
+      en: 'Where was the permanent inheritance of the 2.5 tribes situated relative to the Jordan?',
+      ta: 'இரண்டரை கோத்திரத்தாரின் சுதந்தரம் யோர்தானின் எந்தத் திசையில் அமைந்திருந்தது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Toward the sunset (West)', ta: 'சூரியன் அஸ்தமிக்கும் திசை (மேற்கு)' }, isCorrect: false },
@@ -897,8 +897,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Obedience',
     question: {
-      en: 'What unified response did the people give to Joshua in Joshua 1:16?',
-      ta: 'யோசுவா 1:16-ல், ஜனங்கள் யோசுவாவுக்கு அளித்த ஒருமனதான பிரதியுத்தரம் என்ன?',
+      en: 'What wholehearted pledge of obedience did the people make to Joshua?',
+      ta: 'ஜனங்கள் யோசுவாவுக்கு அளித்த முழுமனதான கீழ்ப்படிதலின் வாக்குறுதி என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: '"All that you have commanded us we will do, and wherever you send us we will go"', ta: '"நீர் எங்களுக்குக் கட்டளையிடுகிறதையெல்லாம் செய்வோம், நீர் எங்களை அனுப்பும் இடமெல்லாம் போவோம்"' }, isCorrect: true },
@@ -918,8 +918,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Obedience',
     question: {
-      en: 'To whom did the people compare their promised obedience to Joshua in Joshua 1:17?',
-      ta: 'யோசுவா 1:17-ல், யோசுவாவுக்குக் கீழ்ப்படிவதை ஜனங்கள் யாருக்குக் கீழ்ப்படிந்ததோடு ஒப்பிட்டுப் பேசினார்கள்?',
+      en: 'Whose obedience did the people cite as the standard for how they would obey Joshua?',
+      ta: 'யோசுவாவுக்குக் கீழ்ப்படிவதை ஜனங்கள் யாருக்குக் கீழ்ப்படிந்ததோடு ஒப்பிட்டுக் கூறினார்கள்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Just as we obeyed Aaron', ta: 'ஆரோனுக்கு செவிகொடுத்ததுபோல' }, isCorrect: false },
@@ -939,8 +939,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Prayer',
     question: {
-      en: 'What prayer / blessing did the people express for Joshua in Joshua 1:17?',
-      ta: 'யோசுவா 1:17-ல், ஜனங்கள் யோசுவாவிற்காகக் கூறிய ஆசீர்வாத வார்த்தை / ஜெபம் என்ன?',
+      en: 'What prayer and blessing did the people speak over Joshua\'s leadership?',
+      ta: 'யோசுவாவின் தலைமைத்துவத்திற்காக ஜனங்கள் வேண்டிய ஆசீர்வாத ஜெபம் என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: '"May you live longer than Moses"', ta: '"மோசேயை விட அதிக காலம் வாழ்வீராக"' }, isCorrect: false },
@@ -960,8 +960,8 @@ export const joshua1Questions = [
     difficulty: 'medium',
     category: 'Discipline',
     question: {
-      en: 'According to Joshua 1:18, what penalty was declared for anyone who rebelled against Joshua\'s commands?',
-      ta: 'யோசுவா 1:18-ன் படி, யோசுவாவின் கட்டளைக்கு விரோதமாய்ச் செயல்பட்டு கீழ்ப்படியாதவனுக்கு என்ன தண்டனை விதிக்கப்பட்டது?',
+      en: 'What penalty was declared for anyone who rebelled against the leader\'s command?',
+      ta: 'தலைவனின் கட்டளைக்கு விரோதமாய்ச் செயல்பட்டு கீழ்ப்படியாதவனுக்கு என்ன தண்டனை விதிக்கப்பட்டது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'He shall pay forty shekels of silver', ta: 'நாற்பது வெள்ளி சேக்கல் அபராதம் செலுத்தவேண்டும்' }, isCorrect: false },
@@ -981,8 +981,8 @@ export const joshua1Questions = [
     difficulty: 'easy',
     category: 'Encouragement',
     question: {
-      en: 'What encouraging words did the people say to Joshua at the very end of Joshua chapter 1 (v.18)?',
-      ta: 'யோசுவா 1-ம் அதிகாரத்தின் கடைசி வசனத்தில் (வசனம் 18), ஜனங்கள் யோசுவாவை நோக்கி கூறிய ஊக்கமளிக்கும் வார்த்தை என்ன?',
+      en: 'What final words of encouragement did the congregation speak to Joshua?',
+      ta: 'ஜனங்கள் யோசுவாவை நோக்கி கூறிய இறுதி ஊக்கமளிக்கும் வார்த்தை என்ன?',
     },
     options: [
       { id: 'opt_1', text: { en: '"Do not leave us alone"', ta: '"எங்களை தனியே விட்டுவிடாதிரும்"' }, isCorrect: false },
@@ -1002,14 +1002,14 @@ export const joshua1Questions = [
     difficulty: 'hard',
     category: 'Context',
     question: {
-      en: 'In Joshua 1, who was the supreme authority giving the initial commands to Joshua?',
-      ta: 'யோசுவா 1-ல், யோசுவாவுக்கு ஆரம்பக் கட்டளைகளைப் பிறப்பித்த உன்னத அதிகாரி யார்?',
+      en: 'Who was the supreme authority commissioning Joshua to lead Israel across the Jordan?',
+      ta: 'இஸ்ரவேலை வழிநடத்தி யோர்தானைக் கடக்கும்படி யோசுவாவுக்குக் கட்டளையிட்ட உன்னத அதிகாரி யார்?',
     },
     options: [
       { id: 'opt_1', text: { en: 'The High Priest', ta: 'பிரதான ஆசாரியன்' }, isCorrect: false },
       { id: 'opt_2', text: { en: 'The LORD (Yahweh)', ta: 'கர்த்தர் (யேகோவா)' }, isCorrect: true },
       { id: 'opt_3', text: { en: 'The assembly of elders', ta: 'மூப்பர்களின் சபை' }, isCorrect: false },
-      { id: 'opt_4', text: { en: 'The angel of the army', ta: 'சேனையின் அதிபதி தூதன்' }, isCorrect: false },
+      { id: 'opt_4', text: { en: 'The commander of the Egyptian army', ta: 'எகிப்திய சேனையின் அதிபதி' }, isCorrect: false },
     ],
     explanation: { en: '', ta: '' },
     isActive: true,
@@ -1023,8 +1023,8 @@ export const joshua1Questions = [
     difficulty: 'hard',
     category: 'Scripture',
     question: {
-      en: 'What specific action with the Law brings true prosperity according to Joshua 1:8?',
-      ta: 'யோசுவா 1:8-ன் படி, மெய்யான செழிப்பைக் கொண்டுவருவது எது?',
+      en: 'What specific attitude toward God\'s written word guarantees true prosperity and success?',
+      ta: 'மெய்யான செழிப்பையும் நல்வெற்றியையும் உத்தரவாதப்படுத்தும் செயல் எது?',
     },
     options: [
       { id: 'opt_1', text: { en: 'Memorizing without doing', ta: 'செய்யாமல் மனப்பாடம் மட்டும் செய்வது' }, isCorrect: false },
@@ -1044,12 +1044,12 @@ export const joshua1Questions = [
     difficulty: 'hard',
     category: 'Leadership',
     question: {
-      en: 'How many times in Joshua Chapter 1 does the command/exhortation "be strong and courageous" (or very courageous) appear from God and the people combined?',
-      ta: 'யோசுவா 1-ம் அதிகாரத்தில் தேவனும் ஜனங்களும் சேர்த்து "திடன்கொண்டு தைரியமாயிரு / பலங்கொள்" என்று எத்தனை முறை வலியுறுத்துகிறார்கள் (வசனங்கள் 6, 7, 9, 18)?',
+      en: 'How many times in the opening commissioning does the phrase "be strong and courageous" (or very courageous) appear?',
+      ta: 'யோசுவாவின் நியமன நிகழ்வில் தேவனும் ஜனங்களும் சேர்த்து "திடன்கொண்டு தைரியமாயிரு / பலங்கொள்" என்று எத்தனை முறை வலியுறுத்துகிறார்கள்?',
     },
     options: [
       { id: 'opt_1', text: { en: '1 time only', ta: '1 முறை மட்டும்' }, isCorrect: false },
-      { id: 'opt_2', text: { en: '4 times (vv. 6, 7, 9, 18)', ta: '4 முறை (வசனங்கள் 6, 7, 9, 18)' }, isCorrect: true },
+      { id: 'opt_2', text: { en: '4 times', ta: '4 முறை' }, isCorrect: true },
       { id: 'opt_3', text: { en: '7 times', ta: '7 முறை' }, isCorrect: false },
       { id: 'opt_4', text: { en: '10 times', ta: '10 முறை' }, isCorrect: false },
     ],
@@ -1073,7 +1073,7 @@ async function runSeed() {
       insertedCount++;
     }
 
-    console.log(`Successfully created and inserted ${insertedCount} questions for OT - Joshua Chapter 1!`);
+    console.log(`Successfully updated and inserted ${insertedCount} clean questions for OT - Joshua Chapter 1!`);
     await mongoose.disconnect();
     process.exit(0);
   } catch (err) {
