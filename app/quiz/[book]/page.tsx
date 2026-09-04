@@ -349,69 +349,140 @@ export default function QuizPlayPage() {
           </div>
         </div>
 
-        {/* Detailed Scripture Review (Accordion) */}
+        {/* Detailed Question Review (Accordion) */}
         {showReviewList && (
           <div className="space-y-4 pt-2 animate-fadeIn">
             <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-2">
               <h2 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
-                <span>Scripture Review & Explanations</span>
+                <span>{langMode === 'ta' ? 'கேள்வி & விடைகள் ஆய்வு' : 'Question & Answer Review'}</span>
               </h2>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">{quizResult.review?.length} Questions</span>
             </div>
 
             <div className="space-y-3">
-              {quizResult.review?.map((item: any, idx: number) => (
-                <div
-                  key={idx}
-                  className={`warm-card rounded-2xl p-5 border space-y-3 ${
-                    item.isCorrect ? 'border-emerald-400/80 dark:border-emerald-500/50' : 'border-rose-400/80 dark:border-rose-500/50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-[#FAF3E0] dark:bg-amber-500/15 text-[#8C6B1B] dark:text-amber-300 text-xs font-black flex items-center justify-center">
-                        {idx + 1}
-                      </span>
-                      <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md">
-                        {langMode === 'ta' ? `கேள்வி ${idx + 1}` : `Question ${idx + 1}`}
-                      </span>
+              {quizResult.review?.map((item: any, idx: number) => {
+                const isSelectedCorrect = item.isCorrect;
+                return (
+                  <div
+                    key={idx}
+                    className={`warm-card rounded-2xl p-5 border space-y-3.5 ${
+                      isSelectedCorrect
+                        ? 'border-emerald-400/80 dark:border-emerald-500/50'
+                        : 'border-rose-400/80 dark:border-rose-500/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-lg bg-[#FAF3E0] dark:bg-amber-500/15 text-[#8C6B1B] dark:text-amber-300 text-xs font-black flex items-center justify-center">
+                          {idx + 1}
+                        </span>
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md">
+                          {langMode === 'ta' ? `கேள்வி ${idx + 1}` : `Question ${idx + 1}`}
+                        </span>
+                      </div>
+                      {isSelectedCorrect ? (
+                        <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[3]" /> Correct
+                        </span>
+                      ) : (
+                        <span className="text-xs font-black text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/50 px-2.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800 flex items-center gap-1">
+                          <XCircle className="w-3 h-3 stroke-[3]" /> Incorrect
+                        </span>
+                      )}
                     </div>
-                    {item.isCorrect ? (
-                      <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                        <Check className="w-3 h-3" /> Correct
-                      </span>
+
+                    {/* Question Text */}
+                    <div className="space-y-1">
+                      {(langMode === 'both' || langMode === 'en') && item.question?.en && (
+                        <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">
+                          {item.question.en}
+                        </p>
+                      )}
+                      {(langMode === 'both' || langMode === 'ta') && item.question?.ta && (
+                        <p className="text-xs font-tamil text-slate-700 dark:text-slate-300 leading-relaxed font-semibold">
+                          {item.question.ta}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Options / Correct Answer Display */}
+                    {item.options && item.options.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
+                        {item.options.map((opt: any, optIdx: number) => {
+                          const isCorrectOpt = opt.isCorrect || opt.id === item.correctOptionId;
+                          const isUserSelected = opt.id === item.selectedOptionId;
+
+                          let cardClasses = 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-300';
+                          if (isCorrectOpt) {
+                            cardClasses = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700/60 text-emerald-900 dark:text-emerald-200 font-bold shadow-sm';
+                          } else if (isUserSelected && !isSelectedCorrect) {
+                            cardClasses = 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-700/60 text-rose-900 dark:text-rose-200 line-through';
+                          }
+
+                          return (
+                            <div
+                              key={optIdx}
+                              className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${cardClasses}`}
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <span className="font-black text-[10px] uppercase">
+                                  {String.fromCharCode(65 + optIdx)}:
+                                </span>
+                                <div className="truncate">
+                                  {(langMode === 'both' || langMode === 'en') && opt.text?.en && (
+                                    <span>{opt.text.en}</span>
+                                  )}
+                                  {(langMode === 'both' || langMode === 'ta') && opt.text?.ta && (
+                                    <span className="font-tamil ml-1 text-slate-600 dark:text-slate-300">({opt.text.ta})</span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {isCorrectOpt && (
+                                <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0">
+                                  <Check className="w-3 h-3 stroke-[3]" /> Correct Answer
+                                </span>
+                              )}
+                              {!isCorrectOpt && isUserSelected && (
+                                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-900/50 px-1.5 py-0.5 rounded-md shrink-0">
+                                  Your choice
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     ) : (
-                      <span className="text-xs font-black text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/50 px-2.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800 flex items-center gap-1">
-                        <XCircle className="w-3 h-3" /> Incorrect
-                      </span>
+                      /* Fallback if options list not present */
+                      <div className="space-y-1.5 text-xs pt-1">
+                        {item.correctOptionText && (
+                          <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 flex items-center gap-2 font-bold">
+                            <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[3]" />
+                            <span>
+                              Correct Answer:{' '}
+                              {langMode === 'ta' && item.correctOptionText.ta
+                                ? item.correctOptionText.ta
+                                : item.correctOptionText.en}
+                            </span>
+                          </div>
+                        )}
+                        {!isSelectedCorrect && item.selectedOptionText && (
+                          <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 flex items-center gap-2 font-semibold">
+                            <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                            <span>
+                              Your Answer:{' '}
+                              {langMode === 'ta' && item.selectedOptionText.ta
+                                ? item.selectedOptionText.ta
+                                : item.selectedOptionText.en}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
-
-                  <div className="space-y-1">
-                    {(langMode === 'both' || langMode === 'en') && item.question?.en && (
-                      <p className="text-sm font-bold text-slate-900 dark:text-white leading-snug">{item.question.en}</p>
-                    )}
-                    {(langMode === 'both' || langMode === 'ta') && item.question?.ta && (
-                      <p className="text-xs font-tamil text-slate-700 dark:text-slate-300 leading-relaxed">{item.question.ta}</p>
-                    )}
-                  </div>
-
-                  {item.explanation && (
-                    <div className="bg-[#FAF3E0]/70 dark:bg-amber-500/10 border border-[#E8D8B8] dark:border-amber-500/30 rounded-xl p-3 text-xs space-y-1">
-                      <span className="font-extrabold text-[#8C6B1B] dark:text-amber-300 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-[#D49020] dark:text-amber-400" /> Scripture Insight:
-                      </span>
-                      {(langMode === 'both' || langMode === 'en') && item.explanation.en && (
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{item.explanation.en}</p>
-                      )}
-                      {(langMode === 'both' || langMode === 'ta') && item.explanation.ta && (
-                        <p className="text-slate-700 dark:text-slate-300 font-tamil leading-relaxed">{item.explanation.ta}</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -589,7 +660,7 @@ export default function QuizPlayPage() {
         </div>
 
         {/* Practice Mode Instant Explanation */}
-        {quizMode === 'practice' && practiceRevealed && currentQ.explanation && (
+        {quizMode === 'practice' && practiceRevealed && currentQ.explanation && (currentQ.explanation.en || currentQ.explanation.ta) && (
           <div className="p-4 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 space-y-1.5 animate-fadeIn">
             <span className="text-xs font-extrabold text-[#8C6B1B] dark:text-amber-300 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" /> Scripture Insight:

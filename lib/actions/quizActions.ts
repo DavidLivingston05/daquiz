@@ -201,6 +201,7 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
     }
 
     const correctOption = (original as any).options?.find((opt: any) => opt.isCorrect);
+    const selectedOption = (original as any).options?.find((opt: any) => opt.id === ans.selectedOptionId);
     const isCorrect = correctOption?.id === ans.selectedOptionId;
 
     if (isCorrect) {
@@ -221,11 +222,16 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
     return {
       questionId: (original as any)._id.toString(),
       selectedOptionId: ans.selectedOptionId,
+      selectedOptionText: selectedOption ? selectedOption.text : null,
       isCorrect,
       timeSpentSeconds: ans.timeSpent,
       correctOptionId: correctOption?.id,
-      explanation: (original as any).explanation || { en: '', ta: '' },
-      reference: `${(original as any).book} ${(original as any).chapter || 1}:${(original as any).verse || 1}`,
+      correctOptionText: correctOption ? correctOption.text : null,
+      options: (original as any).options?.map((opt: any) => ({
+        id: opt.id,
+        text: opt.text,
+        isCorrect: !!opt.isCorrect,
+      })) || [],
       question: (original as any).question,
     };
   });
