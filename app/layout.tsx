@@ -36,18 +36,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${tamil.variable}`}>
-      <body className="min-h-screen flex flex-col bg-[#FBF8F4] dark:bg-[#0B0F17] text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-white transition-colors duration-300">
+      <body className="min-h-screen flex flex-col bg-[#F8F9FA] dark:bg-[#0A0E17] text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-[#D49020] selection:text-white transition-colors duration-300">
         <ThemeProvider>
           <LanguageProvider>
-            {/* Ambient Warm / Celestial Accents in Background */}
+            {/* Ambient Ultra-Clean Modern Mesh Glow */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-              <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[650px] h-[450px] bg-gradient-to-tr from-[#EEDBBB]/50 dark:from-amber-600/10 via-[#F7EFE0]/40 dark:via-blue-600/10 to-transparent blur-[100px] rounded-full" />
-              <div className="absolute top-1/3 -left-32 w-[450px] h-[450px] bg-gradient-to-tr from-[#E6D4B5]/40 dark:from-amber-700/10 to-transparent blur-[120px] rounded-full" />
-              <div className="absolute bottom-10 -right-32 w-[500px] h-[500px] bg-gradient-to-tr from-[#E8D7B9]/40 dark:from-amber-500/10 via-[#FAF1DF]/30 to-transparent blur-[120px] rounded-full" />
+              <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[750px] h-[500px] bg-gradient-to-b from-amber-200/25 via-amber-100/10 dark:from-amber-500/10 dark:via-blue-900/10 to-transparent blur-[120px] rounded-full" />
+              <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-amber-200/15 dark:from-indigo-900/10 to-transparent blur-[140px] rounded-full" />
+              <div className="absolute -bottom-20 -right-40 w-[600px] h-[600px] bg-gradient-to-tl from-amber-100/20 dark:from-amber-600/10 to-transparent blur-[140px] rounded-full" />
             </div>
 
             {/* Navigation Header */}
-            <header className="border-b border-[#EAE0D0] dark:border-[#232E42] bg-[#FFFDF9]/90 dark:bg-[#111622]/90 backdrop-blur-md sticky top-0 z-40 transition-all shadow-[0_2px_15px_-3px_rgba(180,150,100,0.06)]">
+            <header className="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-[#0E131F]/90 backdrop-blur-md sticky top-0 z-40 transition-all shadow-[0_1px_3px_0_rgba(0,0,0,0.02),0_4px_16px_-4px_rgba(0,0,0,0.04)]">
               <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
                 <Link href="/" className="flex items-center gap-2.5 group shrink-0">
                   <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#E8A838] via-[#D49020] to-[#B87410] text-white flex items-center justify-center shadow-md shadow-amber-500/20 group-hover:scale-105 transition-all">

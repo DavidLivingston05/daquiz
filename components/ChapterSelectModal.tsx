@@ -129,16 +129,16 @@ export default function ChapterSelectModal({
   }[lang];
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 dark:bg-black/75 backdrop-blur-md overflow-y-auto animate-fadeIn">
       {/* Backdrop */}
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-lg my-auto overflow-hidden rounded-3xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] p-6 sm:p-8 shadow-2xl space-y-6 text-slate-800 dark:text-slate-100 transition-colors">
+      <div className="relative z-10 w-full max-w-lg my-auto overflow-hidden rounded-3xl bg-white dark:bg-[#111724] border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-2xl shadow-slate-900/20 space-y-6 text-slate-800 dark:text-slate-100 transition-colors">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-[#FBF8F4] dark:bg-[#1A2232] text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
         </button>

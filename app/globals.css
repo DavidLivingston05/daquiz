@@ -4,11 +4,11 @@
 
 @layer base {
   body {
-    @apply bg-[#FBF8F4] text-slate-800 antialiased selection:bg-[#D4AF37] selection:text-white transition-colors duration-300;
+    @apply bg-[#F8F9FA] text-slate-900 antialiased selection:bg-[#D49020] selection:text-white transition-colors duration-300;
   }
 
   .dark body {
-    @apply bg-[#0B0F17] text-slate-100 selection:bg-[#F59E0B] selection:text-slate-950;
+    @apply bg-[#0A0E17] text-slate-100 selection:bg-[#F59E0B] selection:text-slate-950;
   }
 }
 
@@ -33,14 +33,14 @@
 /* Elevated Warm / Dark Theme Cards */
 .warm-card {
   background: #FFFFFF;
-  border: 1px solid #EAE0D0;
-  box-shadow: 0 4px 20px -4px rgba(180, 150, 100, 0.08);
+  border: 1px solid #EAECEF;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
   transition: all 0.25s ease;
 }
 
 .dark .warm-card {
-  background: #141A26;
-  border: 1px solid #232E42;
+  background: #111724;
+  border: 1px solid #1E293B;
   box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.4);
 }
 
@@ -50,8 +50,8 @@
 
 .warm-card-hover:hover {
   transform: translateY(-2px);
-  border-color: #D4AF37;
-  box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.2);
+  border-color: #D49020;
+  box-shadow: 0 10px 25px -5px rgba(212, 144, 32, 0.15);
 }
 
 .dark .warm-card-hover:hover {
@@ -62,36 +62,36 @@
 /* Option Cards for Quizzes */
 .quiz-option-card {
   background: #FFFFFF;
-  border: 1.5px solid #EAE0D0;
-  color: #2D3748;
+  border: 1.5px solid #E2E8F0;
+  color: #1E293B;
   transition: all 0.2s ease-in-out;
 }
 
 .dark .quiz-option-card {
-  background: #141A26;
-  border: 1.5px solid #232E42;
+  background: #111724;
+  border: 1.5px solid #1E293B;
   color: #E2E8F0;
 }
 
 .quiz-option-card:hover {
-  border-color: #D4AF37;
-  background-color: #FFFDF9;
+  border-color: #D49020;
+  background-color: #FAF8F5;
 }
 
 .dark .quiz-option-card:hover {
   border-color: #F59E0B;
-  background-color: #1A2232;
+  background-color: #161F30;
 }
 
 .quiz-option-card-selected {
-  background-color: #FAF3E0 !important;
-  border-color: #C5A059 !important;
-  color: #3D2F14 !important;
-  box-shadow: 0 4px 14px -2px rgba(197, 160, 89, 0.25);
+  background-color: #FFFBF0 !important;
+  border-color: #D49020 !important;
+  color: #78350F !important;
+  box-shadow: 0 4px 14px -2px rgba(212, 144, 32, 0.2);
 }
 
 .dark .quiz-option-card-selected {
-  background-color: #2A2114 !important;
+  background-color: #241A0E !important;
   border-color: #F59E0B !important;
   color: #FEF3C7 !important;
   box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.3);

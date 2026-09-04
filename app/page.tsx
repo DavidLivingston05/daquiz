@@ -331,7 +331,7 @@ export default function HomePage() {
 
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] rounded-3xl p-6 sm:p-8 shadow-xl shadow-[#2C1810]/5 space-y-6 animate-fadeIn transition-colors">
+        <div className="w-full max-w-md bg-white dark:bg-[#111724] border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-900/5 dark:shadow-black/40 space-y-6 animate-fadeIn transition-colors">
           
           {/* STEP 1: LANGUAGE SELECTION FIRST */}
           {entryStep === 'language' ? (
