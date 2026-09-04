@@ -5,6 +5,7 @@ import { BookOpen, Sparkles, ShieldCheck, Compass } from 'lucide-react';
 import { Plus_Jakarta_Sans, Noto_Sans_Tamil } from 'next/font/google';
 import LanguageSelector from '@/components/LanguageSelector';
 import UserProfileChip from '@/components/UserProfileChip';
+import HeaderBrandSubtitle from '@/components/HeaderBrandSubtitle';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -56,9 +57,7 @@ export default function RootLayout({
                     PRO
                   </span>
                 </div>
-                <span className="text-[11px] font-tamil text-slate-400 leading-none hidden sm:block">
-                  வேத வினாடி வினா
-                </span>
+                <HeaderBrandSubtitle />
               </div>
             </Link>
 

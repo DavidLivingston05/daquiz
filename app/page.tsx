@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { getAvailableBooks } from '@/lib/actions/quizActions';
 import { getLeaderboard } from '@/lib/actions/userActions';
+import { useLanguage } from '@/lib/useLanguage';
 
 const defaultBooks = [
   { book: 'Genesis', testament: 'OT', count: 10, ta: 'ஆதியாகமம்' },
@@ -45,6 +46,7 @@ const tamilBookNames: Record<string, string> = {
 };
 
 export default function HomePage() {
+  const lang = useLanguage();
   const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
@@ -73,6 +75,57 @@ export default function HomePage() {
   const otBooks = booksToDisplay.filter((b) => b.testament === 'OT');
   const ntBooks = booksToDisplay.filter((b) => b.testament === 'NT');
 
+  // Strict text rendering based on language
+  const getBannerBadge = () => {
+    if (lang === 'en') return 'BIBLE QUIZ & COMPETITION PLATFORM';
+    if (lang === 'ta') return 'வேத வினாடி வினா & போட்டி தளம்';
+    return 'BIBLE QUIZ & COMPETITION • வேத வினாடி வினா';
+  };
+
+  const getHeroTitle = () => {
+    if (lang === 'en') return 'Master the Scriptures with Speed & Knowledge';
+    if (lang === 'ta') return 'வேத வசனங்களை ஆழமாகக் கற்றுக்கொள்ளுங்கள்';
+    return 'Master the Scriptures in English & Tamil';
+  };
+
+  const getHeroSubtitle = () => {
+    if (lang === 'en')
+      return 'Study Holy Scripture books, test your Bible memory, and compete on the live leaderboard!';
+    if (lang === 'ta')
+      return 'பரிசுத்த வேத புத்தகங்களை படியுங்கள், உங்கள் நினைவாற்றலை சோதியுங்கள், தரவரிசையில் முதலிடம் பெறுங்கள்!';
+    return 'வேத வசனங்களை ஆழமாகக் கற்றுக்கொள்ளுங்கள். போட்டிகளில் பங்கேற்று தரவரிசையைப் பெறுங்கள்!';
+  };
+
+  const getCompetitionBtnText = () => {
+    if (lang === 'en') return 'Start Competition';
+    if (lang === 'ta') return 'போட்டியைத் தொடங்கு';
+    return 'Start Competition (போட்டி)';
+  };
+
+  const getPracticeBtnText = () => {
+    if (lang === 'en') return 'Practice Test';
+    if (lang === 'ta') return 'பயிற்சி வினாடி வினா';
+    return 'Practice Test (பயிற்சி)';
+  };
+
+  const getOTTitle = () => {
+    if (lang === 'en') return 'Old Testament';
+    if (lang === 'ta') return 'பழைய ஏற்பாடு';
+    return 'Old Testament (பழைய ஏற்பாடு)';
+  };
+
+  const getNTTitle = () => {
+    if (lang === 'en') return 'New Testament';
+    if (lang === 'ta') return 'புதிய ஏற்பாடு';
+    return 'New Testament (புதிய ஏற்பாடு)';
+  };
+
+  const getLeaderboardTitle = () => {
+    if (lang === 'en') return 'Top Participants Leaderboard';
+    if (lang === 'ta') return 'சிறந்த வெற்றியாளர்களின் தரவரிசை';
+    return 'Top Participants • சிறந்த வெற்றியாளர்கள்';
+  };
+
   return (
     <div className="space-y-12 pb-10">
       {/* Hero Banner with Radiant Glow */}
@@ -80,15 +133,19 @@ export default function HomePage() {
         <div className="relative z-10 max-w-2xl space-y-5">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide uppercase">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Bible Quiz & Competition Platform</span>
+            <span>{getBannerBadge()}</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-            Master the Scriptures in English & Tamil
+            {getHeroTitle()}
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base font-tamil leading-relaxed">
-            வேத வசனங்களை ஆழமாகக் கற்றுக்கொள்ளுங்கள். போட்டிகளில் பங்கேற்று தரவரிசையைப் பெறுங்கள்!
+          <p
+            className={`text-slate-300 text-sm sm:text-base leading-relaxed ${
+              lang === 'ta' || lang === 'both' ? 'font-tamil' : 'font-sans'
+            }`}
+          >
+            {getHeroSubtitle()}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -97,7 +154,7 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-xs shadow-lg hover:scale-105 transition-all"
             >
               <Trophy className="w-4 h-4 stroke-[2.5]" />
-              <span>Start Competition (போட்டி)</span>
+              <span>{getCompetitionBtnText()}</span>
             </Link>
 
             <Link
@@ -105,7 +162,7 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs hover:bg-slate-700 transition-all"
             >
               <GraduationCap className="w-4 h-4 text-emerald-400" />
-              <span>Practice Test (பயிற்சி வினாடி வினா)</span>
+              <span>{getPracticeBtnText()}</span>
             </Link>
           </div>
         </div>
@@ -124,8 +181,7 @@ export default function HomePage() {
                 <Medal className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-white">Top Participants Leaderboard</h3>
-                <p className="text-[11px] text-slate-400 font-tamil">சிறந்த போட்டியாளர்கள்</p>
+                <h3 className="text-sm font-black text-white">{getLeaderboardTitle()}</h3>
               </div>
             </div>
             <span className="text-[11px] text-amber-400 font-bold uppercase tracking-wider">Top 5 Ranks</span>
@@ -169,11 +225,11 @@ export default function HomePage() {
               <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center">
                 <BookMarked className="w-4 h-4" />
               </div>
-              <h2 className="text-xl font-black text-white">
-                Old Testament <span className="text-sm font-normal font-tamil text-slate-400">(பழைய ஏற்பாடு)</span>
-              </h2>
+              <h2 className="text-xl font-black text-white">{getOTTitle()}</h2>
             </div>
-            <span className="text-xs text-slate-400 font-semibold">{otBooks.length} Books</span>
+            <span className="text-xs text-slate-400 font-semibold">
+              {otBooks.length} {lang === 'ta' ? 'புத்தகங்கள்' : 'Books'}
+            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -188,11 +244,21 @@ export default function HomePage() {
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/25 uppercase tracking-wider">
                       OT
                     </span>
-                    <h3 className="text-lg font-bold text-white">
-                      {item.book}
-                    </h3>
-                    {taName && (
-                      <p className="text-xs font-tamil text-slate-400 font-medium">{taName}</p>
+
+                    {/* Book title strictly based on language selection */}
+                    {lang === 'en' && (
+                      <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                    )}
+                    {lang === 'ta' && (
+                      <h3 className="text-lg font-tamil font-bold text-white">{taName || item.book}</h3>
+                    )}
+                    {lang === 'both' && (
+                      <div>
+                        <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                        {taName && (
+                          <p className="text-xs font-tamil text-slate-400 font-medium">{taName}</p>
+                        )}
+                      </div>
                     )}
                   </div>
 
@@ -201,12 +267,12 @@ export default function HomePage() {
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
                       className="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 text-center text-xs font-extrabold shadow-sm transition-all"
                     >
-                      Competition
+                      {lang === 'ta' ? 'போட்டி' : 'Competition'}
                     </Link>
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
                       className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all"
-                      title="Practice Test"
+                      title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
                       <GraduationCap className="w-4 h-4" />
                     </Link>
@@ -224,11 +290,11 @@ export default function HomePage() {
               <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
                 <BookMarked className="w-4 h-4" />
               </div>
-              <h2 className="text-xl font-black text-white">
-                New Testament <span className="text-sm font-normal font-tamil text-slate-400">(புதிய ஏற்பாடு)</span>
-              </h2>
+              <h2 className="text-xl font-black text-white">{getNTTitle()}</h2>
             </div>
-            <span className="text-xs text-slate-400 font-semibold">{ntBooks.length} Books</span>
+            <span className="text-xs text-slate-400 font-semibold">
+              {ntBooks.length} {lang === 'ta' ? 'புத்தகங்கள்' : 'Books'}
+            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -243,11 +309,21 @@ export default function HomePage() {
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 uppercase tracking-wider">
                       NT
                     </span>
-                    <h3 className="text-lg font-bold text-white">
-                      {item.book}
-                    </h3>
-                    {taName && (
-                      <p className="text-xs font-tamil text-slate-400 font-medium">{taName}</p>
+
+                    {/* Book title strictly based on language selection */}
+                    {lang === 'en' && (
+                      <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                    )}
+                    {lang === 'ta' && (
+                      <h3 className="text-lg font-tamil font-bold text-white">{taName || item.book}</h3>
+                    )}
+                    {lang === 'both' && (
+                      <div>
+                        <h3 className="text-lg font-bold text-white">{item.book}</h3>
+                        {taName && (
+                          <p className="text-xs font-tamil text-slate-400 font-medium">{taName}</p>
+                        )}
+                      </div>
                     )}
                   </div>
 
@@ -256,12 +332,12 @@ export default function HomePage() {
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
                       className="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 text-center text-xs font-extrabold shadow-sm transition-all"
                     >
-                      Competition
+                      {lang === 'ta' ? 'போட்டி' : 'Competition'}
                     </Link>
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
                       className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all"
-                      title="Practice Test"
+                      title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
                       <GraduationCap className="w-4 h-4" />
                     </Link>
