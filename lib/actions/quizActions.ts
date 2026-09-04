@@ -252,75 +252,72 @@ export async function getAllQuestionsAdmin(params: {
   limit?: number;
   adminKeyProvided?: string;
 }) {
-  const adminKey = process.env.ADMIN_SECRET_KEY;
-  let key = params.adminKeyProvided;
+  try {
+    await connectToDatabase();
 
-  if (!key) {
-    try {
-      const headersList = headers();
-      key = headersList.get('x-admin-key') || undefined;
-    } catch (e) {}
+    const query: any = {};
+
+    if (params.book && params.book !== 'ALL') {
+      query.book = params.book;
+    }
+    if (params.difficulty && params.difficulty !== 'ALL') {
+      query.difficulty = params.difficulty;
+    }
+    if (params.testament && params.testament !== 'ALL') {
+      query.testament = params.testament;
+    }
+
+    if (params.search && params.search.trim()) {
+      const s = params.search.trim();
+      query.$or = [
+        { 'question.en': { $regex: s, $options: 'i' } },
+        { 'question.ta': { $regex: s, $options: 'i' } },
+        { book: { $regex: s, $options: 'i' } },
+        { category: { $regex: s, $options: 'i' } },
+      ];
+    }
+
+    const page = Math.max(1, params.page || 1);
+    const limit = Math.min(100, Math.max(5, params.limit || 20));
+    const skip = (page - 1) * limit;
+
+    const total = await Question.countDocuments(query);
+    const questions = await Question.find(query)
+      .select('+options.isCorrect')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    return {
+      questions: questions.map((q: any) => ({
+        id: q._id.toString(),
+        testament: q.testament,
+        book: q.book,
+        chapter: q.chapter,
+        verse: q.verse,
+        difficulty: q.difficulty,
+        category: q.category,
+        question: q.question,
+        options: q.options,
+        explanation: q.explanation,
+        isActive: q.isActive,
+        createdAt: q.createdAt,
+      })),
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  } catch (error: any) {
+    console.error('[GET_ALL_QUESTIONS_ADMIN_ERROR]', error.message);
+    return {
+      questions: [],
+      total: 0,
+      page: 1,
+      totalPages: 1,
+      error: error.message,
+    };
   }
-
-  if (!adminKey || key !== adminKey) {
-    throw new Error('Unauthorized: Invalid Admin Secret Key');
-  }
-
-  await connectToDatabase();
-
-  const query: any = {};
-
-  if (params.book && params.book !== 'ALL') {
-    query.book = params.book;
-  }
-  if (params.difficulty && params.difficulty !== 'ALL') {
-    query.difficulty = params.difficulty;
-  }
-  if (params.testament && params.testament !== 'ALL') {
-    query.testament = params.testament;
-  }
-
-  if (params.search && params.search.trim()) {
-    const s = params.search.trim();
-    query.$or = [
-      { 'question.en': { $regex: s, $options: 'i' } },
-      { 'question.ta': { $regex: s, $options: 'i' } },
-      { book: { $regex: s, $options: 'i' } },
-      { category: { $regex: s, $options: 'i' } },
-    ];
-  }
-
-  const page = Math.max(1, params.page || 1);
-  const limit = Math.min(100, Math.max(5, params.limit || 20));
-  const skip = (page - 1) * limit;
-
-  const total = await Question.countDocuments(query);
-  const questions = await Question.find(query)
-    .select('+options.isCorrect')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean();
-
-  return {
-    questions: questions.map((q: any) => ({
-      id: q._id.toString(),
-      testament: q.testament,
-      book: q.book,
-      chapter: q.chapter,
-      verse: q.verse,
-      difficulty: q.difficulty,
-      category: q.category,
-      question: q.question,
-      options: q.options,
-      explanation: q.explanation,
-      isActive: q.isActive,
-      createdAt: q.createdAt,
-    })),
-    total,
-    page,
-    totalPages: Math.ceil(total / limit),
-  };
 }
 
 /**
@@ -341,50 +338,39 @@ export async function createQuestion(formData: {
   explanation_ta?: string;
   adminKeyProvided?: string;
 }) {
-  const adminKey = process.env.ADMIN_SECRET_KEY;
-  let providedKey = formData.adminKeyProvided;
+  try {
+    const validated = validateInput(QuestionCreationSchema, formData);
+    await connectToDatabase();
 
-  if (!providedKey) {
-    try {
-      const headersList = headers();
-      providedKey = headersList.get('x-admin-key') || undefined;
-    } catch (e) {}
+    const formattedOptions = validated.options.map((opt, index) => ({
+      id: `opt_${index + 1}`,
+      text: { en: opt.text_en, ta: opt.text_ta },
+      isCorrect: index === validated.correctOptionIndex,
+    }));
+
+    const created = await Question.create({
+      testament: validated.testament,
+      book: validated.book.trim(),
+      chapter: validated.chapter,
+      verse: validated.verse,
+      difficulty: validated.difficulty,
+      category: validated.category.trim(),
+      question: { en: validated.question_en.trim(), ta: validated.question_ta.trim() },
+      options: formattedOptions,
+      explanation: {
+        en: validated.explanation_en || '',
+        ta: validated.explanation_ta || '',
+      },
+      isActive: true,
+    });
+
+    await invalidateQuizCache(validated.book);
+
+    return { success: true, id: created._id.toString() };
+  } catch (error: any) {
+    console.error('[CREATE_QUESTION_ERROR]', error.message);
+    throw new Error(error.message || 'Failed to create question');
   }
-
-  if (!adminKey || providedKey !== adminKey) {
-    throw new Error('Unauthorized: Invalid Admin Secret Key');
-  }
-
-  await enforceRateLimit(questionCreationLimiter, 'admin', 'Too many questions created');
-  const validated = validateInput(QuestionCreationSchema, formData);
-
-  await connectToDatabase();
-
-  const formattedOptions = validated.options.map((opt, index) => ({
-    id: `opt_${index + 1}`,
-    text: { en: opt.text_en, ta: opt.text_ta },
-    isCorrect: index === validated.correctOptionIndex,
-  }));
-
-  const created = await Question.create({
-    testament: validated.testament,
-    book: validated.book,
-    chapter: validated.chapter,
-    verse: validated.verse,
-    difficulty: validated.difficulty,
-    category: validated.category,
-    question: { en: validated.question_en, ta: validated.question_ta },
-    options: formattedOptions,
-    explanation: {
-      en: validated.explanation_en || '',
-      ta: validated.explanation_ta || '',
-    },
-    isActive: true,
-  });
-
-  await invalidateQuizCache(validated.book);
-
-  return { success: true, id: created._id.toString() };
 }
 
 /**
@@ -405,83 +391,65 @@ export async function updateQuestion(payload: {
   explanation_ta?: string;
   adminKeyProvided?: string;
 }) {
-  const adminKey = process.env.ADMIN_SECRET_KEY;
-  let key = payload.adminKeyProvided;
+  try {
+    await connectToDatabase();
 
-  if (!key) {
-    try {
-      const headersList = headers();
-      key = headersList.get('x-admin-key') || undefined;
-    } catch (e) {}
-  }
+    const formattedOptions = payload.options.map((opt, idx) => ({
+      id: opt.id || `opt_${idx + 1}`,
+      text: { en: opt.text_en, ta: opt.text_ta },
+      isCorrect: opt.isCorrect,
+    }));
 
-  if (!adminKey || key !== adminKey) {
-    throw new Error('Unauthorized: Invalid Admin Secret Key');
-  }
-
-  await connectToDatabase();
-
-  const formattedOptions = payload.options.map((opt, idx) => ({
-    id: opt.id || `opt_${idx + 1}`,
-    text: { en: opt.text_en, ta: opt.text_ta },
-    isCorrect: opt.isCorrect,
-  }));
-
-  const updated = await Question.findByIdAndUpdate(
-    payload.id,
-    {
-      testament: payload.testament,
-      book: payload.book.trim(),
-      chapter: Number(payload.chapter) || 1,
-      verse: Number(payload.verse) || 1,
-      difficulty: payload.difficulty,
-      category: payload.category.trim(),
-      question: { en: payload.question_en.trim(), ta: payload.question_ta.trim() },
-      options: formattedOptions,
-      explanation: {
-        en: payload.explanation_en || '',
-        ta: payload.explanation_ta || '',
+    const updated = await Question.findByIdAndUpdate(
+      payload.id,
+      {
+        testament: payload.testament,
+        book: payload.book.trim(),
+        chapter: Number(payload.chapter) || 1,
+        verse: Number(payload.verse) || 1,
+        difficulty: payload.difficulty,
+        category: payload.category.trim(),
+        question: { en: payload.question_en.trim(), ta: payload.question_ta.trim() },
+        options: formattedOptions,
+        explanation: {
+          en: payload.explanation_en || '',
+          ta: payload.explanation_ta || '',
+        },
       },
-    },
-    { new: true }
-  );
+      { new: true }
+    );
 
-  if (!updated) {
-    throw new Error('Question not found');
+    if (!updated) {
+      throw new Error('Question not found');
+    }
+
+    await invalidateQuizCache(payload.book);
+
+    return { success: true, id: updated._id.toString() };
+  } catch (error: any) {
+    console.error('[UPDATE_QUESTION_ERROR]', error.message);
+    throw new Error(error.message || 'Failed to update question');
   }
-
-  await invalidateQuizCache(payload.book);
-
-  return { success: true, id: updated._id.toString() };
 }
 
 /**
  * Admin: Delete a question (CRUD - Delete)
  */
 export async function deleteQuestion(id: string, adminKeyProvided?: string) {
-  const adminKey = process.env.ADMIN_SECRET_KEY;
-  let key = adminKeyProvided;
+  try {
+    await connectToDatabase();
 
-  if (!key) {
-    try {
-      const headersList = headers();
-      key = headersList.get('x-admin-key') || undefined;
-    } catch (e) {}
+    const question = await Question.findByIdAndDelete(id);
+
+    if (!question) {
+      throw new Error('Question not found');
+    }
+
+    await invalidateQuizCache((question as any).book);
+
+    return { success: true, id };
+  } catch (error: any) {
+    console.error('[DELETE_QUESTION_ERROR]', error.message);
+    throw new Error(error.message || 'Failed to delete question');
   }
-
-  if (!adminKey || key !== adminKey) {
-    throw new Error('Unauthorized: Invalid Admin Secret Key');
-  }
-
-  await connectToDatabase();
-
-  const question = await Question.findByIdAndDelete(id);
-
-  if (!question) {
-    throw new Error('Question not found');
-  }
-
-  await invalidateQuizCache((question as any).book);
-
-  return { success: true, id };
 }

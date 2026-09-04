@@ -13,27 +13,22 @@ import {
   PlusCircle,
   CheckCircle2,
   AlertCircle,
-  Key,
   Layers,
   Sparkles,
   BookOpen,
   Search,
-  Filter,
   Edit,
   Trash2,
   Users,
   Database,
-  Phone,
-  Calendar,
-  Clock,
   X,
   RefreshCw,
   Check,
+  Calendar,
+  Trophy,
 } from 'lucide-react';
 
 export default function AdminPage() {
-  const [adminKey, setAdminKey] = useState('');
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState<'questions' | 'create' | 'users' | 'system'>('questions');
 
   // Question CRUD states
@@ -82,34 +77,14 @@ export default function AdminPage() {
   } | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('daquiz_admin_key');
-    if (saved) {
-      setAdminKey(saved);
-      setIsAuthorized(true);
-    }
+    loadQuestions();
+    loadUsers();
 
     fetch('/api/health')
       .then((res) => res.json())
       .then((data) => setHealthData(data))
       .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (isAuthorized && adminKey) {
-      if (activeTab === 'questions') {
-        loadQuestions();
-      } else if (activeTab === 'users') {
-        loadUsers();
-      }
-    }
-  }, [isAuthorized, adminKey, activeTab, page, selectedBook, selectedDiff]);
-
-  const handleAuthorize = () => {
-    if (!adminKey.trim()) return;
-    localStorage.setItem('daquiz_admin_key', adminKey.trim());
-    setIsAuthorized(true);
-    setStatusMessage({ type: 'success', text: 'Admin key saved successfully.' });
-  };
+  }, [page, selectedBook, selectedDiff]);
 
   const loadQuestions = async () => {
     setLoadingQuestions(true);
@@ -120,13 +95,11 @@ export default function AdminPage() {
         difficulty: selectedDiff,
         page,
         limit: 15,
-        adminKeyProvided: adminKey,
       });
       setQuestionsList(data.questions || []);
       setTotalQuestions(data.total || 0);
     } catch (err: any) {
-      console.error('Failed to load questions:', err);
-      setStatusMessage({ type: 'error', text: err.message || 'Failed to load questions.' });
+      console.warn('Failed to load questions:', err.message);
     } finally {
       setLoadingQuestions(false);
     }
@@ -135,11 +108,10 @@ export default function AdminPage() {
   const loadUsers = async () => {
     setLoadingUsers(true);
     try {
-      const users = await getAllUsersAdmin(adminKey);
+      const users = await getAllUsersAdmin();
       setUsersList(users || []);
     } catch (err: any) {
-      console.error('Failed to load users:', err);
-      setStatusMessage({ type: 'error', text: err.message || 'Failed to load user list.' });
+      console.warn('Failed to load users:', err.message);
     } finally {
       setLoadingUsers(false);
     }
@@ -151,7 +123,7 @@ export default function AdminPage() {
     }
 
     try {
-      await deleteQuestion(id, adminKey);
+      await deleteQuestion(id);
       setStatusMessage({ type: 'success', text: 'Question deleted successfully.' });
       loadQuestions();
     } catch (err: any) {
@@ -188,7 +160,6 @@ export default function AdminPage() {
         correctOptionIndex,
         explanation_en: explanationEn,
         explanation_ta: explanationTa,
-        adminKeyProvided: adminKey,
       };
 
       const result = await createQuestion(payload);
@@ -210,6 +181,7 @@ export default function AdminPage() {
         setExplanationEn('');
         setExplanationTa('');
         setActiveTab('questions');
+        loadQuestions();
       }
     } catch (err: any) {
       console.error('Create error:', err);
@@ -238,7 +210,6 @@ export default function AdminPage() {
         options: editingQuestion.options,
         explanation_en: editingQuestion.explanation?.en || '',
         explanation_ta: editingQuestion.explanation?.ta || '',
-        adminKeyProvided: adminKey,
       });
 
       setStatusMessage({ type: 'success', text: 'Question updated successfully!' });
@@ -261,36 +232,28 @@ export default function AdminPage() {
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-white">DaQuiz Admin Control Center</h1>
-              <p className="text-xs text-slate-400">
-                Manage bilingual question repository, registered users, and system health.
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-white tracking-tight">DaQuiz Admin Control Center</h1>
+            <p className="text-xs text-slate-400">
+              Directly manage question bank, edit/delete questions, and view registered participants.
+            </p>
           </div>
         </div>
 
-        {/* Authorization Input */}
         <div className="flex items-center gap-2">
-          <div className="relative">
-            <input
-              type="password"
-              value={adminKey}
-              onChange={(e) => setAdminKey(e.target.value)}
-              placeholder="Enter ADMIN_SECRET_KEY..."
-              className="px-3.5 py-2 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-xs text-white focus:outline-none w-56 font-mono"
-            />
-          </div>
           <button
-            onClick={handleAuthorize}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 font-extrabold text-xs shadow-md hover:scale-105 transition-all"
+            onClick={() => {
+              loadQuestions();
+              loadUsers();
+            }}
+            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5 transition-all"
           >
-            {isAuthorized ? 'Authorized' : 'Authorize'}
+            <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Sync Data</span>
           </button>
         </div>
       </div>
@@ -322,7 +285,7 @@ export default function AdminPage() {
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
         <button
           onClick={() => setActiveTab('questions')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'questions'
               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
               : 'text-slate-400 hover:text-white hover:bg-slate-900'
@@ -334,7 +297,7 @@ export default function AdminPage() {
 
         <button
           onClick={() => setActiveTab('create')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'create'
               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
               : 'text-slate-400 hover:text-white hover:bg-slate-900'
@@ -346,19 +309,19 @@ export default function AdminPage() {
 
         <button
           onClick={() => setActiveTab('users')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'users'
               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
               : 'text-slate-400 hover:text-white hover:bg-slate-900'
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>Registered Users ({usersList.length})</span>
+          <span>Registered Participants ({usersList.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('system')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'system'
               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
               : 'text-slate-400 hover:text-white hover:bg-slate-900'
@@ -388,7 +351,7 @@ export default function AdminPage() {
               </div>
               <button
                 onClick={loadQuestions}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold"
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 text-xs font-black"
               >
                 Search
               </button>
@@ -401,9 +364,9 @@ export default function AdminPage() {
                 className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 focus:outline-none"
               >
                 <option value="ALL">All Difficulties</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
+                <option value="easy">Easy (+100)</option>
+                <option value="medium">Medium (+150)</option>
+                <option value="hard">Hard (+200)</option>
               </select>
 
               <button
@@ -420,16 +383,16 @@ export default function AdminPage() {
           {loadingQuestions ? (
             <div className="py-16 text-center text-slate-400 space-y-2">
               <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-xs">Loading questions...</p>
+              <p className="text-xs">Loading question repository...</p>
             </div>
           ) : questionsList.length === 0 ? (
             <div className="glass-panel p-12 rounded-2xl text-center space-y-3">
-              <p className="text-slate-400 text-sm">No questions found matching your filter.</p>
+              <p className="text-slate-400 text-sm">No questions found matching your query.</p>
               <button
                 onClick={() => setActiveTab('create')}
-                className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-colors"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 text-xs font-black shadow-lg transition-all"
               >
-                Add the First Question
+                + Add a New Question Now
               </button>
             </div>
           ) : (
@@ -441,10 +404,10 @@ export default function AdminPage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 text-[10px] font-black uppercase">
+                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 text-[10px] font-black uppercase">
                         {q.difficulty}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-bold">
+                      <span className="px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-bold">
                         {q.book} {q.chapter}:{q.verse}
                       </span>
                       {q.category && (
@@ -457,17 +420,19 @@ export default function AdminPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setEditingQuestion(q)}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 transition-colors"
+                        className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-emerald-600/30 text-slate-300 hover:text-emerald-300 transition-colors flex items-center gap-1.5 text-xs font-bold"
                         title="Edit Question"
                       >
                         <Edit className="w-3.5 h-3.5" />
+                        <span>Edit</span>
                       </button>
                       <button
                         onClick={() => handleDeleteQuestion(q.id, q.question.en)}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600/30 text-slate-300 hover:text-rose-300 transition-colors"
+                        className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-rose-600/30 text-slate-300 hover:text-rose-300 transition-colors flex items-center gap-1.5 text-xs font-bold"
                         title="Delete Question"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
                       </button>
                     </div>
                   </div>
@@ -692,7 +657,7 @@ export default function AdminPage() {
         </form>
       )}
 
-      {/* ================= TAB 3: REGISTERED USERS ================= */}
+      {/* ================= TAB 3: REGISTERED PARTICIPANTS ================= */}
       {activeTab === 'users' && (
         <div className="space-y-6">
           <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex items-center justify-between gap-3">
@@ -708,7 +673,7 @@ export default function AdminPage() {
             </div>
             <button
               onClick={loadUsers}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loadingUsers ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
@@ -721,7 +686,7 @@ export default function AdminPage() {
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="glass-panel p-12 rounded-2xl text-center text-slate-400 text-xs">
-              No registered participants found.
+              No registered participants found yet. Users will appear here once they login or submit a quiz attempt.
             </div>
           ) : (
             <div className="glass-panel rounded-2xl border border-slate-800 overflow-x-auto">
@@ -734,7 +699,7 @@ export default function AdminPage() {
                     <th className="p-4">Total Points</th>
                     <th className="p-4">Quizzes Completed</th>
                     <th className="p-4">Practice Tests</th>
-                    <th className="p-4">Registered Date</th>
+                    <th className="p-4">Registration Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
@@ -790,10 +755,10 @@ export default function AdminPage() {
           <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
             <h3 className="font-bold text-white text-sm flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Admin Key Details</span>
+              <span>CRUD Access</span>
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Your `ADMIN_SECRET_KEY` is configured in your environment settings to prevent unauthorized question tampering.
+              Full access granted for creating, updating, and removing Bible quiz questions and managing church participants.
             </p>
           </div>
         </div>
