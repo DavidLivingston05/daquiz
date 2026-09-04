@@ -588,16 +588,6 @@ export default function QuizPlayPage() {
 
       {/* 3. Question Card */}
       <div className="warm-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-        {/* Header Tags */}
-        <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-3">
-          <span className="text-xs font-bold text-[#8C6B1B] dark:text-amber-300 bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 px-3 py-1 rounded-full">
-            {currentQ.category || 'Holy Bible'}
-          </span>
-          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase">
-            {currentQ.difficulty || 'General'}
-          </span>
-        </div>
-
         {/* Question Text */}
         <div className="space-y-2">
           {(langMode === 'both' || langMode === 'en') && currentQ.question?.en && (
