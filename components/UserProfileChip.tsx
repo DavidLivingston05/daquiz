@@ -119,7 +119,7 @@ export default function UserProfileChip() {
           !isAdmin && (
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-xs font-bold shadow-md shadow-[#1B3B6F]/20 hover:scale-105 transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl btn-modern-gold text-white text-xs font-bold shadow-md hover:scale-105 transition-all"
             >
               <LogIn className="w-3.5 h-3.5 stroke-[2.5]" />
               <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{signInLabel}</span>
