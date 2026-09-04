@@ -227,7 +227,7 @@ export default function AdminPage() {
         testament,
         book,
         chapter: Number(chapter),
-        verse: Number(verse),
+        verse: 1,
         difficulty,
         category,
         question_en: questionEn,
@@ -242,7 +242,7 @@ export default function AdminPage() {
       if (result.success) {
         setStatusMessage({
           type: 'success',
-          text: `Question for ${book} ${chapter}:${verse} created successfully!`,
+          text: `Question for ${book} Chapter ${chapter} created successfully!`,
         });
 
         // Reset form
@@ -609,7 +609,7 @@ export default function AdminPage() {
                         {q.difficulty}
                       </span>
                       <span className="px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-bold">
-                        {q.book} {q.chapter}:{q.verse}
+                        {q.book} Ch. {q.chapter}
                       </span>
                       {q.category && (
                         <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 text-[10px] font-medium">
@@ -680,7 +680,7 @@ export default function AdminPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1">Testament</label>
               <select
@@ -725,17 +725,6 @@ export default function AdminPage() {
                 min={1}
                 value={chapter}
                 onChange={(e) => setChapter(Number(e.target.value))}
-                className="w-full px-3.5 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Verse</label>
-              <input
-                type="number"
-                min={1}
-                value={verse}
-                onChange={(e) => setVerse(Number(e.target.value))}
                 className="w-full px-3.5 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white"
               />
             </div>
@@ -978,11 +967,11 @@ export default function AdminPage() {
 
             <h2 className="text-lg font-black text-white flex items-center gap-2">
               <Edit className="w-5 h-5 text-emerald-400" />
-              <span>Edit Question ({editingQuestion.book} {editingQuestion.chapter}:{editingQuestion.verse})</span>
+              <span>Edit Question ({editingQuestion.book} Ch. {editingQuestion.chapter})</span>
             </h2>
 
             <form onSubmit={handleEditSubmit} className="space-y-4 text-xs">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-300 font-bold mb-1">Book</label>
                   <input
@@ -998,15 +987,6 @@ export default function AdminPage() {
                     type="number"
                     value={editingQuestion.chapter}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, chapter: Number(e.target.value) })}
-                    className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-bold mb-1">Verse</label>
-                  <input
-                    type="number"
-                    value={editingQuestion.verse}
-                    onChange={(e) => setEditingQuestion({ ...editingQuestion, verse: Number(e.target.value) })}
                     className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white"
                   />
                 </div>

@@ -41,7 +41,7 @@ export const QuestionCreationSchema = z.object({
   testament: z.enum(['OT', 'NT']),
   book: z.string().min(1).max(50),
   chapter: z.number().int().min(1).max(999),
-  verse: z.number().int().min(1).max(999),
+  verse: z.number().int().min(1).max(999).optional().default(1),
   difficulty: z.enum(['easy', 'medium', 'hard']),
   category: z.string().min(1).max(100),
   question_en: z.string().min(5).max(500),
