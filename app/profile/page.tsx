@@ -374,11 +374,11 @@ export default function ProfilePage() {
                     </div>
 
                     <Link
-                      href={`/quiz/${encodeURIComponent(attempt.book)}?mode=${attempt.mode}&chapter=${attempt.chapter}`}
-                      className="px-3 py-1.5 rounded-xl btn-modern-gold text-xs font-extrabold shadow-sm flex items-center gap-1"
+                      href={`/quiz/${encodeURIComponent(attempt.book)}?mode=practice&chapter=${attempt.chapter}`}
+                      className="px-3 py-1.5 rounded-xl btn-modern-gold text-xs font-extrabold shadow-sm flex items-center gap-1.5"
                     >
-                      <RotateCcw className="w-3 h-3" />
-                      <span>{lang === 'ta' ? 'மீண்டும்' : 'Retake'}</span>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{lang === 'ta' ? 'ஆய்வு' : 'Review'}</span>
                     </Link>
                   </div>
                 </div>
