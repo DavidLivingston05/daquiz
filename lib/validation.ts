@@ -11,6 +11,7 @@ const ObjectIdSchema = z.string().regex(/^[0-9a-f]{24}$/i, 'Invalid MongoDB ID')
 // Quiz session validation
 export const QuizSessionSchema = z.object({
   book: z.string().min(1).max(50, 'Book name too long').trim(),
+  chapter: z.number().int().min(1).max(999).optional(),
   count: z.number().int().min(1).max(200).default(50),
 });
 
@@ -29,6 +30,7 @@ export const QuizSubmissionSchema = z.object({
     .max(100, 'Guest ID too long')
     .regex(/^[a-zA-Z0-9_-]+$/, 'Invalid guest ID format'),
   book: z.string().min(1).max(50),
+  chapter: z.number().int().min(1).max(999).optional(),
   totalTime: z.number().int().min(1).max(10800, 'Quiz took too long (max 3 hours)'),
   answers: z
     .array(AnswerSchema)

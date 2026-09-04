@@ -43,6 +43,9 @@ export default function QuizPlayPage() {
   const initialMode = searchParams.get('mode') === 'practice' ? 'practice' : 'competition';
   const [quizMode, setQuizMode] = useState<'competition' | 'practice'>(initialMode);
 
+  const rawChapter = searchParams.get('chapter');
+  const chapterParam = rawChapter && !isNaN(Number(rawChapter)) ? Number(rawChapter) : undefined;
+
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<SanitizedQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -87,10 +90,12 @@ export default function QuizPlayPage() {
       try {
         setLoading(true);
         setErrorMsg(null);
-        const data = await getQuizSession(book, 50, quizMode);
+        const data = await getQuizSession(book, 50, quizMode, chapterParam);
         if (!data || data.length === 0) {
           setErrorMsg(
-            `No active questions found for ${book}. You can add questions in the Admin portal or try another book.`
+            chapterParam
+              ? `No active questions found for ${book} Chapter ${chapterParam}. You can add questions in Admin or select another chapter.`
+              : `No active questions found for ${book}. You can add questions in the Admin portal or try another book.`
           );
         } else {
           setQuestions(data);
@@ -104,7 +109,7 @@ export default function QuizPlayPage() {
     }
 
     loadQuiz();
-  }, [book, quizMode]);
+  }, [book, quizMode, chapterParam]);
 
   // Timer effect (Competition mode only)
   useEffect(() => {
@@ -176,6 +181,7 @@ export default function QuizPlayPage() {
         userName: activeUser?.name,
         mode: quizMode,
         book,
+        chapter: chapterParam,
         totalTime: totalQuizTimeRef.current || 1,
         answers: answersToSubmit.filter(
           (a) => a.selectedOptionId && a.selectedOptionId !== 'timeout_no_answer'
@@ -425,7 +431,10 @@ export default function QuizPlayPage() {
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white transition-all shadow-sm"
         >
           <ChevronLeft className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
-          <span>{book}</span>
+          <span>
+            {book}
+            {chapterParam ? ` • ${langMode === 'ta' ? `அதிகாரம் ${chapterParam}` : `Ch. ${chapterParam}`}` : ''}
+          </span>
         </Link>
 
         {/* Competition / Practice Mode Pill */}

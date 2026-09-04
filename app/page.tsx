@@ -28,8 +28,10 @@ import {
 import { getAvailableBooks } from '@/lib/actions/quizActions';
 import { getLeaderboard, registerOrLoginUser } from '@/lib/actions/userActions';
 import { useLanguage } from '@/context/LanguageContext';
+import ChapterSelectModal from '@/components/ChapterSelectModal';
 
 const defaultBooks = [
+  { book: 'Joshua', testament: 'OT', count: 50, ta: 'யோசுவா' },
   { book: 'Genesis', testament: 'OT', count: 10, ta: 'ஆதியாகமம்' },
   { book: 'Psalms', testament: 'OT', count: 10, ta: 'சங்கீதம்' },
   { book: 'Proverbs', testament: 'OT', count: 10, ta: 'நீதிமொழிகள்' },
@@ -41,6 +43,7 @@ const defaultBooks = [
 ];
 
 const tamilBookNames: Record<string, string> = {
+  Joshua: 'யோசுவா',
   Genesis: 'ஆதியாகமம்',
   Exodus: 'யாத்திராகமம்',
   Leviticus: 'லேவியராகமம்',
@@ -64,6 +67,14 @@ export default function HomePage() {
   const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [leaderboardTab, setLeaderboardTab] = useState<'global' | 'group'>('global');
+
+  // Chapter Selection Modal State
+  const [selectedBookForChapter, setSelectedBookForChapter] = useState<{
+    book: string;
+    bookTa?: string;
+    testament?: string;
+    mode?: 'competition' | 'practice';
+  } | null>(null);
 
   // Auth Gate State
   const [authChecked, setAuthChecked] = useState(false);
@@ -700,7 +711,15 @@ export default function HomePage() {
               return (
                 <div
                   key={item.book}
-                  className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
+                  className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4 cursor-pointer"
+                  onClick={() =>
+                    setSelectedBookForChapter({
+                      book: item.book,
+                      bookTa: taName,
+                      testament: 'OT',
+                      mode: 'competition',
+                    })
+                  }
                 >
                   <div className="space-y-1.5">
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30 uppercase tracking-wider">
@@ -723,20 +742,36 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0] dark:border-[#232E42]">
-                    <Link
-                      href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0] dark:border-[#232E42]" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedBookForChapter({
+                          book: item.book,
+                          bookTa: taName,
+                          testament: 'OT',
+                          mode: 'competition',
+                        })
+                      }
                       className="flex-1 py-2.5 rounded-xl btn-modern-gold text-center text-xs font-extrabold shadow-sm transition-all"
                     >
                       {lang === 'ta' ? 'போட்டி' : 'Competition'}
-                    </Link>
-                    <Link
-                      href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedBookForChapter({
+                          book: item.book,
+                          bookTa: taName,
+                          testament: 'OT',
+                          mode: 'practice',
+                        })
+                      }
                       className="p-2.5 rounded-xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-600 dark:text-slate-300 transition-all"
                       title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
                       <GraduationCap className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
-                    </Link>
+                    </button>
                   </div>
                 </div>
               );
@@ -766,7 +801,15 @@ export default function HomePage() {
               return (
                 <div
                   key={item.book}
-                  className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
+                  className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4 cursor-pointer"
+                  onClick={() =>
+                    setSelectedBookForChapter({
+                      book: item.book,
+                      bookTa: taName,
+                      testament: 'NT',
+                      mode: 'competition',
+                    })
+                  }
                 >
                   <div className="space-y-1.5">
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30 uppercase tracking-wider">
@@ -789,20 +832,36 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0] dark:border-[#232E42]">
-                    <Link
-                      href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0] dark:border-[#232E42]" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedBookForChapter({
+                          book: item.book,
+                          bookTa: taName,
+                          testament: 'NT',
+                          mode: 'competition',
+                        })
+                      }
                       className="flex-1 py-2.5 rounded-xl btn-modern-gold text-center text-xs font-extrabold shadow-sm transition-all"
                     >
                       {lang === 'ta' ? 'போட்டி' : 'Competition'}
-                    </Link>
-                    <Link
-                      href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedBookForChapter({
+                          book: item.book,
+                          bookTa: taName,
+                          testament: 'NT',
+                          mode: 'practice',
+                        })
+                      }
                       className="p-2.5 rounded-xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-600 dark:text-slate-300 transition-all"
                       title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
                       <GraduationCap className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
-                    </Link>
+                    </button>
                   </div>
                 </div>
               );
@@ -810,6 +869,18 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Chapter Selection Modal */}
+      {selectedBookForChapter && (
+        <ChapterSelectModal
+          isOpen={!!selectedBookForChapter}
+          onClose={() => setSelectedBookForChapter(null)}
+          book={selectedBookForChapter.book}
+          bookTa={selectedBookForChapter.bookTa}
+          testament={selectedBookForChapter.testament}
+          initialMode={selectedBookForChapter.mode || 'competition'}
+        />
+      )}
     </div>
   );
 }

@@ -42,6 +42,7 @@ export interface SubmissionPayload {
   userName?: string;
   mode?: 'competition' | 'practice' | 'book';
   book: string;
+  chapter?: number;
   totalTime: number;
   answers: {
     questionId: string;
@@ -84,13 +85,46 @@ export async function getAvailableBooks() {
 }
 
 /**
- * Get quiz questions for a specific book
+ * Get available chapters and question counts for a specific book
+ */
+export async function getAvailableChapters(book: string) {
+  try {
+    await connectToDatabase();
+
+    const chapters = await Question.aggregate([
+      { $match: { book, isActive: true } },
+      {
+        $group: {
+          _id: '$chapter',
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          chapter: '$_id',
+          count: 1,
+        },
+      },
+      { $sort: { chapter: 1 } },
+    ]);
+
+    return chapters || [];
+  } catch (error: any) {
+    console.warn('[GET_AVAILABLE_CHAPTERS_WARN]', error.message);
+    return [];
+  }
+}
+
+/**
+ * Get quiz questions for a specific book and optional chapter
  * If mode === 'practice', includes explanations for instant study.
  */
 export async function getQuizSession(
   book: string,
   count = 50,
-  mode: 'competition' | 'practice' = 'competition'
+  mode: 'competition' | 'practice' = 'competition',
+  chapter?: number
 ): Promise<SanitizedQuestion[]> {
   let clientIp = 'unknown';
   try {
@@ -100,12 +134,17 @@ export async function getQuizSession(
 
   await enforceRateLimit(quizLoadLimiter, clientIp, 'Too many quiz requests');
 
-  const validated = validateInput(QuizSessionSchema, { book, count });
+  const validated = validateInput(QuizSessionSchema, { book, count, chapter });
 
   if (mode === 'practice') {
     // For practice mode, return questions with explanation
     await connectToDatabase();
-    const questions = await Question.find({ book: validated.book, isActive: true })
+    const filter: any = { book: validated.book, isActive: true };
+    if (validated.chapter) {
+      filter.chapter = validated.chapter;
+    }
+
+    const questions = await Question.find(filter)
       .limit(validated.count || 50)
       .select('-options.isCorrect')
       .lean();
@@ -124,7 +163,7 @@ export async function getQuizSession(
   }
 
   // Standard cached session for competition / regular quiz
-  return getCachedQuizQuestions(validated.book, validated.count);
+  return getCachedQuizQuestions(validated.book, validated.count, validated.chapter);
 }
 
 /**

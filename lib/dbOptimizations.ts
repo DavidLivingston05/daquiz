@@ -50,8 +50,10 @@ export async function ensureProductionIndexes() {
  * Get quiz questions with caching
  * 30-minute cache prevents database hammering
  */
-export async function getCachedQuizQuestions(book: string, count = 50) {
-  const cacheKey = `quiz:questions:${book}:${count}`;
+export async function getCachedQuizQuestions(book: string, count = 50, chapter?: number) {
+  const cacheKey = chapter
+    ? `quiz:questions:${book}:ch${chapter}:${count}`
+    : `quiz:questions:${book}:${count}`;
 
   if (redis) {
     try {
@@ -68,7 +70,7 @@ export async function getCachedQuizQuestions(book: string, count = 50) {
   }
 
   // Cache miss or no Redis: fetch from database
-  const questions = await getOptimizedQuizSession(book, count);
+  const questions = await getOptimizedQuizSession(book, count, chapter);
 
   // Store in cache
   if (redis) {
@@ -89,13 +91,18 @@ export async function getCachedQuizQuestions(book: string, count = 50) {
  * - Removes correct answer hints
  * - Uses indexed queries
  */
-export async function getOptimizedQuizSession(book: string, count = 50) {
+export async function getOptimizedQuizSession(book: string, count = 50, chapter?: number) {
   await connectToDatabase();
 
-  const totalCount = await Question.countDocuments({ book, isActive: true });
+  const filter: any = { book, isActive: true };
+  if (chapter && !isNaN(Number(chapter))) {
+    filter.chapter = Number(chapter);
+  }
+
+  const totalCount = await Question.countDocuments(filter);
   const skip = Math.floor(Math.random() * Math.max(0, totalCount - count + 1));
 
-  const questions = await Question.find({ book, isActive: true })
+  const questions = await Question.find(filter)
     .skip(skip)
     .limit(count)
     .select('-options.isCorrect') // Never send correct answers to client
