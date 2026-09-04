@@ -17,8 +17,10 @@ import {
   BookOpen,
   Sparkles,
   ChevronLeft,
+  ChevronRight,
   Zap,
   Check,
+  X,
   HelpCircle,
   Trophy,
   GraduationCap,
@@ -260,93 +262,132 @@ export default function QuizPlayPage() {
     );
   }
 
-  // ================= SCREEN 3: RESULTS CELEBRATION (MATCHING MOCKUP SCREEN 3) =================
+  // ================= SCREEN 3: RESULTS & ATTEMPTS REVIEW (COMPLETED DESIGN) =================
   if (quizResult) {
-    const totalScorePossible = questions.length * 100;
-    const timeBonus = Math.max(0, quizResult.score - quizResult.correctCount * 100);
-    const xpGained = quizResult.score + 10;
+    const correctCount = quizResult.correctCount || 0;
+    const wrongCount =
+      quizResult.review?.filter(
+        (r: any) => !r.isCorrect && r.selectedOptionId && r.selectedOptionId !== 'timeout_no_answer'
+      ).length || Math.max(0, quizResult.totalQuestions - correctCount);
+    const unansweredCount = Math.max(0, quizResult.totalQuestions - (correctCount + wrongCount));
+    const scorePercent =
+      Math.round((correctCount / (quizResult.totalQuestions || 1)) * 100) || 0;
+
+    const totalSeconds = totalQuizTimeRef.current || 1;
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const formattedDuration = `${minutes}MIN${seconds < 10 ? '0' : ''}${seconds}SECS`;
+    const formattedDate = new Date()
+      .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      .toUpperCase();
 
     return (
-      <div className="max-w-xl mx-auto space-y-6 animate-fadeIn pb-12">
-        <div className="warm-card rounded-3xl p-8 text-center space-y-6 shadow-xl">
-          {/* Trophy Icon */}
-          <div className="relative inline-block">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#E8A838] to-[#B87410] flex items-center justify-center mx-auto shadow-lg shadow-amber-500/30 text-3xl">
-              🏆
-            </div>
-            <span className="absolute -top-1 -right-1 text-xl animate-bounce">✨</span>
+      <div className="max-w-md mx-auto space-y-6 animate-fadeIn pb-12">
+        <div className="text-center space-y-1">
+          <h2 className="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">
+            {quizMode === 'practice'
+              ? langMode === 'ta'
+                ? 'பயிற்சி முயற்சிகள்'
+                : 'Practice Attempts'
+              : langMode === 'ta'
+              ? 'போட்டி முடிவுகள்'
+              : 'Quiz Results'}
+          </h2>
+        </div>
+
+        {/* Attempt Card Matching User Design */}
+        <div className="warm-card rounded-3xl p-6 sm:p-7 space-y-5 shadow-xl border border-[#EAE0D0] dark:border-[#232E42]">
+          <div className="text-center">
+            <h3 className="text-sm sm:text-base font-black uppercase text-slate-900 dark:text-white tracking-wider">
+              {langMode === 'ta' ? 'முயற்சி 1' : 'ATTEMPT 1'}
+            </h3>
           </div>
 
-          <div className="space-y-1.5">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-              {langMode === 'ta' ? 'வினாடி வினா முடிந்தது!' : 'Quiz Complete!'}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-              {langMode === 'ta'
-                ? `புத்தகம்: ${book} • அருமையான முயற்சி!`
-                : `Book: ${book} • Outstanding Bible Knowledge!`}
-            </p>
+          <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide px-1">
+            <span>{formattedDate}</span>
+            <span>{formattedDuration}</span>
           </div>
 
-          {/* Primary Score Banner */}
-          <div className="bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 rounded-2xl p-5 max-w-sm mx-auto">
-            <div className="text-xs uppercase font-extrabold text-[#8C6B1B] dark:text-amber-300 tracking-wider">
-              {langMode === 'ta' ? 'மொத்த மதிப்பெண்' : 'Score'}
+          <hr className="border-[#EAE0D0] dark:border-[#232E42]" />
+
+          {/* Circle Score + Status Breakdown */}
+          <div className="flex items-center justify-between sm:justify-around gap-4 py-2">
+            {/* Circular Percentage Ring */}
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 flex items-center justify-center shrink-0 shadow-inner">
+              <span className="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400">
+                {scorePercent}
+              </span>
             </div>
-            <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mt-1">
-              {quizResult.score} <span className="text-base text-slate-400 dark:text-slate-500 font-bold">/ {totalScorePossible}</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white dark:bg-[#141A26] border border-[#E8D8B8] dark:border-amber-500/30 text-xs font-black text-[#8C6B1B] dark:text-amber-300 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
-              <span>+{xpGained} XP Gained</span>
+
+            {/* Counts Breakdown */}
+            <div className="space-y-3 text-xs sm:text-sm">
+              <div className="flex items-center gap-2.5 font-bold text-slate-800 dark:text-slate-200">
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 stroke-[3] shrink-0" />
+                <span>
+                  <strong className="font-black text-slate-900 dark:text-white">{correctCount}</strong>{' '}
+                  {langMode === 'ta' ? 'சரியான விடைகள்' : 'Correct Answers'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5 font-bold text-slate-800 dark:text-slate-200">
+                <X className="w-4 h-4 text-rose-600 dark:text-rose-400 stroke-[3] shrink-0" />
+                <span>
+                  <strong className="font-black text-slate-900 dark:text-white">{wrongCount}</strong>{' '}
+                  {langMode === 'ta' ? 'தவறான விடைகள்' : 'Wrong Answers'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5 font-bold text-slate-800 dark:text-slate-200">
+                <span className="w-4 h-4 flex items-center justify-center text-amber-500 font-black text-base shrink-0">
+                  •
+                </span>
+                <span>
+                  <strong className="font-black text-slate-900 dark:text-white">{unansweredCount}</strong>{' '}
+                  {langMode === 'ta' ? 'விடை அளிக்காதவை' : 'Unanswered'}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Breakdown Metrics */}
-          <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
-            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
-              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Correct</span>
-              <p className="text-lg font-black text-slate-900 dark:text-white mt-0.5">
-                {quizResult.correctCount}/{quizResult.totalQuestions}
-              </p>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
-              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Accuracy</span>
-              <p className="text-lg font-black text-[#D49020] dark:text-amber-400 mt-0.5">{quizResult.accuracy}%</p>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
-              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Speed Bonus</span>
-              <p className="text-lg font-black text-[#8C6B1B] dark:text-amber-300 mt-0.5">+{timeBonus}</p>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-2.5 pt-2 max-w-md mx-auto">
+          <div className="pt-2 flex justify-end border-t border-[#EAE0D0] dark:border-[#232E42]">
             <button
               onClick={() => setShowReviewList(!showReviewList)}
-              className="w-full py-3.5 px-6 rounded-2xl btn-modern-gold font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+              className="text-xs font-black text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white uppercase tracking-wider flex items-center gap-1 transition-colors"
             >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{showReviewList ? 'Hide Review' : 'Review Answers'}</span>
+              <span>
+                {showReviewList
+                  ? langMode === 'ta'
+                    ? 'ஆய்வை மறை'
+                    : 'HIDE REVIEW'
+                  : wrongCount > 0
+                  ? langMode === 'ta'
+                    ? 'தவறுகளை ஆய்வு செய்'
+                    : 'REVIEW MISTAKES'
+                  : langMode === 'ta'
+                  ? 'விடைகளை ஆய்வு செய்'
+                  : 'REVIEW ANSWERS'}
+              </span>
+              <ChevronRight
+                className={`w-4 h-4 transition-transform ${showReviewList ? 'rotate-90' : ''}`}
+              />
             </button>
-
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                onClick={handleRestart}
-                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-200 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Try Again</span>
-              </button>
-              <Link
-                href="/"
-                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-200 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
-                <span>Back to Home</span>
-              </Link>
-            </div>
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
+          <button
+            onClick={handleRestart}
+            className="py-3 px-4 rounded-2xl btn-modern-gold font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>{langMode === 'ta' ? 'மீண்டும் முயற்சி' : 'Try Again'}</span>
+          </button>
+          <Link
+            href="/"
+            className="py-3 px-4 rounded-2xl bg-white dark:bg-[#141A26] hover:bg-[#FAF3E0] dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-800 dark:text-slate-200 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
+            <span>{langMode === 'ta' ? 'முகப்புக்குச் செல்' : 'Back to Home'}</span>
+          </Link>
         </div>
 
         {/* Detailed Question Review (Accordion) */}

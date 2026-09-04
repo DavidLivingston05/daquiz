@@ -678,11 +678,17 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Points Pill */}
+        {/* Completed Quizzes Pill */}
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 shadow-sm">
-            <Zap className="w-4 h-4 text-[#D49020] dark:text-amber-400 fill-[#D49020] dark:fill-amber-400" />
-            <span className="text-xs font-black">{currentUser?.totalScore || 450} XP</span>
+          <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 shadow-sm">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-black">
+              {currentUser?.quizzesTaken
+                ? `${currentUser.quizzesTaken} ${lang === 'ta' ? 'முடிந்தது' : 'Completed'}`
+                : lang === 'ta'
+                ? 'ஆரம்பிக்க தயார்'
+                : 'Ready to Start'}
+            </span>
           </div>
         </div>
       </div>

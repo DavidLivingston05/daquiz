@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { User, LogIn, Trophy, ShieldCheck, LogOut } from 'lucide-react';
+import { User, LogIn, Trophy, ShieldCheck, LogOut, CheckCircle2 } from 'lucide-react';
 import UserAuthModal from './UserAuthModal';
 
 import { useLanguage } from '@/context/LanguageContext';
@@ -98,11 +98,11 @@ export default function UserProfileChip() {
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="text-left hidden sm:block">
-                <span className="block text-slate-800 font-bold leading-tight truncate max-w-[100px]">
+                <span className="block text-slate-800 dark:text-white font-bold leading-tight truncate max-w-[100px]">
                   {user.name}
                 </span>
-                <span className="text-[10px] text-[#A87B1D] font-extrabold flex items-center gap-0.5">
-                  <Trophy className="w-2.5 h-2.5" /> {user.totalScore || 0} {ptsLabel}
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center gap-0.5">
+                  <CheckCircle2 className="w-2.5 h-2.5" /> {user.quizzesTaken || 0} {lang === 'ta' ? 'முடிந்தது' : 'Completed'}
                 </span>
               </div>
             </button>
