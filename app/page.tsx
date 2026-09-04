@@ -644,7 +644,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* 1. TOP WELCOME GREETING & STREAK BANNER */}
+      {/* 1. TOP WELCOME GREETING & STATUS BANNER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2">
@@ -656,18 +656,18 @@ export default function HomePage() {
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
             {lang === 'ta'
-              ? 'இன்றைய வேத வினாடி வினாவிற்கு நீங்கள் தயாரா?'
-              : 'Ready for your daily Scripture quiz?'}
+              ? 'வேத வினாடி வினாவிற்கு நீங்கள் தயாரா?'
+              : 'Ready for your Scripture quiz?'}
           </p>
         </div>
 
-        {/* Streak & Daily Goal Pill */}
+        {/* Streak & Points Pill */}
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white border border-[#EAE0D0] shadow-sm">
             <span className="text-base">🔥</span>
             <div>
-              <div className="text-xs font-black text-slate-800">7-Day Streak</div>
-              <div className="text-[10px] text-slate-500 font-semibold">Daily Goal (1/1)</div>
+              <div className="text-xs font-black text-slate-800">Streak Active</div>
+              <div className="text-[10px] text-slate-500 font-semibold">Keep Learning</div>
             </div>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B]">
@@ -676,50 +676,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
-      {/* 2. GOLDEN HERO BANNER: DAILY QUIZ (MATCHING MOCKUP SCREEN 1) */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#D4AF37] via-[#C59A3F] to-[#A87B1D] p-6 sm:p-8 text-white shadow-xl shadow-[#C59A3F]/20">
-        <div className="relative z-10 max-w-xl space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs font-extrabold uppercase tracking-wide">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-200" />
-            <span>{lang === 'ta' ? 'இன்றைய சிறப்பு வினாடி வினா' : 'Daily Quiz'}</span>
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-            {lang === 'ta' ? 'மத்தேயு: இயேசுவின் உவமைகள்' : 'The Parables: Gospel of Matthew'}
-          </h2>
-
-          <p className="text-white/90 text-xs sm:text-sm font-medium">
-            {lang === 'ta'
-              ? '10 கேள்விகள் • 15 நிமிடங்கள் • அதிக புள்ளிகளைப் பெறுங்கள்'
-              : '10 Questions • 15 mins • Test your memory on Christ’s parables'}
-          </p>
-
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            <Link
-              href="/quiz/Matthew?mode=competition"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-xs sm:text-sm shadow-lg hover:scale-105 transition-all"
-            >
-              <Trophy className="w-4 h-4 text-yellow-400" />
-              <span>{lang === 'ta' ? 'இப்போதே தொடங்கு' : 'Start Now (15 mins)'}</span>
-              <ArrowRight className="w-4 h-4 ml-0.5" />
-            </Link>
-
-            <Link
-              href="/quiz/Matthew?mode=practice"
-              className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 text-white font-bold text-xs sm:text-sm transition-all"
-            >
-              <GraduationCap className="w-4 h-4" />
-              <span>{lang === 'ta' ? 'பயிற்சி முறை' : 'Practice Mode'}</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Decorative Watermark */}
-        <div className="absolute right-2 bottom-0 opacity-15 pointer-events-none translate-x-4 translate-y-4">
-          <ScrollText className="w-64 h-64 text-white" />
-        </div>
-      </section>
 
       {/* 3. TESTAMENT CATEGORY PROGRESS CARDS (MATCHING MOCKUP SCREEN 1) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
