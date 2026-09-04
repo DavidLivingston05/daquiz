@@ -7,7 +7,7 @@ import {
   updateQuestion,
   deleteQuestion,
 } from '@/lib/actions/quizActions';
-import { getAllUsersAdmin } from '@/lib/actions/userActions';
+import { getAllUsersAdmin, deleteUserAdmin } from '@/lib/actions/userActions';
 import {
   ShieldCheck,
   PlusCircle,
@@ -211,6 +211,22 @@ export default function AdminPage() {
       }
     } catch (err: any) {
       setStatusMessage({ type: 'error', text: err.message || 'Failed to delete question.' });
+    }
+  };
+
+  const handleDeleteUser = async (id: string, name: string, phone: string) => {
+    if (!window.confirm(`Are you sure you want to delete participant:\n"${name}" (${phone})?\n\nThis will remove their registration and saved scores.`)) {
+      return;
+    }
+
+    try {
+      const res = await deleteUserAdmin(id);
+      if (res.success) {
+        setStatusMessage({ type: 'success', text: `Participant "${name}" deleted successfully.` });
+        loadUsers();
+      }
+    } catch (err: any) {
+      setStatusMessage({ type: 'error', text: err.message || 'Failed to delete participant.' });
     }
   };
 
@@ -950,6 +966,7 @@ export default function AdminPage() {
                     <th className="p-4">Quizzes Completed</th>
                     <th className="p-4">Practice Tests</th>
                     <th className="p-4">Registration Date</th>
+                    <th className="p-4 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EAE0D0] dark:divide-[#232E42]">
@@ -968,6 +985,16 @@ export default function AdminPage() {
                       <td className="p-4 text-slate-700 dark:text-slate-200 font-bold">{u.practiceCount}</td>
                       <td className="p-4 text-slate-500 dark:text-slate-400 text-[11px] font-medium">
                         {new Date(u.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-4 text-right">
+                        <button
+                          onClick={() => handleDeleteUser(u.id, u.name, u.phone)}
+                          className="px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-extrabold transition-all flex items-center gap-1.5 ml-auto"
+                          title="Delete Participant"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete</span>
+                        </button>
                       </td>
                     </tr>
                   ))}

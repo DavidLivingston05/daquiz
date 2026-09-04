@@ -66,15 +66,20 @@ export default function UserAuthModal({
     setLoading(true);
 
     try {
-      if (!name.trim()) throw new Error('Please enter your full name.');
-      if (!phone.trim() || phone.trim().length < 7)
-        throw new Error('Please enter a valid phone number (at least 7 digits).');
-      if (!age || Number(age) < 1 || Number(age) > 120)
-        throw new Error('Please enter a valid age between 1 and 120.');
+      if (!name.trim()) {
+        throw new Error(lang === 'ta' ? 'தயவுசெய்து உங்கள் பெயரை உள்ளிடவும்.' : 'Please enter your full name.');
+      }
+      const cleanPhone = phone.replace(/[^0-9]/g, '').trim();
+      if (!cleanPhone || cleanPhone.length !== 10) {
+        throw new Error(lang === 'ta' ? 'தொலைபேசி எண் சரியாக 10 இலக்கங்களாக இருக்க வேண்டும்.' : 'Phone number must be exactly 10 digits.');
+      }
+      if (!age || Number(age) < 1 || Number(age) > 120) {
+        throw new Error(lang === 'ta' ? 'சரியான வயதை உள்ளிடவும் (1 முதல் 120).' : 'Please enter a valid age between 1 and 120.');
+      }
 
       const result = await registerOrLoginUser({
         name: name.trim(),
-        phone: phone.trim(),
+        phone: cleanPhone,
         age: Number(age),
       });
 
@@ -147,7 +152,7 @@ export default function UserAuthModal({
       nameLabel: 'Name *',
       namePlaceholder: 'Your Name',
       phoneLabel: 'Phone No *',
-      phonePlaceholder: 'Phone Number',
+      phonePlaceholder: '10-digit Mobile Number',
       ageLabel: 'Age *',
       agePlaceholder: 'Age',
       adminUserLabel: 'Username *',
@@ -165,8 +170,8 @@ export default function UserAuthModal({
       loginTitleAdmin: 'நிர்வாகி உள்நுழைவு',
       nameLabel: 'பெயர் *',
       namePlaceholder: 'உங்கள் பெயர்',
-      phoneLabel: 'தொலைபேசி எண் *',
-      phonePlaceholder: 'தொலைபேசி எண்',
+      phoneLabel: 'தொலைபேசி எண் (10 இலக்கம்) *',
+      phonePlaceholder: '10 இலக்க மொபைல் எண்',
       ageLabel: 'வயது *',
       agePlaceholder: 'வயது',
       adminUserLabel: 'பயனர்பெயர் *',
@@ -184,8 +189,8 @@ export default function UserAuthModal({
       loginTitleAdmin: 'Admin Login • நிர்வாகி',
       nameLabel: 'Name (பெயர்) *',
       namePlaceholder: 'Your Name / பெயர்',
-      phoneLabel: 'Phone No (தொலைபேசி) *',
-      phonePlaceholder: 'Phone Number / எண்',
+      phoneLabel: 'Phone No (10 இலக்கம்) *',
+      phonePlaceholder: '10-digit Mobile / மொபைல் எண்',
       ageLabel: 'Age (வயது) *',
       agePlaceholder: 'Age / வயது',
       adminUserLabel: 'Username (பயனர்பெயர்) *',
@@ -295,8 +300,9 @@ export default function UserAuthModal({
                 <input
                   type="tel"
                   required
+                  maxLength={10}
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
                   placeholder={t.phonePlaceholder}
                   className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                 />

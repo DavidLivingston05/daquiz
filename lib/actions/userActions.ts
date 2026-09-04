@@ -19,12 +19,19 @@ export async function registerOrLoginUser(payload: UserAuthPayload) {
   try {
     await connectToDatabase();
 
-    const cleanPhone = payload.phone.replace(/[^0-9+]/g, '').trim();
+    // Clean phone number to strictly 10 digits (strip country codes / leading 0 if needed)
+    let cleanPhone = payload.phone.replace(/[^0-9]/g, '').trim();
+    if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
+      cleanPhone = cleanPhone.slice(1);
+    } else if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+      cleanPhone = cleanPhone.slice(2);
+    }
+
     const cleanName = payload.name.trim();
     const cleanAge = Math.min(120, Math.max(1, Number(payload.age) || 18));
 
-    if (!cleanPhone || cleanPhone.length < 7) {
-      throw new Error('Please enter a valid phone number (minimum 7 digits).');
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      throw new Error('Phone number must be exactly 10 digits.');
     }
 
     if (!cleanName || cleanName.length < 2) {
@@ -74,7 +81,12 @@ export async function registerOrLoginUser(payload: UserAuthPayload) {
 export async function getUserProfile(phone: string) {
   try {
     await connectToDatabase();
-    const cleanPhone = phone.replace(/[^0-9+]/g, '').trim();
+    let cleanPhone = phone.replace(/[^0-9]/g, '').trim();
+    if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
+      cleanPhone = cleanPhone.slice(1);
+    } else if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+      cleanPhone = cleanPhone.slice(2);
+    }
     const user = await User.findOne({ phone: cleanPhone }).lean();
 
     if (!user) {
@@ -158,5 +170,31 @@ export async function getAllUsersAdmin(adminKeyProvided?: string) {
   } catch (error: any) {
     console.error('[GET_ALL_USERS_ADMIN_ERROR]', error.message);
     return [];
+  }
+}
+
+/**
+ * Admin action to delete a registered user and their attempts
+ */
+export async function deleteUserAdmin(userId: string) {
+  try {
+    await connectToDatabase();
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    const userPhone = user.phone;
+    await Promise.all([
+      User.findByIdAndDelete(userId),
+      QuizAttempt.deleteMany({ userPhone }),
+    ]);
+
+    console.log(`[USER_DELETED_ADMIN] Deleted user ${userId} (${userPhone})`);
+    return { success: true };
+  } catch (error: any) {
+    console.error('[DELETE_USER_ADMIN_ERROR]', error.message);
+    throw new Error(error.message || 'Failed to delete user.');
   }
 }
