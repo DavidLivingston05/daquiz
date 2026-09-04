@@ -199,22 +199,22 @@ export default function UserAuthModal({
   }[lang];
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto">
       {/* Click outside backdrop */}
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-md my-auto overflow-hidden rounded-3xl bg-white border border-[#EAE0D0] p-6 sm:p-8 shadow-2xl shadow-[rgba(180,150,100,0.15)] space-y-6 animate-fadeIn text-slate-800">
+      <div className="relative z-10 w-full max-w-md my-auto overflow-hidden rounded-3xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] p-6 sm:p-8 shadow-2xl shadow-[rgba(180,150,100,0.15)] space-y-6 animate-fadeIn text-slate-800 dark:text-slate-100 transition-colors">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-[#FBF8F4] text-slate-400 hover:text-slate-800 hover:bg-[#F2E8D7] transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-xl bg-[#FBF8F4] dark:bg-[#1A2232] text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-[#F2E8D7] dark:hover:bg-[#20293D] transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Mode Selector Tabs */}
-        <div className="flex items-center p-1 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
+        <div className="flex items-center p-1 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
           <button
             type="button"
             onClick={() => {
@@ -223,8 +223,8 @@ export default function UserAuthModal({
             }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
               authMode === 'user'
-                ? 'bg-[#1B3B6F] text-white shadow-md'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'btn-modern-gold text-white shadow-md'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
             }`}
           >
             <User className="w-4 h-4" />
@@ -238,8 +238,8 @@ export default function UserAuthModal({
             }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
               authMode === 'admin'
-                ? 'bg-gradient-to-r from-[#D4AF37] to-[#C59A3F] text-slate-950 shadow-md font-black'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'btn-modern-gold text-white shadow-md'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -249,13 +249,13 @@ export default function UserAuthModal({
 
         {/* Header */}
         <div className="text-left">
-          <h2 className={`text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+          <h2 className={`text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-snug ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
             {authMode === 'user' ? t.loginTitleUser : t.loginTitleAdmin}
           </h2>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold">
             {error}
           </div>
         )}
@@ -265,7 +265,7 @@ export default function UserAuthModal({
           <form onSubmit={handleUserSubmit} className="space-y-4">
             {/* Name */}
             <div className="space-y-1.5 text-left">
-              <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 {t.nameLabel}
               </label>
               <div className="relative">
@@ -278,14 +278,14 @@ export default function UserAuthModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t.namePlaceholder}
-                  className={`w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] border border-[#EAE0D0] focus:border-[#D4AF37] rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
                 />
               </div>
             </div>
 
             {/* Phone */}
             <div className="space-y-1.5 text-left">
-              <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 {t.phoneLabel}
               </label>
               <div className="relative">
@@ -298,14 +298,14 @@ export default function UserAuthModal({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={t.phonePlaceholder}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] border border-[#EAE0D0] focus:border-[#D4AF37] rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Age */}
             <div className="space-y-1.5 text-left">
-              <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 {t.ageLabel}
               </label>
               <div className="relative">
@@ -320,19 +320,19 @@ export default function UserAuthModal({
                   value={age}
                   onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
                   placeholder={t.agePlaceholder}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] border border-[#EAE0D0] focus:border-[#D4AF37] rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Remember Me */}
             <div className="flex items-center justify-between text-xs pt-1">
-              <label className={`flex items-center gap-2 cursor-pointer text-slate-600 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 <input
                   type="checkbox"
                   checked={rememberUser}
                   onChange={(e) => setRememberUser(e.target.checked)}
-                  className="w-4 h-4 rounded border-[#EAE0D0] bg-[#FDFBF7] text-[#1B3B6F] focus:ring-[#1B3B6F]"
+                  className="w-4 h-4 rounded border-[#EAE0D0] bg-[#FDFBF7] dark:bg-[#1A2232] text-[#D49020] focus:ring-[#D49020]"
                 />
                 <span>{t.rememberMe}</span>
               </label>
@@ -343,7 +343,7 @@ export default function UserAuthModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-black text-sm shadow-xl shadow-[#1B3B6F]/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                className="w-full py-3 px-6 rounded-2xl btn-modern-gold font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -361,7 +361,7 @@ export default function UserAuthModal({
           <form onSubmit={handleAdminSubmit} className="space-y-4">
             {/* Admin Username */}
             <div className="space-y-1.5 text-left">
-              <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 {t.adminUserLabel}
               </label>
               <div className="relative">
@@ -374,14 +374,14 @@ export default function UserAuthModal({
                   value={adminUser}
                   onChange={(e) => setAdminUser(e.target.value)}
                   placeholder={t.adminUserPlaceholder}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] border border-[#EAE0D0] focus:border-[#D4AF37] rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Admin Password */}
             <div className="space-y-1.5 text-left">
-              <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 {t.adminPassLabel}
               </label>
               <div className="relative">
@@ -394,19 +394,19 @@ export default function UserAuthModal({
                   value={adminPass}
                   onChange={(e) => setAdminPass(e.target.value)}
                   placeholder={t.adminPassPlaceholder}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] border border-[#EAE0D0] focus:border-[#D4AF37] rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#FDFBF7] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Remember Me */}
             <div className="flex items-center justify-between text-xs pt-1">
-              <label className={`flex items-center gap-2 cursor-pointer text-slate-600 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <label className={`flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                 <input
                   type="checkbox"
                   checked={rememberAdmin}
                   onChange={(e) => setRememberAdmin(e.target.checked)}
-                  className="w-4 h-4 rounded border-[#EAE0D0] bg-[#FDFBF7] text-[#D4AF37] focus:ring-[#D4AF37]"
+                  className="w-4 h-4 rounded border-[#EAE0D0] bg-[#FDFBF7] dark:bg-[#1A2232] text-[#D49020] focus:ring-[#D49020]"
                 />
                 <span>{t.rememberMe}</span>
               </label>
@@ -417,10 +417,10 @@ export default function UserAuthModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#C59A3F] hover:from-[#C59A3F] hover:to-[#A87B1D] text-slate-950 font-black text-sm shadow-xl shadow-[#D4AF37]/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                className="w-full py-3 px-6 rounded-2xl btn-modern-gold font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
                     <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{t.submitAdmin}</span>
@@ -429,11 +429,11 @@ export default function UserAuthModal({
                 )}
               </button>
             </div>
-            </form>
-          )}
-        </div>
+          </form>
+        )}
       </div>
-    );
+    </div>
+  );
 
     return createPortal(modalContent, document.body);
   }

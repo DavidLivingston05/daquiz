@@ -315,17 +315,17 @@ export default function HomePage() {
 
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md bg-white border border-[#EAE0D0] rounded-3xl p-6 sm:p-8 shadow-xl shadow-[#2C1810]/5 space-y-6 animate-fadeIn">
+        <div className="w-full max-w-md bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] rounded-3xl p-6 sm:p-8 shadow-xl shadow-[#2C1810]/5 space-y-6 animate-fadeIn transition-colors">
           
           {/* STEP 1: LANGUAGE SELECTION FIRST */}
           {entryStep === 'language' ? (
             <div className="space-y-5">
               <div className="text-left space-y-1.5">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B] text-xs font-black uppercase tracking-wider">
-                  <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 text-xs font-black uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
                   <span>{t.step1Badge}</span>
                 </div>
-                <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+                <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                   {t.step1Title}
                 </h1>
               </div>
@@ -337,19 +337,19 @@ export default function HomePage() {
                   onClick={() => setLanguage('en')}
                   className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
                     lang === 'en'
-                      ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/30'
-                      : 'bg-[#FBF8F4] border-[#EAE0D0] text-slate-700 hover:border-[#C5A059]/60 hover:bg-white'
+                      ? 'bg-[#FAF3E0] dark:bg-amber-500/15 border-[#D49020] dark:border-amber-500/40 text-[#3D2F14] dark:text-amber-200 shadow-md ring-2 ring-[#D49020]/30'
+                      : 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-300 hover:border-[#D49020]/60 hover:bg-white dark:hover:bg-[#20293D]'
                   }`}
                 >
                   <div className="flex items-center gap-3.5">
                     <span className="text-2xl">🇬🇧</span>
                     <div>
-                      <div className="font-extrabold text-sm text-slate-900">English</div>
-                      <div className="text-xs text-slate-500">Pure English quiz interface</div>
+                      <div className="font-extrabold text-sm text-slate-900 dark:text-white">English</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">Pure English quiz interface</div>
                     </div>
                   </div>
                   {lang === 'en' && (
-                    <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-black shadow-sm">
+                    <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#E8A838] to-[#B87410] text-white flex items-center justify-center text-xs font-black shadow-sm">
                       ✓
                     </span>
                   )}
@@ -360,19 +360,19 @@ export default function HomePage() {
                   onClick={() => setLanguage('ta')}
                   className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
                     lang === 'ta'
-                      ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/30'
-                      : 'bg-[#FBF8F4] border-[#EAE0D0] text-slate-700 hover:border-[#C5A059]/60 hover:bg-white'
+                      ? 'bg-[#FAF3E0] dark:bg-amber-500/15 border-[#D49020] dark:border-amber-500/40 text-[#3D2F14] dark:text-amber-200 shadow-md ring-2 ring-[#D49020]/30'
+                      : 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-300 hover:border-[#D49020]/60 hover:bg-white dark:hover:bg-[#20293D]'
                   }`}
                 >
                   <div className="flex items-center gap-3.5">
                     <span className="text-2xl">🇮🇳</span>
                     <div>
-                      <div className="font-extrabold font-tamil text-sm text-slate-900">தமிழ்</div>
-                      <div className="text-xs font-tamil text-slate-500">முழுமையான தமிழ் இடைமுகம்</div>
+                      <div className="font-extrabold font-tamil text-sm text-slate-900 dark:text-white">தமிழ்</div>
+                      <div className="text-xs font-tamil text-slate-500 dark:text-slate-400">முழுமையான தமிழ் இடைமுகம்</div>
                     </div>
                   </div>
                   {lang === 'ta' && (
-                    <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-black shadow-sm">
+                    <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#E8A838] to-[#B87410] text-white flex items-center justify-center text-xs font-black shadow-sm">
                       ✓
                     </span>
                   )}
@@ -383,19 +383,19 @@ export default function HomePage() {
                   onClick={() => setLanguage('both')}
                   className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
                     lang === 'both'
-                      ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/30'
-                      : 'bg-[#FBF8F4] border-[#EAE0D0] text-slate-700 hover:border-[#C5A059]/60 hover:bg-white'
+                      ? 'bg-[#FAF3E0] dark:bg-amber-500/15 border-[#D49020] dark:border-amber-500/40 text-[#3D2F14] dark:text-amber-200 shadow-md ring-2 ring-[#D49020]/30'
+                      : 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-300 hover:border-[#D49020]/60 hover:bg-white dark:hover:bg-[#20293D]'
                   }`}
                 >
                   <div className="flex items-center gap-3.5">
                     <span className="text-2xl">🌐</span>
                     <div>
-                      <div className="font-extrabold text-sm text-slate-900">Both / இருமொழி</div>
-                      <div className="text-xs text-slate-500">English + தமிழ் side-by-side</div>
+                      <div className="font-extrabold text-sm text-slate-900 dark:text-white">Both / இருமொழி</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">English + தமிழ் side-by-side</div>
                     </div>
                   </div>
                   {lang === 'both' && (
-                    <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-black shadow-sm">
+                    <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#E8A838] to-[#B87410] text-white flex items-center justify-center text-xs font-black shadow-sm">
                       ✓
                     </span>
                   )}
@@ -406,7 +406,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setEntryStep('auth')}
-                className="w-full py-3.5 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                className="w-full py-3.5 px-6 rounded-2xl btn-modern-gold font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
               >
                 <span>{t.continueBtn}</span>
               </button>
@@ -414,24 +414,24 @@ export default function HomePage() {
           ) : (
             /* STEP 2: SIGN IN (PARTICIPANT OR ADMIN) */
             <div className="space-y-5">
-              <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-3">
+              <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-3">
                 <button
                   type="button"
                   onClick={() => {
                     setEntryStep('language');
                     setAuthError(null);
                   }}
-                  className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 font-semibold transition-colors"
+                  className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-semibold transition-colors"
                 >
                   <span>{t.backBtn}</span>
                 </button>
-                <span className="text-[11px] font-extrabold text-[#8C6B1B] bg-[#FAF3E0] px-2 py-0.5 rounded-md uppercase">
+                <span className="text-[11px] font-extrabold text-[#8C6B1B] dark:text-amber-300 bg-[#FAF3E0] dark:bg-amber-500/15 px-2 py-0.5 rounded-md uppercase">
                   {t.step2Indicator}
                 </span>
               </div>
 
               {/* Mode Tabs */}
-              <div className="flex items-center p-1 rounded-2xl bg-[#F4EDE2] border border-[#E5DAC8]">
+              <div className="flex items-center p-1 rounded-2xl bg-[#F4EDE2] dark:bg-[#1A2232] border border-[#E5DAC8] dark:border-[#232E42]">
                 <button
                   type="button"
                   onClick={() => {
@@ -440,8 +440,8 @@ export default function HomePage() {
                   }}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
                     authTab === 'user'
-                      ? 'bg-white text-[#1B3B6F] shadow-sm'
-                      : 'text-slate-500 hover:text-slate-800'
+                      ? 'btn-modern-gold text-white shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
                   }`}
                 >
                   <User className="w-4 h-4" />
@@ -455,8 +455,8 @@ export default function HomePage() {
                   }}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-extrabold transition-all ${
                     authTab === 'admin'
-                      ? 'bg-[#C5A059] text-white shadow-sm'
-                      : 'text-slate-500 hover:text-slate-800'
+                      ? 'btn-modern-gold text-white shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4" />
@@ -466,13 +466,13 @@ export default function HomePage() {
 
               {/* Heading */}
               <div className="text-left">
-                <h1 className={`text-xl font-black text-slate-800 tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                <h1 className={`text-xl font-black text-slate-900 dark:text-white tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                   {authTab === 'user' ? t.loginTitleUser : t.loginTitleAdmin}
                 </h1>
               </div>
 
               {authError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold">
                   {authError}
                 </div>
               )}
@@ -481,7 +481,7 @@ export default function HomePage() {
               {authTab === 'user' ? (
                 <form onSubmit={handleUserLoginSubmit} className="space-y-4">
                   <div className="space-y-1 text-left">
-                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.nameLabel}
                     </label>
                     <div className="relative">
@@ -494,13 +494,13 @@ export default function HomePage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder={t.namePlaceholder}
-                        className={`w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#1B3B6F] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
+                        className={`w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1 text-left">
-                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.phoneLabel}
                     </label>
                     <div className="relative">
@@ -513,13 +513,13 @@ export default function HomePage() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder={t.phonePlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#1B3B6F] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1 text-left">
-                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.ageLabel}
                     </label>
                     <div className="relative">
@@ -534,18 +534,18 @@ export default function HomePage() {
                         value={age}
                         onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
                         placeholder={t.agePlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#1B3B6F] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <label className={`flex items-center gap-2 cursor-pointer text-slate-600 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       <input
                         type="checkbox"
                         checked={rememberUser}
                         onChange={(e) => setRememberUser(e.target.checked)}
-                        className="w-4 h-4 rounded border-[#EAE0D0] text-[#1B3B6F] focus:ring-[#1B3B6F]"
+                        className="w-4 h-4 rounded border-[#EAE0D0] text-[#D49020] focus:ring-[#D49020]"
                       />
                       <span>{t.rememberMe}</span>
                     </label>
@@ -555,7 +555,7 @@ export default function HomePage() {
                     <button
                       type="submit"
                       disabled={loadingAuth}
-                      className="w-full py-3.5 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3.5 px-6 rounded-2xl btn-modern-gold font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
                     >
                       {loadingAuth ? (
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -568,7 +568,7 @@ export default function HomePage() {
               ) : (
                 <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
                   <div className="space-y-1 text-left">
-                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.adminUserLabel}
                     </label>
                     <div className="relative">
@@ -581,13 +581,13 @@ export default function HomePage() {
                         value={adminUser}
                         onChange={(e) => setAdminUser(e.target.value)}
                         placeholder={t.adminUserPlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#C5A059] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1 text-left">
-                    <label className={`block text-xs font-bold text-slate-700 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`block text-xs font-bold text-slate-700 dark:text-slate-300 ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       {t.adminPassLabel}
                     </label>
                     <div className="relative">
@@ -600,18 +600,18 @@ export default function HomePage() {
                         value={adminPass}
                         onChange={(e) => setAdminPass(e.target.value)}
                         placeholder={t.adminPassPlaceholder}
-                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] border border-[#EAE0D0] focus:border-[#C5A059] focus:bg-white rounded-xl text-sm text-slate-900 focus:outline-none transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <label className={`flex items-center gap-2 cursor-pointer text-slate-600 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+                    <label className={`flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400 select-none ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                       <input
                         type="checkbox"
                         checked={rememberAdmin}
                         onChange={(e) => setRememberAdmin(e.target.checked)}
-                        className="w-4 h-4 rounded border-[#EAE0D0] text-[#C5A059] focus:ring-[#C5A059]"
+                        className="w-4 h-4 rounded border-[#EAE0D0] text-[#D49020] focus:ring-[#D49020]"
                       />
                       <span>{t.rememberMe}</span>
                     </label>
@@ -621,7 +621,7 @@ export default function HomePage() {
                     <button
                       type="submit"
                       disabled={loadingAuth}
-                      className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#B38728] text-white font-extrabold text-sm shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3.5 px-6 rounded-2xl btn-modern-gold font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
                     >
                       {loadingAuth ? (
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -643,18 +643,18 @@ export default function HomePage() {
   const greetingName = currentUser?.name || (isAdminLoggedIn ? 'Admin' : 'Believer');
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-12 animate-fadeIn">
       {/* 1. TOP WELCOME GREETING & STATUS BANNER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
             <span>
               {lang === 'ta'
                 ? `வணக்கம், ${greetingName}! 👋`
                 : `Welcome, ${greetingName}! 👋`}
             </span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">
             {lang === 'ta'
               ? 'வேத வினாடி வினாவிற்கு நீங்கள் தயாரா?'
               : 'Ready for your Scripture quiz?'}
@@ -663,15 +663,15 @@ export default function HomePage() {
 
         {/* Streak & Points Pill */}
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white border border-[#EAE0D0] shadow-sm">
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] shadow-sm">
             <span className="text-base">🔥</span>
             <div>
-              <div className="text-xs font-black text-slate-800">Streak Active</div>
-              <div className="text-[10px] text-slate-500 font-semibold">Keep Learning</div>
+              <div className="text-xs font-black text-slate-900 dark:text-white">Streak Active</div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">Keep Learning</div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B]">
-            <Zap className="w-4 h-4 text-[#C5A059] fill-[#C5A059]" />
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300">
+            <Zap className="w-4 h-4 text-[#D49020] dark:text-amber-400 fill-[#D49020] dark:fill-amber-400" />
             <span className="text-xs font-black">{currentUser?.totalScore || 450} XP</span>
           </div>
         </div>
@@ -685,16 +685,16 @@ export default function HomePage() {
             <div className="flex items-center gap-2.5">
               <span className="text-2xl">🧔</span>
               <div>
-                <h3 className="text-sm font-black text-slate-800">
+                <h3 className="text-sm font-black text-slate-900 dark:text-white">
                   {lang === 'ta' ? 'புதிய ஏற்பாடு' : 'New Testament'}
                 </h3>
-                <p className="text-[11px] text-slate-500 font-medium">75 / 120 completed</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">75 / 120 completed</p>
               </div>
             </div>
-            <span className="text-xs font-black text-[#1B3B6F]">62%</span>
+            <span className="text-xs font-black text-[#D49020] dark:text-amber-400">62%</span>
           </div>
-          <div className="h-2 w-full bg-[#EAE0D0] rounded-full overflow-hidden">
-            <div className="h-full bg-[#1B3B6F] rounded-full" style={{ width: '62%' }} />
+          <div className="h-2 w-full bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-[#E8A838] to-[#D49020] rounded-full" style={{ width: '62%' }} />
           </div>
         </div>
 
@@ -704,15 +704,15 @@ export default function HomePage() {
             <div className="flex items-center gap-2.5">
               <span className="text-2xl">📖</span>
               <div>
-                <h3 className="text-sm font-black text-slate-800">
+                <h3 className="text-sm font-black text-slate-900 dark:text-white">
                   {lang === 'ta' ? 'பழைய ஏற்பாடு' : 'Old Testament'}
                 </h3>
-                <p className="text-[11px] text-slate-500 font-medium">20 / 120 completed</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">20 / 120 completed</p>
               </div>
             </div>
-            <span className="text-xs font-black text-[#C5A059]">17%</span>
+            <span className="text-xs font-black text-[#D49020] dark:text-amber-400">17%</span>
           </div>
-          <div className="h-2 w-full bg-[#EAE0D0] rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#C59A3F] rounded-full" style={{ width: '17%' }} />
           </div>
         </div>
@@ -723,16 +723,16 @@ export default function HomePage() {
             <div className="flex items-center gap-2.5">
               <span className="text-2xl">👑</span>
               <div>
-                <h3 className="text-sm font-black text-slate-800">
+                <h3 className="text-sm font-black text-slate-900 dark:text-white">
                   {lang === 'ta' ? 'வேத பாத்திரங்கள்' : 'Characters'}
                 </h3>
-                <p className="text-[11px] text-slate-500 font-medium">15 / 30 completed</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">15 / 30 completed</p>
               </div>
             </div>
-            <span className="text-xs font-black text-amber-700">50%</span>
+            <span className="text-xs font-black text-amber-600 dark:text-amber-400">50%</span>
           </div>
-          <div className="h-2 w-full bg-[#EAE0D0] rounded-full overflow-hidden">
-            <div className="h-full bg-amber-600 rounded-full" style={{ width: '50%' }} />
+          <div className="h-2 w-full bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full" style={{ width: '50%' }} />
           </div>
         </div>
       </div>
@@ -741,16 +741,16 @@ export default function HomePage() {
       <div id="books-section" className="space-y-8">
         {/* Old Testament */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-2.5">
+          <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-2.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center">
                 <BookMarked className="w-4 h-4" />
               </div>
-              <h2 className="text-lg font-black text-slate-800">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white">
                 {lang === 'ta' ? 'பழைய ஏற்பாடு' : 'Old Testament'}
               </h2>
             </div>
-            <span className="text-xs text-slate-500 font-bold">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
               {otBooks.length} {lang === 'ta' ? 'புத்தகங்கள்' : 'Books'}
             </span>
           </div>
@@ -764,39 +764,39 @@ export default function HomePage() {
                   className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-200 uppercase tracking-wider">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30 uppercase tracking-wider">
                       OT
                     </span>
 
                     {lang === 'en' && (
-                      <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
+                      <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{item.book}</h3>
                     )}
                     {lang === 'ta' && (
-                      <h3 className="text-lg font-tamil font-extrabold text-slate-900">{taName || item.book}</h3>
+                      <h3 className="text-lg font-tamil font-extrabold text-slate-900 dark:text-white">{taName || item.book}</h3>
                     )}
                     {lang === 'both' && (
                       <div>
-                        <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
+                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{item.book}</h3>
                         {taName && (
-                          <p className="text-xs font-tamil text-slate-500 font-semibold">{taName}</p>
+                          <p className="text-xs font-tamil text-slate-500 dark:text-slate-400 font-semibold">{taName}</p>
                         )}
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0]">
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0] dark:border-[#232E42]">
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
-                      className="flex-1 py-2.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-center text-xs font-extrabold shadow-sm transition-all"
+                      className="flex-1 py-2.5 rounded-xl btn-modern-gold text-center text-xs font-extrabold shadow-sm transition-all"
                     >
                       {lang === 'ta' ? 'போட்டி' : 'Competition'}
                     </Link>
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
-                      className="p-2.5 rounded-xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-600 hover:text-slate-900 transition-all"
+                      className="p-2.5 rounded-xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-600 dark:text-slate-300 transition-all"
                       title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
-                      <GraduationCap className="w-4 h-4 text-[#8C6B1B]" />
+                      <GraduationCap className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
                     </Link>
                   </div>
                 </div>
@@ -807,16 +807,16 @@ export default function HomePage() {
 
         {/* New Testament */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-2.5">
+          <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-2.5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-[#1B3B6F] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-500/15 border border-amber-200 dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center">
                 <BookMarked className="w-4 h-4" />
               </div>
-              <h2 className="text-lg font-black text-slate-800">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white">
                 {lang === 'ta' ? 'புதிய ஏற்பாடு' : 'New Testament'}
               </h2>
             </div>
-            <span className="text-xs text-slate-500 font-bold">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">
               {ntBooks.length} {lang === 'ta' ? 'புத்தகங்கள்' : 'Books'}
             </span>
           </div>
@@ -830,39 +830,39 @@ export default function HomePage() {
                   className="warm-card warm-card-hover rounded-2xl p-5 flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-blue-100 text-[#1B3B6F] border border-blue-200 uppercase tracking-wider">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30 uppercase tracking-wider">
                       NT
                     </span>
 
                     {lang === 'en' && (
-                      <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
+                      <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{item.book}</h3>
                     )}
                     {lang === 'ta' && (
-                      <h3 className="text-lg font-tamil font-extrabold text-slate-900">{taName || item.book}</h3>
+                      <h3 className="text-lg font-tamil font-extrabold text-slate-900 dark:text-white">{taName || item.book}</h3>
                     )}
                     {lang === 'both' && (
                       <div>
-                        <h3 className="text-lg font-extrabold text-slate-900">{item.book}</h3>
+                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{item.book}</h3>
                         {taName && (
-                          <p className="text-xs font-tamil text-slate-500 font-semibold">{taName}</p>
+                          <p className="text-xs font-tamil text-slate-500 dark:text-slate-400 font-semibold">{taName}</p>
                         )}
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0]">
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#EAE0D0] dark:border-[#232E42]">
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=competition`}
-                      className="flex-1 py-2.5 rounded-xl bg-[#1B3B6F] hover:bg-[#142C54] text-white text-center text-xs font-extrabold shadow-sm transition-all"
+                      className="flex-1 py-2.5 rounded-xl btn-modern-gold text-center text-xs font-extrabold shadow-sm transition-all"
                     >
                       {lang === 'ta' ? 'போட்டி' : 'Competition'}
                     </Link>
                     <Link
                       href={`/quiz/${encodeURIComponent(item.book)}?mode=practice`}
-                      className="p-2.5 rounded-xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-600 hover:text-slate-900 transition-all"
+                      className="p-2.5 rounded-xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-600 dark:text-slate-300 transition-all"
                       title={lang === 'ta' ? 'பயிற்சி வினாடி வினா' : 'Practice Test'}
                     >
-                      <GraduationCap className="w-4 h-4 text-[#8C6B1B]" />
+                      <GraduationCap className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
                     </Link>
                   </div>
                 </div>
@@ -874,16 +874,16 @@ export default function HomePage() {
 
       {/* 5. LEADERBOARD SECTION (MATCHING MOCKUP SCREEN 4) */}
       <div id="leaderboard-section" className="warm-card rounded-3xl p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE0D0] pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE0D0] dark:border-[#232E42] pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] text-[#8C6B1B] flex items-center justify-center">
-              <Trophy className="w-5 h-5 text-[#C5A059]" />
+            <div className="w-10 h-10 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-[#D49020] dark:text-amber-400" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-800">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">
                 {lang === 'ta' ? 'தரவரிசைப் பட்டியல்' : 'Leaderboard & Top Ranks'}
               </h3>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 {lang === 'ta'
                   ? 'சிறந்த பங்கேற்பாளர்கள் மற்றும் புள்ளிகள்'
                   : 'Compete for the top podium on DaQuiz'}
@@ -892,13 +892,13 @@ export default function HomePage() {
           </div>
 
           {/* Global vs Church Group Toggle */}
-          <div className="inline-flex p-1 rounded-2xl bg-[#F4EDE2] border border-[#E5DAC8]">
+          <div className="inline-flex p-1 rounded-2xl bg-[#F4EDE2] dark:bg-[#1A2232] border border-[#E5DAC8] dark:border-[#232E42]">
             <button
               onClick={() => setLeaderboardTab('global')}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
                 leaderboardTab === 'global'
-                  ? 'bg-[#1B3B6F] text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'btn-modern-gold text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {lang === 'ta' ? 'அனைத்து பங்கேற்பாளர்கள்' : 'Global'}
@@ -907,8 +907,8 @@ export default function HomePage() {
               onClick={() => setLeaderboardTab('group')}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
                 leaderboardTab === 'group'
-                  ? 'bg-[#1B3B6F] text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'btn-modern-gold text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {lang === 'ta' ? 'சபை குழு' : 'Church Group'}
@@ -923,20 +923,20 @@ export default function HomePage() {
               {leaderboard.slice(0, 3).map((player: any, idx: number) => {
                 const medals = ['🥇', '🥈', '🥉'];
                 const rankBgs = [
-                  'bg-gradient-to-b from-[#FAF3E0] to-white border-[#C5A059]',
-                  'bg-gradient-to-b from-slate-50 to-white border-slate-300',
-                  'bg-gradient-to-b from-amber-50/60 to-white border-amber-300',
+                  'bg-gradient-to-b from-[#FAF3E0] dark:from-amber-500/20 to-white dark:to-[#141A26] border-[#D49020] dark:border-amber-500/40',
+                  'bg-gradient-to-b from-slate-50 dark:from-slate-800/40 to-white dark:to-[#141A26] border-slate-300 dark:border-slate-700',
+                  'bg-gradient-to-b from-amber-50/60 dark:from-amber-600/15 to-white dark:to-[#141A26] border-amber-300 dark:border-amber-600/40',
                 ];
 
                 return (
                   <div
                     key={player.id || idx}
-                    className={`rounded-2xl border p-4 text-center space-y-2.5 shadow-sm ${rankBgs[idx] || 'bg-white border-[#EAE0D0]'}`}
+                    className={`rounded-2xl border p-4 text-center space-y-2.5 shadow-sm ${rankBgs[idx] || 'bg-white dark:bg-[#141A26] border-[#EAE0D0] dark:border-[#232E42]'}`}
                   >
                     <div className="text-3xl">{medals[idx]}</div>
                     <div>
-                      <div className="font-black text-sm text-slate-900 truncate">{player.name}</div>
-                      <div className="text-xs font-extrabold text-[#8C6B1B] mt-0.5">{player.totalScore} XP</div>
+                      <div className="font-black text-sm text-slate-900 dark:text-white truncate">{player.name}</div>
+                      <div className="text-xs font-extrabold text-[#8C6B1B] dark:text-amber-300 mt-0.5">{player.totalScore} XP</div>
                     </div>
                   </div>
                 );
@@ -949,15 +949,15 @@ export default function HomePage() {
                 {leaderboard.slice(3).map((player: any) => (
                   <div
                     key={player.id}
-                    className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0] flex items-center justify-between"
+                    className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-lg bg-[#EAE0D0] text-slate-700 text-xs font-black flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-lg bg-[#EAE0D0] dark:bg-[#232E42] text-slate-700 dark:text-slate-200 text-xs font-black flex items-center justify-center">
                         #{player.rank}
                       </span>
-                      <span className="text-xs font-bold text-slate-800">{player.name}</span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{player.name}</span>
                     </div>
-                    <span className="text-xs font-black text-[#8C6B1B]">{player.totalScore} XP</span>
+                    <span className="text-xs font-black text-[#8C6B1B] dark:text-amber-300">{player.totalScore} XP</span>
                   </div>
                 ))}
               </div>
@@ -965,7 +965,7 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="text-center py-8 space-y-2">
-            <p className="text-sm font-semibold text-slate-500">
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
               {lang === 'ta'
                 ? 'முதல் வினாடி வினாவை முடித்து தரவரிசையில் முதலிடம் பெறுங்கள்!'
                 : 'Complete the first quiz to claim #1 rank on the leaderboard!'}

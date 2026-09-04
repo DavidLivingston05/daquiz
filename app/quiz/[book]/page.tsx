@@ -265,17 +265,17 @@ export default function QuizPlayPage() {
         <div className="warm-card rounded-3xl p-8 text-center space-y-6 shadow-xl">
           {/* Trophy Icon */}
           <div className="relative inline-block">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F3E5AB] flex items-center justify-center mx-auto shadow-lg shadow-[#D4AF37]/30 text-3xl">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#E8A838] to-[#B87410] flex items-center justify-center mx-auto shadow-lg shadow-amber-500/30 text-3xl">
               🏆
             </div>
             <span className="absolute -top-1 -right-1 text-xl animate-bounce">✨</span>
           </div>
 
           <div className="space-y-1.5">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
               {langMode === 'ta' ? 'வினாடி வினா முடிந்தது!' : 'Quiz Complete!'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
               {langMode === 'ta'
                 ? `புத்தகம்: ${book} • அருமையான முயற்சி!`
                 : `Book: ${book} • Outstanding Bible Knowledge!`}
@@ -283,34 +283,34 @@ export default function QuizPlayPage() {
           </div>
 
           {/* Primary Score Banner */}
-          <div className="bg-[#FAF3E0] border border-[#E8D8B8] rounded-2xl p-5 max-w-sm mx-auto">
-            <div className="text-xs uppercase font-extrabold text-[#8C6B1B] tracking-wider">
+          <div className="bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 rounded-2xl p-5 max-w-sm mx-auto">
+            <div className="text-xs uppercase font-extrabold text-[#8C6B1B] dark:text-amber-300 tracking-wider">
               {langMode === 'ta' ? 'மொத்த மதிப்பெண்' : 'Score'}
             </div>
-            <div className="text-3xl sm:text-4xl font-black text-slate-900 mt-1">
-              {quizResult.score} <span className="text-base text-slate-400 font-bold">/ {totalScorePossible}</span>
+            <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mt-1">
+              {quizResult.score} <span className="text-base text-slate-400 dark:text-slate-500 font-bold">/ {totalScorePossible}</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white border border-[#E8D8B8] text-xs font-black text-[#8C6B1B]">
-              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+            <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white dark:bg-[#141A26] border border-[#E8D8B8] dark:border-amber-500/30 text-xs font-black text-[#8C6B1B] dark:text-amber-300 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
               <span>+{xpGained} XP Gained</span>
             </div>
           </div>
 
           {/* Breakdown Metrics */}
           <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
-            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Correct</span>
-              <p className="text-lg font-black text-slate-800 mt-0.5">
+            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Correct</span>
+              <p className="text-lg font-black text-slate-900 dark:text-white mt-0.5">
                 {quizResult.correctCount}/{quizResult.totalQuestions}
               </p>
             </div>
-            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Accuracy</span>
-              <p className="text-lg font-black text-[#1B3B6F] mt-0.5">{quizResult.accuracy}%</p>
+            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Accuracy</span>
+              <p className="text-lg font-black text-[#D49020] dark:text-amber-400 mt-0.5">{quizResult.accuracy}%</p>
             </div>
-            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] border border-[#EAE0D0]">
-              <span className="text-[10px] uppercase font-bold text-slate-500">Speed Bonus</span>
-              <p className="text-lg font-black text-[#8C6B1B] mt-0.5">+{timeBonus}</p>
+            <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42]">
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Speed Bonus</span>
+              <p className="text-lg font-black text-[#8C6B1B] dark:text-amber-300 mt-0.5">+{timeBonus}</p>
             </div>
           </div>
 
@@ -318,7 +318,7 @@ export default function QuizPlayPage() {
           <div className="space-y-2.5 pt-2 max-w-md mx-auto">
             <button
               onClick={() => setShowReviewList(!showReviewList)}
-              className="w-full py-3.5 px-6 rounded-2xl bg-[#1B3B6F] hover:bg-[#142C54] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-6 rounded-2xl btn-modern-gold font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{showReviewList ? 'Hide Review' : 'Review Answers'}</span>
@@ -327,16 +327,16 @@ export default function QuizPlayPage() {
             <div className="grid grid-cols-2 gap-2.5">
               <button
                 onClick={handleRestart}
-                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-700 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
+                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-200 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Try Again</span>
               </button>
               <Link
                 href="/"
-                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] hover:bg-white border border-[#EAE0D0] text-slate-700 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
+                className="py-3 px-4 rounded-2xl bg-[#FBF8F4] dark:bg-[#1A2232] hover:bg-white dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-200 font-extrabold text-xs transition-all flex items-center justify-center gap-1.5"
               >
-                <BookOpen className="w-3.5 h-3.5 text-[#8C6B1B]" />
+                <BookOpen className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
                 <span>Back to Home</span>
               </Link>
             </div>
@@ -346,12 +346,12 @@ export default function QuizPlayPage() {
         {/* Detailed Scripture Review (Accordion) */}
         {showReviewList && (
           <div className="space-y-4 pt-2 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-2">
-              <h2 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#1B3B6F]" />
+            <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-2">
+              <h2 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
                 <span>Scripture Review & Explanations</span>
               </h2>
-              <span className="text-xs text-slate-500 font-semibold">{quizResult.review?.length} Questions</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">{quizResult.review?.length} Questions</span>
             </div>
 
             <div className="space-y-3">
@@ -359,24 +359,24 @@ export default function QuizPlayPage() {
                 <div
                   key={idx}
                   className={`warm-card rounded-2xl p-5 border space-y-3 ${
-                    item.isCorrect ? 'border-emerald-300/80' : 'border-rose-300/80'
+                    item.isCorrect ? 'border-emerald-400/80 dark:border-emerald-500/50' : 'border-rose-400/80 dark:border-rose-500/50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-[#FAF3E0] text-[#8C6B1B] text-xs font-black flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-lg bg-[#FAF3E0] dark:bg-amber-500/15 text-[#8C6B1B] dark:text-amber-300 text-xs font-black flex items-center justify-center">
                         {idx + 1}
                       </span>
-                      <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md">
+                      <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md">
                         {item.reference}
                       </span>
                     </div>
                     {item.isCorrect ? (
-                      <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                      <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
                         <Check className="w-3 h-3" /> Correct
                       </span>
                     ) : (
-                      <span className="text-xs font-black text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200 flex items-center gap-1">
+                      <span className="text-xs font-black text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/50 px-2.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800 flex items-center gap-1">
                         <XCircle className="w-3 h-3" /> Incorrect
                       </span>
                     )}
@@ -384,23 +384,23 @@ export default function QuizPlayPage() {
 
                   <div className="space-y-1">
                     {(langMode === 'both' || langMode === 'en') && item.question?.en && (
-                      <p className="text-sm font-bold text-slate-900 leading-snug">{item.question.en}</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white leading-snug">{item.question.en}</p>
                     )}
                     {(langMode === 'both' || langMode === 'ta') && item.question?.ta && (
-                      <p className="text-xs font-tamil text-slate-700 leading-relaxed">{item.question.ta}</p>
+                      <p className="text-xs font-tamil text-slate-700 dark:text-slate-300 leading-relaxed">{item.question.ta}</p>
                     )}
                   </div>
 
                   {item.explanation && (
-                    <div className="bg-[#FAF3E0]/70 border border-[#E8D8B8] rounded-xl p-3 text-xs space-y-1">
-                      <span className="font-extrabold text-[#8C6B1B] flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> Scripture Insight:
+                    <div className="bg-[#FAF3E0]/70 dark:bg-amber-500/10 border border-[#E8D8B8] dark:border-amber-500/30 rounded-xl p-3 text-xs space-y-1">
+                      <span className="font-extrabold text-[#8C6B1B] dark:text-amber-300 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-[#D49020] dark:text-amber-400" /> Scripture Insight:
                       </span>
                       {(langMode === 'both' || langMode === 'en') && item.explanation.en && (
-                        <p className="text-slate-700 leading-relaxed">{item.explanation.en}</p>
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{item.explanation.en}</p>
                       )}
                       {(langMode === 'both' || langMode === 'ta') && item.explanation.ta && (
-                        <p className="text-slate-700 font-tamil leading-relaxed">{item.explanation.ta}</p>
+                        <p className="text-slate-700 dark:text-slate-300 font-tamil leading-relaxed">{item.explanation.ta}</p>
                       )}
                     </div>
                   )}
@@ -422,20 +422,20 @@ export default function QuizPlayPage() {
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#EAE0D0] text-xs font-extrabold text-slate-700 hover:text-slate-950 transition-all shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] text-xs font-extrabold text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white transition-all shadow-sm"
         >
-          <ChevronLeft className="w-4 h-4 text-[#8C6B1B]" />
+          <ChevronLeft className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
           <span>{book}</span>
         </Link>
 
         {/* Competition / Practice Mode Pill */}
-        <div className="inline-flex p-1 rounded-2xl bg-[#F4EDE2] border border-[#E5DAC8] text-xs font-extrabold">
+        <div className="inline-flex p-1 rounded-2xl bg-[#F4EDE2] dark:bg-[#1A2232] border border-[#E5DAC8] dark:border-[#232E42] text-xs font-extrabold">
           <button
             onClick={() => setQuizMode('competition')}
             className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all ${
               quizMode === 'competition'
-                ? 'bg-[#1B3B6F] text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'btn-modern-gold text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Trophy className="w-3.5 h-3.5 text-yellow-300" />
@@ -445,11 +445,11 @@ export default function QuizPlayPage() {
             onClick={() => setQuizMode('practice')}
             className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all ${
               quizMode === 'practice'
-                ? 'bg-[#1B3B6F] text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'btn-modern-gold text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <GraduationCap className="w-3.5 h-3.5 text-[#C5A059]" />
+            <GraduationCap className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
             <span>Practice</span>
           </button>
         </div>
@@ -458,12 +458,12 @@ export default function QuizPlayPage() {
       {/* 2. Circular Timer & Question Header */}
       <div className="flex items-center justify-between px-1">
         <div>
-          <span className="text-[11px] font-black uppercase text-[#8C6B1B] tracking-wider">
+          <span className="text-[11px] font-black uppercase text-[#8C6B1B] dark:text-amber-300 tracking-wider">
             QUESTION {currentIndex + 1} OF {questions.length}
           </span>
-          <div className="h-1.5 w-36 bg-[#EAE0D0] rounded-full overflow-hidden mt-1">
+          <div className="h-1.5 w-36 bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden mt-1">
             <div
-              className="h-full bg-[#1B3B6F] rounded-full transition-all duration-300"
+              className="h-full bg-gradient-to-r from-[#E8A838] to-[#D49020] rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -477,7 +477,8 @@ export default function QuizPlayPage() {
                 cx="28"
                 cy="28"
                 r={timerRadius}
-                stroke="#EAE0D0"
+                stroke="currentColor"
+                className="text-[#EAE0D0] dark:text-[#232E42]"
                 strokeWidth="4"
                 fill="transparent"
               />
@@ -485,7 +486,7 @@ export default function QuizPlayPage() {
                 cx="28"
                 cy="28"
                 r={timerRadius}
-                stroke={questionTimeLeft <= 7 ? '#E11D48' : '#C5A059'}
+                stroke={questionTimeLeft <= 7 ? '#E11D48' : '#D49020'}
                 strokeWidth="4"
                 fill="transparent"
                 strokeDasharray={timerCircumference}
@@ -496,7 +497,7 @@ export default function QuizPlayPage() {
             </svg>
             <span
               className={`absolute text-xs font-mono font-black ${
-                questionTimeLeft <= 7 ? 'text-rose-600 animate-pulse' : 'text-slate-800'
+                questionTimeLeft <= 7 ? 'text-rose-600 dark:text-rose-400 animate-pulse' : 'text-slate-900 dark:text-white'
               }`}
             >
               0:{questionTimeLeft < 10 ? `0${questionTimeLeft}` : questionTimeLeft}
@@ -508,11 +509,11 @@ export default function QuizPlayPage() {
       {/* 3. Question Card */}
       <div className="warm-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
         {/* Scripture Reference Tag */}
-        <div className="flex items-center justify-between border-b border-[#EAE0D0] pb-3">
-          <span className="text-xs font-bold text-[#8C6B1B] bg-[#FAF3E0] border border-[#E8D8B8] px-3 py-1 rounded-full">
+        <div className="flex items-center justify-between border-b border-[#EAE0D0] dark:border-[#232E42] pb-3">
+          <span className="text-xs font-bold text-[#8C6B1B] dark:text-amber-300 bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 px-3 py-1 rounded-full">
             {currentQ.book} {currentQ.chapter ? `${currentQ.chapter}:${currentQ.verse || 1}` : ''}
           </span>
-          <span className="text-[11px] font-bold text-slate-500 uppercase">
+          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase">
             {currentQ.difficulty || 'General'}
           </span>
         </div>
@@ -520,12 +521,12 @@ export default function QuizPlayPage() {
         {/* Question Text */}
         <div className="space-y-2">
           {(langMode === 'both' || langMode === 'en') && currentQ.question?.en && (
-            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white leading-snug">
               {currentQ.question.en}
             </h2>
           )}
           {(langMode === 'both' || langMode === 'ta') && currentQ.question?.ta && (
-            <p className="text-base sm:text-lg font-tamil font-bold text-slate-800 leading-relaxed">
+            <p className="text-base sm:text-lg font-tamil font-bold text-slate-800 dark:text-slate-100 leading-relaxed">
               {currentQ.question.ta}
             </p>
           )}
@@ -543,15 +544,15 @@ export default function QuizPlayPage() {
                 onClick={() => handleSelectOption(opt.id)}
                 className={`w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-3.5 ${
                   isSelected
-                    ? 'bg-[#FAF3E0] border-[#C5A059] text-[#3D2F14] shadow-md ring-2 ring-[#C5A059]/25 scale-[1.01]'
-                    : 'bg-[#FBF8F4] border-[#EAE0D0] hover:border-[#C5A059]/60 hover:bg-white text-slate-800'
+                    ? 'bg-[#FAF3E0] dark:bg-amber-500/15 border-[#D49020] dark:border-amber-500/50 text-[#3D2F14] dark:text-amber-200 shadow-md ring-2 ring-[#D49020]/25 scale-[1.01]'
+                    : 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] hover:border-[#D49020]/60 hover:bg-white dark:hover:bg-[#20293D] text-slate-800 dark:text-slate-200'
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-all ${
                     isSelected
-                      ? 'bg-[#C5A059] text-white shadow-sm'
-                      : 'bg-[#EAE0D0] text-slate-700'
+                      ? 'bg-gradient-to-tr from-[#E8A838] to-[#B87410] text-white shadow-sm'
+                      : 'bg-[#EAE0D0] dark:bg-[#232E42] text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   {isSelected ? <Check className="w-4 h-4 stroke-[3]" /> : letter}
@@ -559,14 +560,14 @@ export default function QuizPlayPage() {
 
                 <div className="space-y-0.5 flex-1">
                   {(langMode === 'both' || langMode === 'en') && opt.text?.en && (
-                    <p className={`text-sm font-bold ${isSelected ? 'text-[#3D2F14]' : 'text-slate-800'}`}>
+                    <p className={`text-sm font-bold ${isSelected ? 'text-[#3D2F14] dark:text-amber-200' : 'text-slate-900 dark:text-white'}`}>
                       {opt.text.en}
                     </p>
                   )}
                   {(langMode === 'both' || langMode === 'ta') && opt.text?.ta && (
                     <p
                       className={`text-xs font-tamil ${
-                        isSelected ? 'text-[#8C6B1B] font-bold' : 'text-slate-600 font-medium'
+                        isSelected ? 'text-[#8C6B1B] dark:text-amber-300 font-bold' : 'text-slate-600 dark:text-slate-400 font-medium'
                       }`}
                     >
                       {opt.text.ta}
@@ -580,28 +581,28 @@ export default function QuizPlayPage() {
 
         {/* Practice Mode Instant Explanation */}
         {quizMode === 'practice' && practiceRevealed && currentQ.explanation && (
-          <div className="p-4 rounded-2xl bg-[#FAF3E0] border border-[#E8D8B8] space-y-1.5 animate-fadeIn">
-            <span className="text-xs font-extrabold text-[#8C6B1B] flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" /> Scripture Insight:
+          <div className="p-4 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 space-y-1.5 animate-fadeIn">
+            <span className="text-xs font-extrabold text-[#8C6B1B] dark:text-amber-300 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" /> Scripture Insight:
             </span>
             {(langMode === 'both' || langMode === 'en') && currentQ.explanation.en && (
-              <p className="text-xs text-slate-700 leading-relaxed">{currentQ.explanation.en}</p>
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{currentQ.explanation.en}</p>
             )}
             {(langMode === 'both' || langMode === 'ta') && currentQ.explanation.ta && (
-              <p className="text-xs font-tamil text-slate-700 leading-relaxed">{currentQ.explanation.ta}</p>
+              <p className="text-xs font-tamil text-slate-700 dark:text-slate-300 leading-relaxed">{currentQ.explanation.ta}</p>
             )}
           </div>
         )}
 
-        {/* Action Button: Next Question (Royal Navy #1B3B6F) */}
+        {/* Action Button: Next Question (Radiant Golden Glow) */}
         <div className="pt-2">
           <button
             onClick={() => handleNextQuestion(false)}
             disabled={!currentSelectedOption || submitting}
             className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all flex items-center justify-center gap-2 ${
               currentSelectedOption
-                ? 'bg-[#1B3B6F] hover:bg-[#142C54] text-white hover:scale-[1.01] cursor-pointer'
-                : 'bg-[#EAE0D0] text-slate-400 cursor-not-allowed'
+                ? 'btn-modern-gold cursor-pointer'
+                : 'bg-[#EAE0D0] dark:bg-[#1E2738] text-slate-400 dark:text-slate-600 cursor-not-allowed'
             }`}
           >
             {submitting ? (
@@ -616,7 +617,7 @@ export default function QuizPlayPage() {
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <Sparkles className="w-4 h-4 text-yellow-200" />
                 <span>{langMode === 'ta' ? 'முடிவுகளைக் காண்க' : 'Finish & View Score'}</span>
               </>
             )}
