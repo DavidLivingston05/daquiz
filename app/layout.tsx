@@ -36,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${tamil.variable}`}>
-      <body className="min-h-screen flex flex-col bg-[#FBF8F4] dark:bg-[#0B0F17] text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-white pb-16 sm:pb-0 transition-colors duration-300">
+      <body className="min-h-screen flex flex-col bg-[#FBF8F4] dark:bg-[#0B0F17] text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-white transition-colors duration-300">
         <ThemeProvider>
           <LanguageProvider>
             {/* Ambient Warm / Celestial Accents in Background */}
@@ -80,8 +80,8 @@ export default function RootLayout({
               {children}
             </main>
 
-            {/* Footer */}
-            <footer className="border-t border-[#EAE0D0] dark:border-[#232E42] bg-[#FFFDF9]/80 dark:bg-[#111622]/80 backdrop-blur-md py-6 text-xs text-slate-500 dark:text-slate-400">
+            {/* Footer (Desktop Only) */}
+            <footer className="hidden sm:block border-t border-[#EAE0D0] dark:border-[#232E42] bg-[#FFFDF9]/80 dark:bg-[#111622]/80 backdrop-blur-md py-6 text-xs text-slate-500 dark:text-slate-400">
               <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                 <div>
                   © {new Date().getFullYear()} <span className="text-slate-800 dark:text-slate-200 font-bold">DaQuiz</span> Bible Ministry.
@@ -92,24 +92,6 @@ export default function RootLayout({
                 </div>
               </div>
             </footer>
-
-            {/* Mobile Bottom Navigation Bar */}
-            <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#FFFDF9]/95 dark:bg-[#111622]/95 backdrop-blur-md border-t border-[#EAE0D0] dark:border-[#232E42] px-4 py-2 flex items-center justify-around shadow-lg">
-              <Link href="/" className="flex flex-col items-center gap-0.5 text-slate-800 dark:text-amber-400 font-bold text-[10px]">
-                <div className="w-7 h-7 rounded-xl bg-[#FAF3E0] dark:bg-amber-500/15 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center">
-                  <Home className="w-4 h-4" />
-                </div>
-                <span>Home</span>
-              </Link>
-              <Link href="/#books-section" className="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-semibold text-[10px]">
-                <Compass className="w-4 h-4 mt-1.5" />
-                <span>Browse</span>
-              </Link>
-              <Link href="/#profile" className="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-semibold text-[10px]">
-                <User className="w-4 h-4 mt-1.5" />
-                <span>Profile</span>
-              </Link>
-            </nav>
           </LanguageProvider>
         </ThemeProvider>
       </body>
