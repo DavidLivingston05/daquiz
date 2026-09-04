@@ -677,67 +677,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 3. TESTAMENT CATEGORY PROGRESS CARDS (MATCHING MOCKUP SCREEN 1) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* New Testament Card */}
-        <div className="warm-card rounded-2xl p-4.5 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">🧔</span>
-              <div>
-                <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                  {lang === 'ta' ? 'புதிய ஏற்பாடு' : 'New Testament'}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">75 / 120 completed</p>
-              </div>
-            </div>
-            <span className="text-xs font-black text-[#D49020] dark:text-amber-400">62%</span>
-          </div>
-          <div className="h-2 w-full bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#E8A838] to-[#D49020] rounded-full" style={{ width: '62%' }} />
-          </div>
-        </div>
-
-        {/* Old Testament Card */}
-        <div className="warm-card rounded-2xl p-4.5 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">📖</span>
-              <div>
-                <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                  {lang === 'ta' ? 'பழைய ஏற்பாடு' : 'Old Testament'}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">20 / 120 completed</p>
-              </div>
-            </div>
-            <span className="text-xs font-black text-[#D49020] dark:text-amber-400">17%</span>
-          </div>
-          <div className="h-2 w-full bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#C59A3F] rounded-full" style={{ width: '17%' }} />
-          </div>
-        </div>
-
-        {/* Bible Characters Card */}
-        <div className="warm-card rounded-2xl p-4.5 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">👑</span>
-              <div>
-                <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                  {lang === 'ta' ? 'வேத பாத்திரங்கள்' : 'Characters'}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">15 / 30 completed</p>
-              </div>
-            </div>
-            <span className="text-xs font-black text-amber-600 dark:text-amber-400">50%</span>
-          </div>
-          <div className="h-2 w-full bg-[#EAE0D0] dark:bg-[#232E42] rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full" style={{ width: '50%' }} />
-          </div>
-        </div>
-      </div>
-
-      {/* 4. BOOK EXPLORER SECTION */}
+      {/* 2. BOOK EXPLORER SECTION */}
       <div id="books-section" className="space-y-8">
         {/* Old Testament */}
         <div className="space-y-4">
