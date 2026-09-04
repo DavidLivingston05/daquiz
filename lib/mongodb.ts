@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -20,14 +18,18 @@ if (!global.mongooseCache) {
 
 /**
  * Connect to MongoDB with connection pooling and caching.
- * Prevents multiple active connections across hot reloads and serverless invocations.
+ * Evaluates process.env.MONGODB_URI dynamically at call time for serverless compatibility.
  */
 export async function connectToDatabase(): Promise<typeof mongoose> {
-  if (!MONGODB_URI) {
-    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri) {
+    throw new Error(
+      'Please define the MONGODB_URI environment variable inside your deployment environment settings or .env.local'
+    );
   }
 
-  if (cached.conn) {
+  if (cached.conn && cached.conn.connection.readyState === 1) {
     return cached.conn;
   }
 
@@ -41,10 +43,17 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
       socketTimeoutMS: 45000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log('✓ Successfully connected to MongoDB');
-      return mongooseInstance;
-    });
+    cached.promise = mongoose
+      .connect(uri, opts)
+      .then((mongooseInstance) => {
+        console.log('✓ Successfully connected to MongoDB');
+        return mongooseInstance;
+      })
+      .catch((err) => {
+        cached.promise = null;
+        console.error('✗ MongoDB connection error:', err.message);
+        throw err;
+      });
   }
 
   try {

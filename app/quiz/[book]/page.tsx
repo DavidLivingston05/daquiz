@@ -26,7 +26,9 @@ type LanguageMode = 'both' | 'en' | 'ta';
 export default function QuizPlayPage() {
   const params = useParams();
   const router = useRouter();
-  const book = decodeURIComponent((params?.book as string) || 'Genesis');
+  const rawBook = params?.book;
+  const bookParam = Array.isArray(rawBook) ? rawBook[0] : rawBook;
+  const book = bookParam ? decodeURIComponent(bookParam) : 'Genesis';
 
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<SanitizedQuestion[]>([]);

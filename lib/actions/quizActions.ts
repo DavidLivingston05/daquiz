@@ -47,30 +47,36 @@ export interface SubmissionPayload {
 
 /**
  * Get distinct books and question counts available
+ * Safe for Server Components with try/catch fallback
  */
 export async function getAvailableBooks() {
-  await connectToDatabase();
+  try {
+    await connectToDatabase();
 
-  const books = await Question.aggregate([
-    { $match: { isActive: true } },
-    {
-      $group: {
-        _id: { book: '$book', testament: '$testament' },
-        count: { $sum: 1 },
+    const books = await Question.aggregate([
+      { $match: { isActive: true } },
+      {
+        $group: {
+          _id: { book: '$book', testament: '$testament' },
+          count: { $sum: 1 },
+        },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        book: '$_id.book',
-        testament: '$_id.testament',
-        count: 1,
+      {
+        $project: {
+          _id: 0,
+          book: '$_id.book',
+          testament: '$_id.testament',
+          count: 1,
+        },
       },
-    },
-    { $sort: { book: 1 } },
-  ]);
+      { $sort: { book: 1 } },
+    ]);
 
-  return books;
+    return books || [];
+  } catch (error: any) {
+    console.warn('[GET_AVAILABLE_BOOKS_WARN]', error.message);
+    return [];
+  }
 }
 
 /**
@@ -80,10 +86,15 @@ export async function getAvailableBooks() {
  * - Optimized with .lean()
  */
 export async function getQuizSession(book: string, count = 10): Promise<SanitizedQuestion[]> {
-  const headersList = headers();
-  const clientIp = getClientIp(headersList);
+  let clientIp = 'unknown';
+  try {
+    const headersList = headers();
+    clientIp = getClientIp(headersList);
+  } catch (e) {
+    // Non-fatal if headers() is unavailable
+  }
 
-  // Rate limit check
+  // Rate limit check (gracefully fails open if Redis not configured)
   await enforceRateLimit(quizLoadLimiter, clientIp, 'Too many quiz requests');
 
   // Validate input
@@ -225,8 +236,16 @@ export async function createQuestion(formData: {
   adminKeyProvided?: string;
 }) {
   const adminKey = process.env.ADMIN_SECRET_KEY;
-  const headersList = headers();
-  const providedKey = formData.adminKeyProvided || headersList.get('x-admin-key');
+  let providedKey = formData.adminKeyProvided;
+
+  if (!providedKey) {
+    try {
+      const headersList = headers();
+      providedKey = headersList.get('x-admin-key') || undefined;
+    } catch (e) {
+      // ignore
+    }
+  }
 
   if (!adminKey || providedKey !== adminKey) {
     throw new Error('Unauthorized: Invalid Admin Secret Key');
@@ -277,14 +296,42 @@ export async function createQuestion(formData: {
  * Get quiz statistics for a guest
  */
 export async function getGuestStatistics(guestIdentifier: string) {
-  await connectToDatabase();
+  try {
+    await connectToDatabase();
 
-  const attempts = await QuizAttempt.find({ guestIdentifier })
-    .sort({ createdAt: -1 })
-    .select('correctAnswers totalQuestions scoreEarned book createdAt')
-    .lean();
+    const attempts = await QuizAttempt.find({ guestIdentifier })
+      .sort({ createdAt: -1 })
+      .select('correctAnswers totalQuestions scoreEarned book createdAt')
+      .lean();
 
-  if (attempts.length === 0) {
+    if (!attempts || attempts.length === 0) {
+      return {
+        totalAttempts: 0,
+        averageScore: 0,
+        averageAccuracy: 0,
+        bestScore: 0,
+        history: [],
+      };
+    }
+
+    const totalAttempts = attempts.length;
+    const averageScore = Math.round(
+      attempts.reduce((sum, a) => sum + a.scoreEarned, 0) / totalAttempts
+    );
+    const averageAccuracy = Math.round(
+      attempts.reduce((sum, a) => sum + (a.correctAnswers / a.totalQuestions) * 100, 0) / totalAttempts
+    );
+    const bestScore = Math.max(...attempts.map((a) => a.scoreEarned));
+
+    return {
+      totalAttempts,
+      averageScore,
+      averageAccuracy,
+      bestScore,
+      history: attempts.slice(0, 10),
+    };
+  } catch (error: any) {
+    console.error('[GET_GUEST_STATS_ERROR]', error.message);
     return {
       totalAttempts: 0,
       averageScore: 0,
@@ -293,21 +340,4 @@ export async function getGuestStatistics(guestIdentifier: string) {
       history: [],
     };
   }
-
-  const totalAttempts = attempts.length;
-  const averageScore = Math.round(
-    attempts.reduce((sum, a) => sum + a.scoreEarned, 0) / totalAttempts
-  );
-  const averageAccuracy = Math.round(
-    attempts.reduce((sum, a) => sum + (a.correctAnswers / a.totalQuestions) * 100, 0) / totalAttempts
-  );
-  const bestScore = Math.max(...attempts.map((a) => a.scoreEarned));
-
-  return {
-    totalAttempts,
-    averageScore,
-    averageAccuracy,
-    bestScore,
-    history: attempts.slice(0, 10),
-  };
 }
