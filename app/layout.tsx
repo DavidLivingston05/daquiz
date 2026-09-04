@@ -105,10 +105,6 @@ export default function RootLayout({
                 <Compass className="w-4 h-4 mt-1.5" />
                 <span>Browse</span>
               </Link>
-              <Link href="/#leaderboard-section" className="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-semibold text-[10px]">
-                <Trophy className="w-4 h-4 mt-1.5" />
-                <span>Leaderboard</span>
-              </Link>
               <Link href="/#profile" className="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-semibold text-[10px]">
                 <User className="w-4 h-4 mt-1.5" />
                 <span>Profile</span>
