@@ -284,91 +284,76 @@ export default function HomePage() {
   if (!currentUser && !isAdminLoggedIn) {
     const t = {
       en: {
-        step1Badge: 'Step 1 of 2 • Language Selection',
-        step1Title: 'Choose Preferred Language',
-        step1Subtitle: 'Select how you would like to view Bible questions and scripture.',
-        langFlexTitle: 'Language is always flexible',
-        langFlexDesc: 'You can change your language anytime later from the top navigation bar!',
-        continueBtn: 'Continue to Sign In →',
-        backBtn: '← Change Language (English)',
-        step2Indicator: 'Step 2 of 2',
+        step1Badge: 'Step 1 • Language',
+        step1Title: 'Select Language',
+        continueBtn: 'Next →',
+        backBtn: '← Change Language',
+        step2Indicator: 'Step 2',
         tabParticipant: 'Participant',
         tabAdmin: 'Admin',
-        loginTitleUser: 'Login to your account',
-        loginSubUser: 'Enter your details to take Bible quizzes and track your competition score.',
-        loginTitleAdmin: 'Admin Console Login',
-        loginSubAdmin: 'Enter admin credentials to manage questions and participants.',
-        nameLabel: 'Full Name *',
-        namePlaceholder: 'e.g. David Livingston',
-        phoneLabel: 'Phone Number *',
-        phonePlaceholder: 'e.g. +91 9876543210',
+        loginTitleUser: 'Sign In',
+        loginTitleAdmin: 'Admin Login',
+        nameLabel: 'Name *',
+        namePlaceholder: 'Your Name',
+        phoneLabel: 'Phone No *',
+        phonePlaceholder: 'Phone Number',
         ageLabel: 'Age *',
-        agePlaceholder: 'e.g. 24',
+        agePlaceholder: 'Age',
         adminUserLabel: 'Username *',
         adminUserPlaceholder: 'admin',
         adminPassLabel: 'Password *',
         adminPassPlaceholder: '••••••••',
         rememberMe: 'Remember me',
-        submitUser: 'Login & Enter Quiz',
-        submitAdmin: 'Login as Admin',
+        submitUser: 'Enter Quiz →',
+        submitAdmin: 'Login →',
       },
       ta: {
-        step1Badge: 'படி 1 / 2 • மொழி தேர்வு',
-        step1Title: 'விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்',
-        step1Subtitle: 'வேத வினாடி வினா மற்றும் வசனங்களுக்கான மொழியைத் தேர்வு செய்க.',
-        langFlexTitle: 'மொழி எப்போதும் மாற்றக்கூடியது',
-        langFlexDesc: 'கவலைப்பட வேண்டாம்! நீங்கள் எப்போது வேண்டுமானாலும் மேல் பகுதியில் உள்ள பொத்தானைப் பயன்படுத்தி மொழியை மாற்றிக்கொள்ளலாம்.',
-        continueBtn: 'உள்நுழைவுக்குத் தொடர்க →',
-        backBtn: '← மொழியை மாற்றவும் (தமிழ்)',
-        step2Indicator: 'படி 2 / 2',
+        step1Badge: 'படி 1 • மொழி',
+        step1Title: 'மொழியைத் தேர்ந்தெடுக்கவும்',
+        continueBtn: 'அடுத்து →',
+        backBtn: '← மொழி மாற்றம்',
+        step2Indicator: 'படி 2',
         tabParticipant: 'பங்கேற்பாளர்',
         tabAdmin: 'நிர்வாகி',
-        loginTitleUser: 'உங்கள் கணக்கில் உள்நுழையவும்',
-        loginSubUser: 'வேத வினாடி வினாவில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.',
+        loginTitleUser: 'உள்நுழையவும்',
         loginTitleAdmin: 'நிர்வாகி உள்நுழைவு',
-        loginSubAdmin: 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.',
-        nameLabel: 'முழு பெயர் *',
-        namePlaceholder: 'எ.கா. தாவீது லிவிங்ஸ்டன்',
+        nameLabel: 'பெயர் *',
+        namePlaceholder: 'உங்கள் பெயர்',
         phoneLabel: 'தொலைபேசி எண் *',
-        phonePlaceholder: 'எ.கா. +91 9876543210',
+        phonePlaceholder: 'தொலைபேசி எண்',
         ageLabel: 'வயது *',
-        agePlaceholder: 'எ.கா. 24',
+        agePlaceholder: 'வயது',
         adminUserLabel: 'பயனர்பெயர் *',
-        adminUserPlaceholder: 'நிர்வாகி பெயர்',
+        adminUserPlaceholder: 'நிர்வாகி',
         adminPassLabel: 'கடவுச்சொல் *',
         adminPassPlaceholder: '••••••••',
         rememberMe: 'என்னை நினைவில் கொள்',
-        submitUser: 'உள்நுழையவும்',
-        submitAdmin: 'நிர்வாகியாக உள்நுழையவும்',
+        submitUser: 'உள்நுழையவும் →',
+        submitAdmin: 'நிர்வாகியாக உள்நுழைக →',
       },
       both: {
-        step1Badge: 'Step 1 of 2 • மொழி தேர்வு',
-        step1Title: 'Choose Language • மொழியைத் தேர்ந்தெடுக்கவும்',
-        step1Subtitle: 'Select language • உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்.',
-        langFlexTitle: 'Language is flexible • மொழி மாற்றக்கூடியது',
-        langFlexDesc: 'You can change language anytime from top bar • எப்போது வேண்டுமானாலும் மேல் பகுதியில் மொழியை மாற்றலாம்.',
-        continueBtn: 'Continue to Sign In → (தொடர்க)',
-        backBtn: '← Change Language (மொழி மாற்றம்)',
-        step2Indicator: 'Step 2 of 2 • படி 2 / 2',
-        tabParticipant: 'Participant (பயனர்)',
+        step1Badge: 'Step 1 • மொழி தேர்வு',
+        step1Title: 'Select Language • மொழி தேர்வு',
+        continueBtn: 'Next (அடுத்து) →',
+        backBtn: '← Change Language',
+        step2Indicator: 'Step 2 • படி 2',
+        tabParticipant: 'Participant (பங்கேற்பாளர்)',
         tabAdmin: 'Admin (நிர்வாகி)',
-        loginTitleUser: 'Login to your account • உள்நுழையவும்',
-        loginSubUser: 'Enter your details • உங்கள் விவரங்களை உள்ளிட்டு தொடரவும்.',
-        loginTitleAdmin: 'Admin Login • நிர்வாகி உள்நுழைவு',
-        loginSubAdmin: 'Enter credentials • நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.',
-        nameLabel: 'Full Name (முழு பெயர்) *',
-        namePlaceholder: 'e.g. David Livingston / உங்கள் பெயர்',
-        phoneLabel: 'Phone Number (தொலைபேசி எண்) *',
-        phonePlaceholder: 'e.g. +91 9876543210',
+        loginTitleUser: 'Sign In • உள்நுழைவு',
+        loginTitleAdmin: 'Admin Login • நிர்வாகி',
+        nameLabel: 'Name (பெயர்) *',
+        namePlaceholder: 'Your Name / பெயர்',
+        phoneLabel: 'Phone No (தொலைபேசி) *',
+        phonePlaceholder: 'Phone Number / எண்',
         ageLabel: 'Age (வயது) *',
-        agePlaceholder: 'e.g. 24',
+        agePlaceholder: 'Age / வயது',
         adminUserLabel: 'Username (பயனர்பெயர்) *',
         adminUserPlaceholder: 'admin / நிர்வாகி',
         adminPassLabel: 'Password (கடவுச்சொல்) *',
         adminPassPlaceholder: '••••••••',
-        rememberMe: 'Remember me (நினைவில் கொள்)',
-        submitUser: 'Login & Enter (உள்நுழையவும்)',
-        submitAdmin: 'Login as Admin (நிர்வாகி உள்நுழைவு)',
+        rememberMe: 'Remember me',
+        submitUser: 'Enter Quiz (உள்நுழை) →',
+        submitAdmin: 'Login (நிர்வாகி) →',
       },
     }[lang];
 
@@ -378,9 +363,9 @@ export default function HomePage() {
           
           {/* STEP 1: LANGUAGE SELECTION FIRST */}
           {entryStep === 'language' ? (
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Badge & Title */}
-              <div className="text-left space-y-2">
+              <div className="text-left space-y-1.5">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   <span>{t.step1Badge}</span>
@@ -388,9 +373,6 @@ export default function HomePage() {
                 <h1 className="text-2xl font-black text-white tracking-tight">
                   {t.step1Title}
                 </h1>
-                <p className={`text-xs text-slate-400 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
-                  {t.step1Subtitle}
-                </p>
               </div>
 
               {/* 3 Language Options Cards */}
@@ -407,10 +389,7 @@ export default function HomePage() {
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">🇬🇧</span>
-                    <div>
-                      <div className="font-black text-sm text-white">English</div>
-                      <div className="text-xs text-slate-400">Pure English Bible Quiz</div>
-                    </div>
+                    <div className="font-black text-sm text-white">English</div>
                   </div>
                   {lang === 'en' && (
                     <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
@@ -431,10 +410,7 @@ export default function HomePage() {
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">🇮🇳</span>
-                    <div>
-                      <div className="font-black font-tamil text-sm text-white">தமிழ் (Tamil)</div>
-                      <div className="text-xs font-tamil text-slate-400">தூய தமிழ் வேத வினாடி வினா</div>
-                    </div>
+                    <div className="font-black font-tamil text-sm text-white">தமிழ்</div>
                   </div>
                   {lang === 'ta' && (
                     <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
@@ -455,10 +431,7 @@ export default function HomePage() {
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">🌐</span>
-                    <div>
-                      <div className="font-black text-sm text-white">Both (இருமொழி)</div>
-                      <div className="text-xs text-slate-400">English & தமிழ் side-by-side</div>
-                    </div>
+                    <div className="font-black text-sm text-white">Both (இருமொழி)</div>
                   </div>
                   {lang === 'both' && (
                     <span className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
@@ -466,17 +439,6 @@ export default function HomePage() {
                     </span>
                   )}
                 </button>
-              </div>
-
-              {/* Informative Notice that Language can be changed anytime */}
-              <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/25 space-y-1 text-left">
-                <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold">
-                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                  <span>{t.langFlexTitle}</span>
-                </div>
-                <p className={`text-[11px] text-slate-300 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
-                  {t.langFlexDesc}
-                </p>
               </div>
 
               {/* Continue to Step 2 Button */}
@@ -490,7 +452,7 @@ export default function HomePage() {
             </div>
           ) : (
             /* STEP 2: SIGN IN (PARTICIPANT OR ADMIN) */
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Back to Step 1 */}
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <button
@@ -541,13 +503,10 @@ export default function HomePage() {
               </div>
 
               {/* Heading */}
-              <div className="text-left space-y-1.5">
-                <h1 className={`text-2xl font-black text-white tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
+              <div className="text-left">
+                <h1 className={`text-xl font-black text-white tracking-tight ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
                   {authTab === 'user' ? t.loginTitleUser : t.loginTitleAdmin}
                 </h1>
-                <p className={`text-xs text-slate-400 leading-relaxed ${lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}`}>
-                  {authTab === 'user' ? t.loginSubUser : t.loginSubAdmin}
-                </p>
               </div>
 
               {authError && (

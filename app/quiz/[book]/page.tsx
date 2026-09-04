@@ -607,8 +607,6 @@ export default function QuizPlayPage() {
           setIsAuthModalOpen(false);
           submitQuiz(selectedAnswers, newUser);
         }}
-        title="Record Your Competition Score"
-        subtitle="Enter your name, phone number, and age to save your rank on the leaderboard."
       />
     </div>
   );
