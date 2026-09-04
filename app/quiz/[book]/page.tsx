@@ -26,10 +26,12 @@ import {
   User,
 } from 'lucide-react';
 import Link from 'next/link';
-import LanguageSelector, { LanguagePreference } from '@/components/LanguageSelector';
+import LanguageSelector from '@/components/LanguageSelector';
 import UserAuthModal from '@/components/UserAuthModal';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function QuizPlayPage() {
+  const { language: langMode } = useLanguage();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -48,7 +50,6 @@ export default function QuizPlayPage() {
     { questionId: string; selectedOptionId: string; timeSpent: number }[]
   >([]);
   const [currentSelectedOption, setCurrentSelectedOption] = useState<string | null>(null);
-  const [langMode, setLangMode] = useState<LanguagePreference>('both');
 
   // Active User Profile
   const [currentUser, setCurrentUser] = useState<any | null>(null);
@@ -68,24 +69,14 @@ export default function QuizPlayPage() {
   const [quizResult, setQuizResult] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Load language preference and user session
+  // Load user session
   useEffect(() => {
-    const savedLang = localStorage.getItem('daquiz_lang') as LanguagePreference;
-    if (savedLang) setLangMode(savedLang);
-
-    const handleLangChange = (e: any) => {
-      if (e.detail) setLangMode(e.detail);
-    };
-    window.addEventListener('daquiz-lang-changed', handleLangChange);
-
     const savedUser = localStorage.getItem('daquiz_user');
     if (savedUser) {
       try {
         setCurrentUser(JSON.parse(savedUser));
       } catch (e) {}
     }
-
-    return () => window.removeEventListener('daquiz-lang-changed', handleLangChange);
   }, []);
 
   // Load questions

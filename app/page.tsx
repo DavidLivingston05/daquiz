@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { getAvailableBooks } from '@/lib/actions/quizActions';
 import { getLeaderboard } from '@/lib/actions/userActions';
-import { useLanguage } from '@/lib/useLanguage';
+import { useLanguage } from '@/context/LanguageContext';
 
 const defaultBooks = [
   { book: 'Genesis', testament: 'OT', count: 10, ta: 'ஆதியாகமம்' },
@@ -46,7 +46,7 @@ const tamilBookNames: Record<string, string> = {
 };
 
 export default function HomePage() {
-  const lang = useLanguage();
+  const { language: lang } = useLanguage();
   const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
 

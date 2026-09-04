@@ -1,56 +1,18 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Languages } from 'lucide-react';
+import React from 'react';
+import { useLanguage, LanguagePreference } from '@/context/LanguageContext';
 
-export type LanguagePreference = 'both' | 'en' | 'ta';
-
-interface LanguageSelectorProps {
-  currentLang?: LanguagePreference;
-  onLanguageChange?: (lang: LanguagePreference) => void;
-  variant?: 'compact' | 'full';
-}
-
-export default function LanguageSelector({
-  currentLang,
-  onLanguageChange,
-  variant = 'compact',
-}: LanguageSelectorProps) {
-  const [lang, setLang] = useState<LanguagePreference>('both');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('daquiz_lang') as LanguagePreference;
-    if (saved && (saved === 'both' || saved === 'en' || saved === 'ta')) {
-      setLang(saved);
-      if (onLanguageChange && !currentLang) {
-        onLanguageChange(saved);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (currentLang && currentLang !== lang) {
-      setLang(currentLang);
-    }
-  }, [currentLang]);
-
-  const handleSelect = (selected: LanguagePreference) => {
-    setLang(selected);
-    localStorage.setItem('daquiz_lang', selected);
-    if (onLanguageChange) {
-      onLanguageChange(selected);
-    }
-    // Dispatch custom event so other components sync instantly
-    window.dispatchEvent(new CustomEvent('daquiz-lang-changed', { detail: selected }));
-  };
+export default function LanguageSelector() {
+  const { language, setLanguage } = useLanguage();
 
   return (
     <div className="inline-flex items-center p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold shadow-inner">
       <button
         type="button"
-        onClick={() => handleSelect('both')}
+        onClick={() => setLanguage('both')}
         className={`px-3 py-1.5 rounded-lg transition-all ${
-          lang === 'both'
+          language === 'both'
             ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
             : 'text-slate-400 hover:text-white'
         }`}
@@ -60,9 +22,9 @@ export default function LanguageSelector({
 
       <button
         type="button"
-        onClick={() => handleSelect('en')}
+        onClick={() => setLanguage('en')}
         className={`px-3 py-1.5 rounded-lg transition-all ${
-          lang === 'en'
+          language === 'en'
             ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
             : 'text-slate-400 hover:text-white'
         }`}
@@ -72,9 +34,9 @@ export default function LanguageSelector({
 
       <button
         type="button"
-        onClick={() => handleSelect('ta')}
+        onClick={() => setLanguage('ta')}
         className={`px-3 py-1.5 rounded-lg font-tamil transition-all ${
-          lang === 'ta'
+          language === 'ta'
             ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black shadow-md shadow-emerald-500/20'
             : 'text-slate-400 hover:text-white'
         }`}

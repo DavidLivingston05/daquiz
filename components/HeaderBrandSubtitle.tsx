@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { useLanguage } from '@/lib/useLanguage';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function HeaderBrandSubtitle() {
-  const lang = useLanguage();
+  const { language } = useLanguage();
 
-  if (lang === 'en') {
+  if (language === 'en') {
     return (
       <span className="text-[11px] text-slate-400 leading-none hidden sm:block">
         Bible Quiz Platform
@@ -14,7 +14,7 @@ export default function HeaderBrandSubtitle() {
     );
   }
 
-  if (lang === 'ta') {
+  if (language === 'ta') {
     return (
       <span className="text-[11px] font-tamil text-slate-400 leading-none hidden sm:block">
         வேத வினாடி வினா
