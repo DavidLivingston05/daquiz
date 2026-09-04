@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { User, LogIn, Trophy, ShieldCheck, LogOut } from 'lucide-react';
 import UserAuthModal from './UserAuthModal';
 
+import { useLanguage } from '@/context/LanguageContext';
+
 export default function UserProfileChip() {
+  const { language: lang } = useLanguage();
   const [user, setUser] = useState<any | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,6 +69,11 @@ export default function UserProfileChip() {
     window.dispatchEvent(new CustomEvent('daquiz-admin-updated', { detail: false }));
   };
 
+  const adminLabel = lang === 'ta' ? 'நிர்வாகி' : lang === 'both' ? 'Admin (நிர்வாகி)' : 'Admin';
+  const ptsLabel = lang === 'ta' ? 'புள்ளிகள்' : 'pts';
+  const signInLabel = lang === 'ta' ? 'உள்நுழைக' : lang === 'both' ? 'Sign In (உள்நுழை)' : 'Sign In';
+  const signOutTitle = lang === 'ta' ? 'வெளியேறு' : 'Sign Out';
+
   return (
     <>
       <div className="flex items-center gap-2">
@@ -73,10 +81,10 @@ export default function UserProfileChip() {
           <Link
             href="/admin"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 hover:bg-amber-500/25 text-xs font-bold transition-all"
-            title="Go to Admin Control Center"
+            title="Admin Control Center"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Admin</span>
+            <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{adminLabel}</span>
           </Link>
         )}
 
@@ -94,7 +102,7 @@ export default function UserProfileChip() {
                   {user.name}
                 </span>
                 <span className="text-[10px] text-amber-400 font-extrabold flex items-center gap-0.5">
-                  <Trophy className="w-2.5 h-2.5" /> {user.totalScore || 0} pts
+                  <Trophy className="w-2.5 h-2.5" /> {user.totalScore || 0} {ptsLabel}
                 </span>
               </div>
             </button>
@@ -102,7 +110,7 @@ export default function UserProfileChip() {
             <button
               onClick={handleLogout}
               className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-slate-700/60 transition-colors"
-              title="Sign Out"
+              title={signOutTitle}
             >
               <LogOut className="w-3.5 h-3.5" />
             </button>
@@ -114,7 +122,7 @@ export default function UserProfileChip() {
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 text-xs font-black shadow-md shadow-emerald-500/20 hover:scale-105 transition-all"
             >
               <LogIn className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Sign In</span>
+              <span className={lang === 'ta' || lang === 'both' ? 'font-tamil' : ''}>{signInLabel}</span>
             </button>
           )
         )}
