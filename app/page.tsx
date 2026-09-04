@@ -661,16 +661,9 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Streak & Points Pill */}
+        {/* Points Pill */}
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] shadow-sm">
-            <span className="text-base">🔥</span>
-            <div>
-              <div className="text-xs font-black text-slate-900 dark:text-white">Streak Active</div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">Keep Learning</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300">
+          <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 shadow-sm">
             <Zap className="w-4 h-4 text-[#D49020] dark:text-amber-400 fill-[#D49020] dark:fill-amber-400" />
             <span className="text-xs font-black">{currentUser?.totalScore || 450} XP</span>
           </div>
