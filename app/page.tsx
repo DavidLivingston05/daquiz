@@ -678,20 +678,16 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Completed Quizzes Pill */}
+        {/* My Profile Link Pill */}
         <div className="flex items-center gap-2.5">
           <Link
             href="/profile"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 shadow-sm transition-all"
-            title={lang === 'ta' ? 'சுயவிவரம் & முன்னேற்றத்தைக் காண்க' : 'View Profile & Progress'}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 hover:bg-[#F2E5C5] dark:hover:bg-amber-500/25 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 shadow-sm transition-all"
+            title={lang === 'ta' ? 'சுயவிவரத்தைக் காண்க' : 'View Profile'}
           >
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <User className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
             <span className="text-xs font-black">
-              {currentUser?.quizzesTaken
-                ? `${currentUser.quizzesTaken} ${lang === 'ta' ? 'முடிந்தது' : 'Completed'}`
-                : lang === 'ta'
-                ? 'சுயவிவரம்'
-                : 'My Profile'}
+              {lang === 'ta' ? 'சுயவிவரம்' : 'My Profile'}
             </span>
           </Link>
         </div>

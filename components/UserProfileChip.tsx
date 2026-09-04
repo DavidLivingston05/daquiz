@@ -98,14 +98,9 @@ export default function UserProfileChip() {
               <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/20 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center font-bold text-[11px] border border-[#D4AF37]/30">
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <div className="text-left hidden sm:block">
-                <span className="block text-slate-800 dark:text-white font-bold leading-tight truncate max-w-[100px]">
-                  {user.name}
-                </span>
-                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-extrabold flex items-center gap-0.5">
-                  <CheckCircle2 className="w-2.5 h-2.5" /> {user.quizzesTaken || 0} {lang === 'ta' ? 'முடிந்தது' : 'Completed'}
-                </span>
-              </div>
+              <span className="text-slate-800 dark:text-white font-bold leading-tight truncate max-w-[120px] hidden sm:inline">
+                {user.name}
+              </span>
             </Link>
 
             <button
