@@ -93,10 +93,14 @@ export default function QuizPlayPage() {
       setLoading(true);
       setErrorMsg(null);
       try {
-        const data = await getQuizSession(book, chapterParam);
+        const data = await getQuizSession(book, 50, quizMode, chapterParam);
         if (!data || data.length === 0) {
           setErrorMsg(
-            langMode === 'ta'
+            chapterParam
+              ? langMode === 'ta'
+                ? `${book} அதிகாரம் ${chapterParam}-க்கு வினாக்கள் எதுவும் கிடைக்கவில்லை.`
+                : `No active questions found for ${book} Chapter ${chapterParam}.`
+              : langMode === 'ta'
               ? `${book} புத்தகத்திற்கு வினாக்கள் எதுவும் கிடைக்கவில்லை. நிர்வாகி பக்கத்தில் வினாக்களைச் சேர்க்கலாம்.`
               : `No active questions found for ${book}. You can add questions in the Admin portal or try another book.`
           );
