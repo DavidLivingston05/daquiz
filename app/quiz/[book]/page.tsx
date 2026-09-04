@@ -406,80 +406,61 @@ export default function QuizPlayPage() {
                       )}
                     </div>
 
-                    {/* Options / Correct Answer Display */}
-                    {item.options && item.options.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
-                        {item.options.map((opt: any, optIdx: number) => {
-                          const isCorrectOpt = opt.isCorrect || opt.id === item.correctOptionId;
-                          const isUserSelected = opt.id === item.selectedOptionId;
+                    {/* Single Right Option Display */}
+                    {(() => {
+                      const correctOpt = item.options?.find((o: any) => o.isCorrect || o.id === item.correctOptionId);
+                      const correctText = item.correctOptionText || correctOpt?.text;
+                      const userOpt = item.options?.find((o: any) => o.id === item.selectedOptionId);
+                      const userText = item.selectedOptionText || userOpt?.text;
 
-                          let cardClasses = 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-300';
-                          if (isCorrectOpt) {
-                            cardClasses = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700/60 text-emerald-900 dark:text-emerald-200 font-bold shadow-sm';
-                          } else if (isUserSelected && !isSelectedCorrect) {
-                            cardClasses = 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-700/60 text-rose-900 dark:text-rose-200 line-through';
-                          }
-
-                          return (
-                            <div
-                              key={optIdx}
-                              className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${cardClasses}`}
-                            >
-                              <div className="flex items-center gap-2 truncate">
-                                <span className="font-black text-[10px] uppercase">
-                                  {String.fromCharCode(65 + optIdx)}:
-                                </span>
-                                <div className="truncate">
-                                  {(langMode === 'both' || langMode === 'en') && opt.text?.en && (
-                                    <span>{opt.text.en}</span>
-                                  )}
-                                  {(langMode === 'both' || langMode === 'ta') && opt.text?.ta && (
-                                    <span className="font-tamil ml-1 text-slate-600 dark:text-slate-300">({opt.text.ta})</span>
-                                  )}
-                                </div>
+                      return (
+                        <div className="space-y-2 pt-1">
+                          {correctText && (
+                            <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 text-emerald-900 dark:text-emerald-200">
+                              <div className="flex items-center gap-1.5 text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase tracking-wide mb-1">
+                                <Check className="w-4 h-4 stroke-[3]" />
+                                <span>{langMode === 'ta' ? 'சரியான விடை:' : 'Correct Answer:'}</span>
                               </div>
-
-                              {isCorrectOpt && (
-                                <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0">
-                                  <Check className="w-3 h-3 stroke-[3]" /> Correct Answer
-                                </span>
-                              )}
-                              {!isCorrectOpt && isUserSelected && (
-                                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-900/50 px-1.5 py-0.5 rounded-md shrink-0">
-                                  Your choice
-                                </span>
-                              )}
+                              <div className="text-sm font-bold text-slate-900 dark:text-emerald-100 pl-5 space-y-0.5">
+                                {(langMode === 'both' || langMode === 'en') && correctText.en && (
+                                  <p>{correctText.en}</p>
+                                )}
+                                {(langMode === 'both' || langMode === 'ta') && correctText.ta && (
+                                  <p className="font-tamil text-xs sm:text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                                    {correctText.ta}
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      /* Fallback if options list not present */
-                      <div className="space-y-1.5 text-xs pt-1">
-                        {item.correctOptionText && (
-                          <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 flex items-center gap-2 font-bold">
-                            <Check className="w-4 h-4 text-emerald-600 shrink-0 stroke-[3]" />
-                            <span>
-                              Correct Answer:{' '}
-                              {langMode === 'ta' && item.correctOptionText.ta
-                                ? item.correctOptionText.ta
-                                : item.correctOptionText.en}
-                            </span>
-                          </div>
-                        )}
-                        {!isSelectedCorrect && item.selectedOptionText && (
-                          <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 flex items-center gap-2 font-semibold">
-                            <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                            <span>
-                              Your Answer:{' '}
-                              {langMode === 'ta' && item.selectedOptionText.ta
-                                ? item.selectedOptionText.ta
-                                : item.selectedOptionText.en}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                          )}
+
+                          {!isSelectedCorrect && (
+                            <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-900 dark:text-rose-200 text-xs">
+                              <div className="flex items-center gap-1.5 font-bold text-rose-700 dark:text-rose-300 uppercase tracking-wide mb-1">
+                                <XCircle className="w-3.5 h-3.5" />
+                                <span>{langMode === 'ta' ? 'உங்கள் விடை:' : 'Your Choice:'}</span>
+                              </div>
+                              <div className="pl-5 text-slate-700 dark:text-rose-200 font-medium space-y-0.5">
+                                {userText ? (
+                                  <>
+                                    {(langMode === 'both' || langMode === 'en') && userText.en && (
+                                      <p className="line-through">{userText.en}</p>
+                                    )}
+                                    {(langMode === 'both' || langMode === 'ta') && userText.ta && (
+                                      <p className="font-tamil line-through">{userText.ta}</p>
+                                    )}
+                                  </>
+                                ) : (
+                                  <p className="italic text-slate-500 dark:text-slate-400">
+                                    {langMode === 'ta' ? 'விடை அளிக்கப்படவில்லை (நேரம் முடிந்தது)' : 'No answer selected (Timed out)'}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}
