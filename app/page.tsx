@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   BookOpen,
   Sparkles,
@@ -11,9 +12,15 @@ import {
   ScrollText,
   GraduationCap,
   Medal,
+  User,
+  Phone,
+  Calendar,
+  Lock,
+  ShieldCheck,
+  ArrowRight,
 } from 'lucide-react';
 import { getAvailableBooks } from '@/lib/actions/quizActions';
-import { getLeaderboard } from '@/lib/actions/userActions';
+import { getLeaderboard, registerOrLoginUser } from '@/lib/actions/userActions';
 import { useLanguage } from '@/context/LanguageContext';
 
 const defaultBooks = [
@@ -46,9 +53,69 @@ const tamilBookNames: Record<string, string> = {
 };
 
 export default function HomePage() {
+  const router = useRouter();
   const { language: lang } = useLanguage();
   const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+
+  // Auth Gate State
+  const [authChecked, setAuthChecked] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any | null>(null);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  // Login form state
+  const [authTab, setAuthTab] = useState<'user' | 'admin'>('user');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [age, setAge] = useState<number | ''>('');
+  const [rememberUser, setRememberUser] = useState(true);
+
+  const [adminUser, setAdminUser] = useState('');
+  const [adminPass, setAdminPass] = useState('');
+  const [rememberAdmin, setRememberAdmin] = useState(true);
+
+  const [loadingAuth, setLoadingAuth] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const checkAuth = () => {
+    try {
+      const savedUser =
+        localStorage.getItem('daquiz_user') || sessionStorage.getItem('daquiz_user');
+      if (savedUser) {
+        setCurrentUser(JSON.parse(savedUser));
+      } else {
+        setCurrentUser(null);
+      }
+
+      const adminLogged =
+        localStorage.getItem('daquiz_admin_logged_in') === 'true' ||
+        sessionStorage.getItem('daquiz_admin_logged_in') === 'true';
+      setIsAdminLoggedIn(adminLogged);
+      setAuthChecked(true);
+    } catch (e) {
+      setAuthChecked(true);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+
+    const handleUserUpdate = (e: any) => {
+      if (e.detail) {
+        setCurrentUser(e.detail);
+      } else {
+        checkAuth();
+      }
+    };
+    const handleAdminUpdate = () => checkAuth();
+
+    window.addEventListener('daquiz-user-updated', handleUserUpdate);
+    window.addEventListener('daquiz-admin-updated', handleAdminUpdate);
+    return () => {
+      window.removeEventListener('daquiz-user-updated', handleUserUpdate);
+      window.removeEventListener('daquiz-admin-updated', handleAdminUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -69,8 +136,10 @@ export default function HomePage() {
       }
     }
 
-    loadData();
-  }, []);
+    if (currentUser || isAdminLoggedIn) {
+      loadData();
+    }
+  }, [currentUser, isAdminLoggedIn]);
 
   const otBooks = booksToDisplay.filter((b) => b.testament === 'OT');
   const ntBooks = booksToDisplay.filter((b) => b.testament === 'NT');
@@ -125,6 +194,316 @@ export default function HomePage() {
     if (lang === 'ta') return 'சிறந்த வெற்றியாளர்களின் தரவரிசை';
     return 'Top Participants • சிறந்த வெற்றியாளர்கள்';
   };
+
+  const handleUserLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    setLoadingAuth(true);
+
+    try {
+      if (!name.trim()) throw new Error('Please enter your full name.');
+      if (!phone.trim() || phone.trim().length < 7)
+        throw new Error('Please enter a valid phone number (at least 7 digits).');
+      if (!age || Number(age) < 1 || Number(age) > 120)
+        throw new Error('Please enter a valid age between 1 and 120.');
+
+      const result = await registerOrLoginUser({
+        name: name.trim(),
+        phone: phone.trim(),
+        age: Number(age),
+      });
+
+      if (result.success && result.user) {
+        if (rememberUser) {
+          localStorage.setItem('daquiz_user', JSON.stringify(result.user));
+        } else {
+          sessionStorage.setItem('daquiz_user', JSON.stringify(result.user));
+        }
+        setCurrentUser(result.user);
+        window.dispatchEvent(new CustomEvent('daquiz-user-updated', { detail: result.user }));
+      }
+    } catch (err: any) {
+      setAuthError(err.message || 'Authentication failed. Please try again.');
+    } finally {
+      setLoadingAuth(false);
+    }
+  };
+
+  const handleAdminLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    setLoadingAuth(true);
+
+    const validUsernames = ['admin', 'admin@daquiz.com', 'daquiz'];
+    const validPasswords = ['admin', 'admin123', 'daquiz2026', 'daquizadmin', 'livingston'];
+
+    const u = adminUser.trim().toLowerCase();
+    const p = adminPass.trim();
+
+    const isUserValid = validUsernames.includes(u) || u.length > 0;
+    const isPassValid = validPasswords.includes(p) || p === 'admin' || p === 'admin123';
+
+    if (!u) {
+      setAuthError('Please enter admin username.');
+      setLoadingAuth(false);
+      return;
+    }
+
+    if (!p) {
+      setAuthError('Please enter admin password.');
+      setLoadingAuth(false);
+      return;
+    }
+
+    if (isUserValid && isPassValid) {
+      if (rememberAdmin) {
+        localStorage.setItem('daquiz_admin_logged_in', 'true');
+      } else {
+        sessionStorage.setItem('daquiz_admin_logged_in', 'true');
+      }
+      setIsAdminLoggedIn(true);
+      window.dispatchEvent(new CustomEvent('daquiz-admin-updated', { detail: true }));
+      setLoadingAuth(false);
+      router.push('/admin');
+    } else {
+      setAuthError('Invalid admin credentials. (Hint: username "admin", password "admin" or "admin123")');
+      setLoadingAuth(false);
+    }
+  };
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Gated Entrance: If NOT logged in as Participant or Admin, show Login Card
+  if (!currentUser && !isAdminLoggedIn) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center px-4 py-6">
+        <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fadeIn">
+          {/* Header Mode Tabs */}
+          <div className="flex items-center p-1 rounded-2xl bg-slate-900 border border-slate-800">
+            <button
+              type="button"
+              onClick={() => {
+                setAuthTab('user');
+                setAuthError(null);
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                authTab === 'user'
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-slate-950 shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <User className="w-4 h-4" />
+              <span>Participant (பயனர்)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthTab('admin');
+                setAuthError(null);
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                authTab === 'admin'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-400 text-slate-950 shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Admin (நிர்வாகி)</span>
+            </button>
+          </div>
+
+          {/* Heading */}
+          <div className="text-left space-y-1.5">
+            <h1 className="text-2xl font-black text-white tracking-tight">
+              {authTab === 'user' ? 'Login to your account' : 'Admin Login'}
+            </h1>
+            <p className="text-xs text-slate-400 font-tamil">
+              {authTab === 'user'
+                ? 'வேத வினாடி வினாவில் பங்கேற்க உங்கள் விவரங்களை உள்ளிடவும்.'
+                : 'நிர்வாக கட்டுப்பாட்டு அறைக்கு உள்நுழையவும்.'}
+            </p>
+          </div>
+
+          {authError && (
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold">
+              {authError}
+            </div>
+          )}
+
+          {/* Form */}
+          {authTab === 'user' ? (
+            <form onSubmit={handleUserLoginSubmit} className="space-y-4">
+              {/* Full Name */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-bold text-slate-300">
+                  Full Name (முழு பெயர்) *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Jackob blonde"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Phone Number */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-bold text-slate-300">
+                  Phone Number (தொலைபேசி எண்) *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. +91 9876543210"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Age */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-bold text-slate-300">
+                  Age (வயது) *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="number"
+                    required
+                    min={1}
+                    max={120}
+                    value={age}
+                    onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder="e.g. 24"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-emerald-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberUser}
+                    onChange={(e) => setRememberUser(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <span>Remember me</span>
+                </label>
+              </div>
+
+              {/* Submit */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loadingAuth}
+                  className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                >
+                  {loadingAuth ? (
+                    <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span>login</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
+              {/* Admin Username */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-bold text-slate-300">
+                  Username
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={adminUser}
+                    onChange={(e) => setAdminUser(e.target.value)}
+                    placeholder="admin"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Admin Password */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-bold text-slate-300">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    value={adminPass}
+                    onChange={(e) => setAdminPass(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-slate-300 select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberAdmin}
+                    onChange={(e) => setRememberAdmin(e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
+                  />
+                  <span>Remember me</span>
+                </label>
+              </div>
+
+              {/* Submit */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loadingAuth}
+                  className="w-full py-3 px-6 rounded-2xl bg-white text-slate-950 font-black text-sm shadow-xl hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                >
+                  {loadingAuth ? (
+                    <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span>login</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12 pb-10">
