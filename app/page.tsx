@@ -1,15 +1,16 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   BookOpen,
   Sparkles,
   Trophy,
-  Flame,
   ChevronRight,
   BookMarked,
   ScrollText,
   GraduationCap,
   Medal,
-  Users,
 } from 'lucide-react';
 import { getAvailableBooks } from '@/lib/actions/quizActions';
 import { getLeaderboard } from '@/lib/actions/userActions';
@@ -43,22 +44,32 @@ const tamilBookNames: Record<string, string> = {
   Revelation: 'வெளிப்படுத்தின விசேஷம்',
 };
 
-export const dynamic = 'force-dynamic';
+export default function HomePage() {
+  const [booksToDisplay, setBooksToDisplay] = useState<any[]>(defaultBooks);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
-export default async function HomePage() {
-  let dbBooks: any[] = [];
-  let leaderboard: any[] = [];
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [dbBooks, topLeaderboard] = await Promise.all([
+          getAvailableBooks().catch(() => []),
+          getLeaderboard(5).catch(() => []),
+        ]);
 
-  try {
-    [dbBooks, leaderboard] = await Promise.all([
-      getAvailableBooks(),
-      getLeaderboard(5),
-    ]);
-  } catch (error) {
-    console.warn('Fallback to default books and leaderboard');
-  }
+        if (dbBooks && dbBooks.length > 0) {
+          setBooksToDisplay(dbBooks);
+        }
+        if (topLeaderboard && topLeaderboard.length > 0) {
+          setLeaderboard(topLeaderboard);
+        }
+      } catch (e) {
+        console.warn('Using default books fallback');
+      }
+    }
 
-  const booksToDisplay = dbBooks.length > 0 ? dbBooks : defaultBooks;
+    loadData();
+  }, []);
+
   const otBooks = booksToDisplay.filter((b) => b.testament === 'OT');
   const ntBooks = booksToDisplay.filter((b) => b.testament === 'NT');
 
