@@ -14,6 +14,7 @@ export interface IQuizAttempt extends Document {
   quizType: string;
   mode: 'competition' | 'practice' | 'book';
   book: string;
+  chapter?: number;
   totalQuestions: number;
   correctAnswers: number;
   scoreEarned: number;
@@ -65,6 +66,10 @@ const QuizAttemptSchema = new Schema<IQuizAttempt>(
       required: true,
       index: true,
       trim: true,
+    },
+    chapter: {
+      type: Number,
+      index: true,
     },
     totalQuestions: {
       type: Number,

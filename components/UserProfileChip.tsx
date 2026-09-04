@@ -90,11 +90,12 @@ export default function UserProfileChip() {
 
         {user ? (
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#EAE0D0] hover:border-[#D4AF37] text-xs font-semibold text-slate-800 transition-all shadow-sm group"
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-[#141A26] border border-[#EAE0D0] dark:border-[#232E42] hover:border-[#D4AF37] text-xs font-semibold text-slate-800 dark:text-slate-100 transition-all shadow-sm group"
+              title="View Profile & Progress"
             >
-              <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/20 text-[#8C6B1B] flex items-center justify-center font-bold text-[11px] border border-[#D4AF37]/30">
+              <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/20 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center font-bold text-[11px] border border-[#D4AF37]/30">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="text-left hidden sm:block">
@@ -105,7 +106,7 @@ export default function UserProfileChip() {
                   <CheckCircle2 className="w-2.5 h-2.5" /> {user.quizzesTaken || 0} {lang === 'ta' ? 'முடிந்தது' : 'Completed'}
                 </span>
               </div>
-            </button>
+            </Link>
 
             <button
               onClick={handleLogout}

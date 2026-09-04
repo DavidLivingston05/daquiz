@@ -244,6 +244,7 @@ export async function verifyAndSubmitQuiz(payload: SubmissionPayload) {
     quizType: 'book',
     mode: payload.mode || 'competition',
     book: payload.book,
+    chapter: payload.chapter,
     totalQuestions: payload.answers.length,
     correctAnswers: correctCount,
     scoreEarned: totalScore,
