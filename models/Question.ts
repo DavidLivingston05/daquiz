@@ -76,7 +76,7 @@ const QuestionSchema = new Schema<IQuestion>(
     },
     category: {
       type: String,
-      default: 'General',
+      default: '',
       index: true,
     },
     question: {

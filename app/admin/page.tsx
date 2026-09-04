@@ -633,11 +633,6 @@ export default function AdminPage() {
                       <span className="px-2.5 py-0.5 rounded-md bg-[#FAF3E0] dark:bg-amber-500/15 text-[#8C6B1B] dark:text-amber-300 border border-[#E8D8B8] dark:border-amber-500/30 text-xs font-extrabold">
                         {q.book} Ch. {q.chapter}
                       </span>
-                      {q.category && (
-                        <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
-                          {q.category}
-                        </span>
-                      )}
                     </div>
 
                     <div className="flex items-center gap-2">

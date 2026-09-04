@@ -45,7 +45,7 @@ export const QuestionCreationSchema = z.object({
   chapter: z.number().int().min(1).max(999),
   verse: z.number().int().min(1).max(999).optional().default(1),
   difficulty: z.enum(['easy', 'medium', 'hard']),
-  category: z.string().min(1).max(100),
+  category: z.string().max(100).optional().default(''),
   question_en: z.string().min(5).max(500),
   question_ta: z.string().min(5).max(500),
   options: z

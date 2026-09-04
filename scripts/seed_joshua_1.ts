@@ -13,7 +13,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 1,
     difficulty: 'easy',
-    category: 'Leadership',
+    category: '',
     question: {
       en: 'Who was the father of Joshua?',
       ta: 'யோசுவாவின் தகப்பனார் யார்?',
@@ -34,7 +34,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 1,
     difficulty: 'easy',
-    category: 'Leadership',
+    category: '',
     question: {
       en: 'What was Joshua\'s role before becoming the leader of Israel?',
       ta: 'தலைவராவதற்கு முன்பு யோசுவா என்ன பணியில் இருந்தார்?',
@@ -55,7 +55,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 1,
     difficulty: 'medium',
-    category: 'History',
+    category: '',
     question: {
       en: 'After whose death did the Lord speak to Joshua the son of Nun?',
       ta: 'யார் மரித்தபின்பு கர்த்தர் நூனின் குமாரனாகிய யோசுவாவிடம் பேசினார்?',
@@ -76,7 +76,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 2,
     difficulty: 'easy',
-    category: 'Commands',
+    category: '',
     question: {
       en: 'What title did the Lord use when referring to Moses?',
       ta: 'கர்த்தர் மோசேயைக் குறித்துப் பேசும்போது என்ன பட்டம் கொடுத்துக் குறிப்பிட்டார்?',
@@ -97,7 +97,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 2,
     difficulty: 'easy',
-    category: 'Geography',
+    category: '',
     question: {
       en: 'Which river did the Lord command Joshua and all the people to cross?',
       ta: 'யோசுவாவும் சகல ஜனங்களும் கடந்து போகும்படி கர்த்தர் கட்டளையிட்ட நதி எது?',
@@ -118,7 +118,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 2,
     difficulty: 'medium',
-    category: 'Commands',
+    category: '',
     question: {
       en: 'Who was instructed to arise and go over the Jordan into the Promised Land?',
       ta: 'எழுந்து யோர்தானைக் கடந்து வாக்குத்தத்த தேசத்திற்குள் செல்லும்படி கட்டளையிடப்பட்டது யார்?',
@@ -139,7 +139,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 3,
     difficulty: 'easy',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What did God promise to give Joshua and the people regarding the land?',
       ta: 'தேசத்தைக் குறித்து யோசுவாவுக்கும் ஜனங்களுக்கும் தேவன் கொடுத்த வாக்குத்தத்தம் என்ன?',
@@ -160,7 +160,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 3,
     difficulty: 'medium',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'Complete the divine promise: "Every place that the sole of your foot will tread upon I have given to you, just as I ______."',
       ta: 'வாக்குத்தத்த வசனத்தை நிறைவு செய்க: "நான் ______ சொன்னபடி, உங்கள் காலடி மிதிக்கும் இடத்தையெல்லாம் உங்களுக்குக் கொடுத்தேன்."',
@@ -181,7 +181,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 4,
     difficulty: 'hard',
-    category: 'Geography',
+    category: '',
     question: {
       en: 'Which great river is specifically named as the eastern boundary of the Promised Land?',
       ta: 'வாக்குத்தத்த தேசத்தின் எல்லையாகக் குறிப்பிடப்பட்டுள்ள பெரிய நதி எது?',
@@ -202,7 +202,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 4,
     difficulty: 'hard',
-    category: 'Geography',
+    category: '',
     question: {
       en: 'Whose whole territory is specifically mentioned within the promised boundaries?',
       ta: 'சுதந்தரிக்கப்படும் எல்லைகளில் யாருடைய தேசம் முழுவதும் அடங்கியிருப்பதாகக் கூறப்பட்டது?',
@@ -223,7 +223,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 4,
     difficulty: 'hard',
-    category: 'Geography',
+    category: '',
     question: {
       en: 'Which body of water toward the going down of the sun forms the western border?',
       ta: 'சூரியன் அஸ்தமிக்கிற திசையான எந்த சமுத்திரம் எல்லையாகக் கூறப்பட்டுள்ளது?',
@@ -244,7 +244,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 4,
     difficulty: 'medium',
-    category: 'Geography',
+    category: '',
     question: {
       en: 'Which mountain region is mentioned together with the wilderness in the territorial boundaries?',
       ta: 'எல்லைகளில் வனாந்தரத்தோடு கூட குறிப்பிடப்பட்ட பிரதேசம் எது?',
@@ -265,7 +265,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 5,
     difficulty: 'easy',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What assurance of unshakeable victory did God give to Joshua?',
       ta: 'யோசுவாவுக்கு தேவன் கொடுத்த அசைக்க முடியாத வெற்றி வாக்குறுதி என்ன?',
@@ -286,7 +286,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 5,
     difficulty: 'medium',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'Complete the promise: "Just as I was with Moses, so ______."',
       ta: 'வாக்குத்தத்தத்தை நிறைவு செய்க: "நான் மோசேயோடு இருந்ததுபோல, ______."',
@@ -307,7 +307,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 5,
     difficulty: 'easy',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What powerful promise of God\'s constant presence and faithfulness was given to Joshua?',
       ta: 'யோசுவாவுக்குக் கூறப்பட்ட தேவனின் மாறாத பிரசன்னத்தின் இரட்டை வாக்குத்தத்தம் என்ன?',
@@ -328,7 +328,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 6,
     difficulty: 'easy',
-    category: 'Commands',
+    category: '',
     question: {
       en: 'What command did God repeatedly give to strengthen Joshua\'s spirit?',
       ta: 'யோசுவாவை திடப்படுத்த தேவன் மீண்டும் மீண்டும் அளித்த கட்டளை என்ன?',
@@ -349,7 +349,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 6,
     difficulty: 'medium',
-    category: 'Prophecy',
+    category: '',
     question: {
       en: 'Why was Joshua commanded to be strong and courageous?',
       ta: 'யோசுவா திடன்கொண்டு தைரியமாயிருக்க வேண்டியதன் முக்கிய நோக்கம் என்ன?',
@@ -370,7 +370,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 6,
     difficulty: 'medium',
-    category: 'Covenants',
+    category: '',
     question: {
       en: 'To whom had the Lord sworn that He would give the Promised Land?',
       ta: 'வாக்குத்தத்தம் பண்ணப்பட்ட தேசத்தைக் கொடுப்பேன் என்று கர்த்தர் யாருக்கு ஆணையிட்டிருந்தார்?',
@@ -391,7 +391,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 7,
     difficulty: 'easy',
-    category: 'Commands',
+    category: '',
     question: {
       en: 'With what emphasis did God charge Joshua regarding strength and courage?',
       ta: 'தைரியத்தைக் குறித்து தேவன் எந்த அழுத்தமான வார்த்தையைச் சொன்னார்?',
@@ -412,7 +412,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 7,
     difficulty: 'medium',
-    category: 'Law',
+    category: '',
     question: {
       en: 'What was Joshua commanded to observe carefully and obey completely?',
       ta: 'முழுமையாகக் கீழ்ப்படிந்து செய்யும்படி யோசுவாவுக்குக் கட்டளையிடப்பட்டது எது?',
@@ -433,7 +433,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 7,
     difficulty: 'medium',
-    category: 'Law',
+    category: '',
     question: {
       en: 'What instruction was given concerning adherence to God\'s Law?',
       ta: 'தேவனுடைய நியாயப்பிரமாணத்தைக் கைக்கொள்வதில் கொடுக்கப்பட்ட எச்சரிக்கை என்ன?',
@@ -454,7 +454,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 7,
     difficulty: 'medium',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What is the promised blessing of not straying to the right or left from God\'s Law?',
       ta: 'தேவனுடைய பிரமாணத்தை விட்டு வலது இடதுபுறம் விலகாமல் நடப்பதினால் கிடைக்கும் ஆசீர்வாதம் என்ன?',
@@ -475,7 +475,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 8,
     difficulty: 'easy',
-    category: 'Scripture',
+    category: '',
     question: {
       en: 'Which book was never to depart from the mouth of the leader?',
       ta: 'வாயைவிட்டுப் பிரியாதிருக்க வேண்டும் என்று கட்டளையிடப்பட்ட புஸ்தகம் எது?',
@@ -496,7 +496,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 8,
     difficulty: 'easy',
-    category: 'Meditation',
+    category: '',
     question: {
       en: 'How frequently was the Book of the Law to be meditated upon?',
       ta: 'நியாயப்பிரமாண புஸ்தகத்தை எப்போது தியானித்துக்கொண்டிருக்க வேண்டும்?',
@@ -517,7 +517,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 8,
     difficulty: 'medium',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What are the two assured results of meditating on and obeying God\'s Word?',
       ta: 'வேதத்தைத் தியானித்து அதன்படி கவனமாய் நடப்பதினால் உண்டாகும் இரண்டு நன்மைகள் யாவை?',
@@ -538,7 +538,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 9,
     difficulty: 'easy',
-    category: 'Commands',
+    category: '',
     question: {
       en: 'With what rhetorical question did the Lord affirm His divine mandate?',
       ta: 'தேவன் தம்முடைய அதிகாரப்பூர்வமான கட்டளையை எந்தக் கேள்வியோடு உறுதிப்படுத்தினார்?',
@@ -559,7 +559,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 9,
     difficulty: 'easy',
-    category: 'Encouragement',
+    category: '',
     question: {
       en: 'Which two fears were explicitly commanded against?',
       ta: 'எந்த இரண்டு காரியங்களுக்கு இடங்கொடுக்க வேண்டாம் என்று தேவன் திட்டவட்டமாகக் கட்டளையிட்டார்?',
@@ -580,7 +580,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 9,
     difficulty: 'easy',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What is the divine ground given for not being dismayed or afraid?',
       ta: 'கலங்காமலும் திகையாமலும் இருப்பதற்கு தேவன் அருளிய வாக்குத்தத்தம் என்ன?',
@@ -601,7 +601,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 10,
     difficulty: 'medium',
-    category: 'Leadership',
+    category: '',
     question: {
       en: 'Whom did Joshua immediately summon and instruct after hearing God\'s voice?',
       ta: 'தேவனுடைய சத்தத்தைக் கேட்டவுடன் யோசுவா உடனே யாரை அழைத்து கட்டளையிட்டான்?',
@@ -622,7 +622,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 11,
     difficulty: 'medium',
-    category: 'Instructions',
+    category: '',
     question: {
       en: 'Where were the officers told to pass through to announce the proclamation?',
       ta: 'கட்டளையை அறிவிக்கும்படி தலைவர்கள் எங்கே நடந்து செல்ல வேண்டும் என்று பணிக்கப்பட்டனர்?',
@@ -643,7 +643,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 11,
     difficulty: 'easy',
-    category: 'Instructions',
+    category: '',
     question: {
       en: 'What were the people instructed to prepare for the journey?',
       ta: 'பிரயாணத்திற்காக ஜனங்கள் தங்களுக்கு எதை ஆயத்தம் பண்ணும்படி சொல்லப்பட்டது?',
@@ -664,7 +664,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 11,
     difficulty: 'easy',
-    category: 'Numbers',
+    category: '',
     question: {
       en: 'Within how many days were the Israelites scheduled to cross the Jordan?',
       ta: 'எத்தனை நாட்களுக்குள்ளே இஸ்ரவேலர் யோர்தானைக் கடந்துபோவார்கள் என்று அறிவிக்கப்பட்டது?',
@@ -685,7 +685,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 11,
     difficulty: 'medium',
-    category: 'Purpose',
+    category: '',
     question: {
       en: 'What was the stated objective of crossing over the river Jordan?',
       ta: 'யோர்தானைக் கடந்து செல்வதன் பிரதான நோக்கம் என்ன?',
@@ -706,7 +706,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 12,
     difficulty: 'easy',
-    category: 'Tribes',
+    category: '',
     question: {
       en: 'Which three tribal groups received specific instructions about their armed men crossing over?',
       ta: 'தங்கள் யுத்தவீரர்கள் கடந்துபோக வேண்டும் என்று குறிப்பாகப் பணிக்கப்பட்ட மூன்று கோத்திரப் பிரிவினர் யார்?',
@@ -727,7 +727,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 12,
     difficulty: 'medium',
-    category: 'Tribes',
+    category: '',
     question: {
       en: 'Which tribe had only HALF of its people settle east of the Jordan?',
       ta: 'யோர்தானுக்கு கிழக்கே எந்தக் கோத்திரத்தின் பாதிப் பகுதி மட்டும் சுதந்தரம் பெற்றது?',
@@ -748,7 +748,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 13,
     difficulty: 'medium',
-    category: 'Remembrance',
+    category: '',
     question: {
       en: 'Whose previous commandment did Joshua remind the eastern tribes to remember?',
       ta: 'யாருடைய பழைய கட்டளையை நினைவுகூரும்படி யோசுவா அந்த கோத்திரத்தாரைக் கேட்டுக்கொண்டான்?',
@@ -769,7 +769,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 13,
     difficulty: 'medium',
-    category: 'Promises',
+    category: '',
     question: {
       en: 'What did Moses state that the LORD had provided for the eastern tribes?',
       ta: 'கர்த்தர் அந்த இரண்டரை கோத்திரத்தாருக்கு எதைக் கட்டளையிட்டு தேசத்தைக் கொடுத்தார்?',
@@ -790,7 +790,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 14,
     difficulty: 'medium',
-    category: 'Instructions',
+    category: '',
     question: {
       en: 'Who was permitted to stay behind in the land east of the Jordan?',
       ta: 'யோர்தானுக்குக் கிழக்குப் பகுதியில் தங்கியிருக்க அனுமதிக்கப்பட்டவர்கள் யார்?',
@@ -811,7 +811,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 14,
     difficulty: 'medium',
-    category: 'Instructions',
+    category: '',
     question: {
       en: 'How were the fighting men of the 2.5 tribes commanded to march before their brethren?',
       ta: 'இரண்டரை கோத்திரத்து யுத்தவீரர்கள் எவ்வாறு தங்கள் சகோதரருக்கு முன்பாகச் செல்ல வேண்டும்?',
@@ -832,7 +832,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 14,
     difficulty: 'easy',
-    category: 'Purpose',
+    category: '',
     question: {
       en: 'What was the primary purpose of the armed men crossing over ahead of Israel?',
       ta: 'முன்னதாக யோர்தானைக் கடந்துசெல்லும் யுத்தவீரர்களின் பிரதான நோக்கம் என்ன?',
@@ -853,7 +853,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 15,
     difficulty: 'medium',
-    category: 'Instructions',
+    category: '',
     question: {
       en: 'Until when were the eastern tribes obligated to battle alongside their brothers?',
       ta: 'எதுவரை அந்த இரண்டரை கோத்திரத்தார் தங்கள் சகோதரரோடு போரிட்டு உதவி செய்ய வேண்டும்?',
@@ -874,7 +874,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 15,
     difficulty: 'medium',
-    category: 'Geography',
+    category: '',
     question: {
       en: 'Where was the permanent inheritance of the 2.5 tribes situated relative to the Jordan?',
       ta: 'இரண்டரை கோத்திரத்தாரின் சுதந்தரம் யோர்தானின் எந்தத் திசையில் அமைந்திருந்தது?',
@@ -895,7 +895,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 16,
     difficulty: 'easy',
-    category: 'Obedience',
+    category: '',
     question: {
       en: 'What wholehearted pledge of obedience did the people make to Joshua?',
       ta: 'ஜனங்கள் யோசுவாவுக்கு அளித்த முழுமனதான கீழ்ப்படிதலின் வாக்குறுதி என்ன?',
@@ -916,7 +916,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 17,
     difficulty: 'easy',
-    category: 'Obedience',
+    category: '',
     question: {
       en: 'Whose obedience did the people cite as the standard for how they would obey Joshua?',
       ta: 'யோசுவாவுக்குக் கீழ்ப்படிவதை ஜனங்கள் யாருக்குக் கீழ்ப்படிந்ததோடு ஒப்பிட்டுக் கூறினார்கள்?',
@@ -937,7 +937,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 17,
     difficulty: 'medium',
-    category: 'Prayer',
+    category: '',
     question: {
       en: 'What prayer and blessing did the people speak over Joshua\'s leadership?',
       ta: 'யோசுவாவின் தலைமைத்துவத்திற்காக ஜனங்கள் வேண்டிய ஆசீர்வாத ஜெபம் என்ன?',
@@ -958,7 +958,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 18,
     difficulty: 'medium',
-    category: 'Discipline',
+    category: '',
     question: {
       en: 'What penalty was declared for anyone who rebelled against the leader\'s command?',
       ta: 'தலைவனின் கட்டளைக்கு விரோதமாய்ச் செயல்பட்டு கீழ்ப்படியாதவனுக்கு என்ன தண்டனை விதிக்கப்பட்டது?',
@@ -979,7 +979,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 18,
     difficulty: 'easy',
-    category: 'Encouragement',
+    category: '',
     question: {
       en: 'What final words of encouragement did the congregation speak to Joshua?',
       ta: 'ஜனங்கள் யோசுவாவை நோக்கி கூறிய இறுதி ஊக்கமளிக்கும் வார்த்தை என்ன?',
@@ -1000,7 +1000,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 1,
     difficulty: 'hard',
-    category: 'Context',
+    category: '',
     question: {
       en: 'Who was the supreme authority commissioning Joshua to lead Israel across the Jordan?',
       ta: 'இஸ்ரவேலை வழிநடத்தி யோர்தானைக் கடக்கும்படி யோசுவாவுக்குக் கட்டளையிட்ட உன்னத அதிகாரி யார்?',
@@ -1021,7 +1021,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 8,
     difficulty: 'hard',
-    category: 'Scripture',
+    category: '',
     question: {
       en: 'What specific attitude toward God\'s written word guarantees true prosperity and success?',
       ta: 'மெய்யான செழிப்பையும் நல்வெற்றியையும் உத்தரவாதப்படுத்தும் செயல் எது?',
@@ -1042,7 +1042,7 @@ export const joshua1Questions = [
     chapter: 1,
     verse: 7,
     difficulty: 'hard',
-    category: 'Leadership',
+    category: '',
     question: {
       en: 'How many times in the opening commissioning does the phrase "be strong and courageous" (or very courageous) appear?',
       ta: 'யோசுவாவின் நியமன நிகழ்வில் தேவனும் ஜனங்களும் சேர்த்து "திடன்கொண்டு தைரியமாயிரு / பலங்கொள்" என்று எத்தனை முறை வலியுறுத்துகிறார்கள்?',

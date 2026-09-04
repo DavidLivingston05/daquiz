@@ -399,7 +399,7 @@ export async function createQuestion(formData: {
       chapter: validated.chapter,
       verse: validated.verse,
       difficulty: validated.difficulty,
-      category: validated.category.trim(),
+      category: (validated.category || '').trim(),
       question: { en: validated.question_en.trim(), ta: validated.question_ta.trim() },
       options: formattedOptions,
       explanation: {
@@ -428,7 +428,7 @@ export async function updateQuestion(payload: {
   chapter: number;
   verse: number;
   difficulty: 'easy' | 'medium' | 'hard';
-  category: string;
+  category?: string;
   question_en: string;
   question_ta: string;
   options: { id?: string; text_en: string; text_ta: string; isCorrect: boolean }[];
@@ -453,7 +453,7 @@ export async function updateQuestion(payload: {
         chapter: Number(payload.chapter) || 1,
         verse: Number(payload.verse) || 1,
         difficulty: payload.difficulty,
-        category: payload.category.trim(),
+        category: (payload.category || '').trim(),
         question: { en: payload.question_en.trim(), ta: payload.question_ta.trim() },
         options: formattedOptions,
         explanation: {
