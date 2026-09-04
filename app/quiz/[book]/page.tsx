@@ -54,6 +54,7 @@ export default function QuizPlayPage() {
   const [selectedAnswers, setSelectedAnswers] = useState<
     { questionId: string; selectedOptionId: string; timeSpent: number }[]
   >([]);
+  const [practiceAnswersMap, setPracticeAnswersMap] = useState<Record<string, string>>({});
   const [currentSelectedOption, setCurrentSelectedOption] = useState<string | null>(null);
 
   // Active User Profile
@@ -86,17 +87,17 @@ export default function QuizPlayPage() {
     }
   }, []);
 
-  // Load questions
+  // Fetch Questions
   useEffect(() => {
     async function loadQuiz() {
+      setLoading(true);
+      setErrorMsg(null);
       try {
-        setLoading(true);
-        setErrorMsg(null);
-        const data = await getQuizSession(book, 50, quizMode, chapterParam);
+        const data = await getQuizSession(book, chapterParam);
         if (!data || data.length === 0) {
           setErrorMsg(
-            chapterParam
-              ? `No active questions found for ${book} Chapter ${chapterParam}. You can add questions in Admin or select another chapter.`
+            langMode === 'ta'
+              ? `${book} புத்தகத்திற்கு வினாக்கள் எதுவும் கிடைக்கவில்லை. நிர்வாகி பக்கத்தில் வினாக்களைச் சேர்க்கலாம்.`
               : `No active questions found for ${book}. You can add questions in the Admin portal or try another book.`
           );
         } else {
@@ -113,24 +114,31 @@ export default function QuizPlayPage() {
     loadQuiz();
   }, [book, quizMode, chapterParam]);
 
-  // Timer effect (Competition mode only)
+  // Timer effect
   useEffect(() => {
-    if (loading || quizResult || questions.length === 0 || quizMode === 'practice') return;
+    if (loading || quizResult || questions.length === 0) return;
 
-    setQuestionTimeLeft(QUESTION_TIME_LIMIT);
-    setQuestionTimeSpent(0);
+    if (quizMode === 'competition') {
+      setQuestionTimeLeft(QUESTION_TIME_LIMIT);
+      setQuestionTimeSpent(0);
 
-    timerIntervalRef.current = setInterval(() => {
-      totalQuizTimeRef.current += 1;
-      setQuestionTimeSpent((prev) => prev + 1);
-      setQuestionTimeLeft((prev) => {
-        if (prev <= 1) {
-          handleNextQuestion(true);
-          return QUESTION_TIME_LIMIT;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      timerIntervalRef.current = setInterval(() => {
+        totalQuizTimeRef.current += 1;
+        setQuestionTimeSpent((prev) => prev + 1);
+        setQuestionTimeLeft((prev) => {
+          if (prev <= 1) {
+            handleNextQuestion(true);
+            return QUESTION_TIME_LIMIT;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      // Practice mode - total timer only, no question timeout
+      timerIntervalRef.current = setInterval(() => {
+        totalQuizTimeRef.current += 1;
+      }, 1000);
+    }
 
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
@@ -141,14 +149,55 @@ export default function QuizPlayPage() {
 
   const handleSelectOption = (optionId: string) => {
     setCurrentSelectedOption(optionId);
-    if (quizMode === 'practice') {
+    if (quizMode === 'practice' && currentQ) {
+      setPracticeAnswersMap((prev) => ({
+        ...prev,
+        [currentQ.id]: optionId,
+      }));
       setPracticeRevealed(true);
     }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (quizMode !== 'practice' || currentIndex <= 0) return;
+    const prevIdx = currentIndex - 1;
+    setCurrentIndex(prevIdx);
+    const prevQ = questions[prevIdx];
+    const prevAnswer = practiceAnswersMap[prevQ?.id] || null;
+    setCurrentSelectedOption(prevAnswer);
+    setPracticeRevealed(!!prevAnswer);
   };
 
   const handleNextQuestion = (forcedByTimeout = false) => {
     if (!currentQ) return;
 
+    if (quizMode === 'practice') {
+      const updatedMap = {
+        ...practiceAnswersMap,
+        ...(currentSelectedOption ? { [currentQ.id]: currentSelectedOption } : {}),
+      };
+      setPracticeAnswersMap(updatedMap);
+
+      if (currentIndex + 1 < questions.length) {
+        const nextIdx = currentIndex + 1;
+        setCurrentIndex(nextIdx);
+        const nextQ = questions[nextIdx];
+        const nextAnswer = updatedMap[nextQ?.id] || null;
+        setCurrentSelectedOption(nextAnswer);
+        setPracticeRevealed(!!nextAnswer);
+      } else {
+        // Last question in practice mode: submit
+        const allPracticeAnswers = questions.map((q) => ({
+          questionId: q.id,
+          selectedOptionId: updatedMap[q.id] || '',
+          timeSpent: 5,
+        }));
+        submitQuiz(allPracticeAnswers, currentUser);
+      }
+      return;
+    }
+
+    // Competition mode: strict forward-only progression
     const answer = {
       questionId: currentQ.id,
       selectedOptionId: forcedByTimeout
@@ -165,7 +214,7 @@ export default function QuizPlayPage() {
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      if (quizMode === 'competition' && !currentUser) {
+      if (!currentUser) {
         setIsAuthModalOpen(true);
       } else {
         submitQuiz(nextAnswers, currentUser);
@@ -686,34 +735,76 @@ export default function QuizPlayPage() {
           </div>
         )}
 
-        {/* Action Button: Next Question (Radiant Golden Glow) */}
+        {/* Action Button(s): Practice Mode has Back & Next, Competition Mode has Next only */}
         <div className="pt-2">
-          <button
-            onClick={() => handleNextQuestion(false)}
-            disabled={!currentSelectedOption || submitting}
-            className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all flex items-center justify-center gap-2 ${
-              currentSelectedOption
-                ? 'btn-modern-gold cursor-pointer'
-                : 'bg-[#EAE0D0] dark:bg-[#1E2738] text-slate-400 dark:text-slate-600 cursor-not-allowed'
-            }`}
-          >
-            {submitting ? (
-              <span className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Saving Quiz Attempt...</span>
-              </span>
-            ) : currentIndex + 1 < questions.length ? (
-              <>
-                <span>{langMode === 'ta' ? 'அடுத்த கேள்வி' : 'Next Question'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 text-yellow-200" />
-                <span>{langMode === 'ta' ? 'முடிவுகளைக் காண்க' : 'Finish & View Score'}</span>
-              </>
-            )}
-          </button>
+          {quizMode === 'practice' ? (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handlePreviousQuestion}
+                disabled={currentIndex === 0 || submitting}
+                className={`py-3.5 px-5 rounded-2xl font-black text-xs sm:text-sm tracking-wide transition-all flex items-center justify-center gap-1.5 ${
+                  currentIndex === 0 || submitting
+                    ? 'bg-[#EAE0D0]/50 dark:bg-[#1E2738]/50 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-transparent'
+                    : 'bg-white dark:bg-[#141A26] hover:bg-[#FAF3E0] dark:hover:bg-[#20293D] border border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-200 shadow-sm cursor-pointer'
+                }`}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>{langMode === 'ta' ? 'முந்தைய' : 'Back'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNextQuestion(false)}
+                disabled={submitting}
+                className="flex-1 py-3.5 px-6 rounded-2xl btn-modern-gold font-black text-xs sm:text-sm tracking-wide shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {submitting ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>{langMode === 'ta' ? 'சேமிக்கிறது...' : 'Saving...'}</span>
+                  </span>
+                ) : currentIndex + 1 < questions.length ? (
+                  <>
+                    <span>{langMode === 'ta' ? 'அடுத்த கேள்வி' : 'Next Question'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{langMode === 'ta' ? 'பயிற்சியை முடிக்கவும்' : 'Submit Practice Test'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => handleNextQuestion(false)}
+              disabled={!currentSelectedOption || submitting}
+              className={`w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all flex items-center justify-center gap-2 ${
+                currentSelectedOption
+                  ? 'btn-modern-gold cursor-pointer'
+                  : 'bg-[#EAE0D0] dark:bg-[#1E2738] text-slate-400 dark:text-slate-600 cursor-not-allowed'
+              }`}
+            >
+              {submitting ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Saving Quiz Attempt...</span>
+                </span>
+              ) : currentIndex + 1 < questions.length ? (
+                <>
+                  <span>{langMode === 'ta' ? 'அடுத்த கேள்வி' : 'Next Question'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 text-yellow-200" />
+                  <span>{langMode === 'ta' ? 'முடிவுகளைக் காண்க' : 'Finish & View Score'}</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
