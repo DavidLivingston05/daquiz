@@ -49,8 +49,10 @@ import {
   ALL_BIBLE_BOOKS,
   BIBLE_BOOK_MAP,
 } from '@/lib/bibleBooks';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function AdminPage() {
+  const { language: lang } = useLanguage();
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
 
@@ -1506,14 +1508,18 @@ export default function AdminPage() {
                 <div className="border-b border-slate-200/80 dark:border-slate-800 pb-4 pr-8">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30">
-                      {inspectingAttemptData.book} • Chapter {inspectingAttemptData.chapter}
+                      {lang === 'ta'
+                        ? `${BIBLE_BOOK_MAP[inspectingAttemptData.book]?.nameTa || inspectingAttemptData.book} • அதிகாரம் ${inspectingAttemptData.chapter}`
+                        : lang === 'both'
+                        ? `${inspectingAttemptData.book} (${BIBLE_BOOK_MAP[inspectingAttemptData.book]?.nameTa || inspectingAttemptData.book}) • Chapter ${inspectingAttemptData.chapter}`
+                        : `${inspectingAttemptData.book} • Chapter ${inspectingAttemptData.chapter}`}
                     </span>
                     <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                       {inspectingAttemptData.mode}
                     </span>
                   </div>
                   <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1.5">
-                    {inspectingAttemptData.userName} — Attempt Review
+                    {inspectingAttemptData.userName} — {lang === 'ta' ? 'முயற்சி ஆய்வு' : 'Attempt Review'}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
                     Completed on {new Date(inspectingAttemptData.createdAt).toLocaleDateString()} • Duration: {inspectingAttemptData.durationStr}
@@ -1524,7 +1530,7 @@ export default function AdminPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
                     <span className="text-[10px] uppercase font-black text-emerald-800 dark:text-emerald-300 block">
-                      Correct Answers
+                      {lang === 'ta' ? 'சரியான விடைகள்' : 'Correct Answers'}
                     </span>
                     <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                       {inspectingAttemptData.correctAnswers} / {inspectingAttemptData.totalQuestions}
@@ -1533,7 +1539,7 @@ export default function AdminPage() {
 
                   <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-center">
                     <span className="text-[10px] uppercase font-black text-rose-800 dark:text-rose-300 block">
-                      Mistakes / Wrong
+                      {lang === 'ta' ? 'தவறானவை' : 'Mistakes / Wrong'}
                     </span>
                     <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
                       {inspectingAttemptData.wrongAnswers}
@@ -1552,7 +1558,7 @@ export default function AdminPage() {
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                       }`}
                     >
-                      All Questions ({inspectingAttemptData.reviewItems?.length || 0})
+                      {lang === 'ta' ? 'எல்லா வினாக்களும்' : 'All Questions'} ({inspectingAttemptData.reviewItems?.length || 0})
                     </button>
                     <button
                       onClick={() => setMistakeFilterOnly(true)}
@@ -1562,7 +1568,7 @@ export default function AdminPage() {
                           : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
                       }`}
                     >
-                      Mistakes Only ({inspectingAttemptData.wrongAnswers})
+                      {lang === 'ta' ? 'தவறுகள் மட்டும்' : 'Mistakes Only'} ({inspectingAttemptData.wrongAnswers})
                     </button>
                   </div>
                 </div>
@@ -1607,12 +1613,12 @@ export default function AdminPage() {
                             {item.isCorrect ? (
                               <>
                                 <CheckCircle2 className="w-3 h-3" />
-                                <span>Correct</span>
+                                <span>{lang === 'ta' ? 'சரி' : 'Correct'}</span>
                               </>
                             ) : (
                               <>
                                 <XCircle className="w-3 h-3" />
-                                <span>Mistake</span>
+                                <span>{lang === 'ta' ? 'தவறு' : 'Mistake'}</span>
                               </>
                             )}
                           </span>
@@ -1620,11 +1626,13 @@ export default function AdminPage() {
 
                         {/* Question Text */}
                         <div className="space-y-1 mb-3">
-                          <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">
-                            {item.questionEn}
-                          </p>
-                          {item.questionTa && (
-                            <p className="text-xs font-tamil text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
+                          {(lang === 'both' || lang === 'en') && item.questionEn && (
+                            <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">
+                              {item.questionEn}
+                            </p>
+                          )}
+                          {(lang === 'both' || lang === 'ta') && item.questionTa && (
+                            <p className={`font-tamil leading-relaxed font-semibold ${lang === 'ta' ? 'text-sm font-extrabold text-slate-900 dark:text-white' : 'text-xs text-slate-600 dark:text-slate-300'}`}>
                               {item.questionTa}
                             </p>
                           )}
@@ -1640,11 +1648,23 @@ export default function AdminPage() {
                                 : 'bg-rose-100/60 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200'
                             }`}
                           >
-                            <span className="font-black shrink-0">User Selected:</span>
+                            <span className="font-black shrink-0">
+                              {lang === 'ta' ? 'பயனர் தேர்ந்தெடுத்தது:' : 'User Selected:'}
+                            </span>
                             <div>
-                              <span>{item.selectedOptionTextEn || 'No Answer / Unanswered'}</span>
-                              {item.selectedOptionTextTa && (
-                                <span className="font-tamil ml-1 opacity-90">({item.selectedOptionTextTa})</span>
+                              {lang === 'en' && (
+                                <span>{item.selectedOptionTextEn || item.selectedOptionTextTa || 'No Answer / Unanswered'}</span>
+                              )}
+                              {lang === 'ta' && (
+                                <span className="font-tamil">{item.selectedOptionTextTa || item.selectedOptionTextEn || 'விடை அளிக்கப்படவில்லை'}</span>
+                              )}
+                              {lang === 'both' && (
+                                <>
+                                  <span>{item.selectedOptionTextEn || 'No Answer / Unanswered'}</span>
+                                  {item.selectedOptionTextTa && (
+                                    <span className="font-tamil ml-1 opacity-90">({item.selectedOptionTextTa})</span>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
@@ -1652,11 +1672,23 @@ export default function AdminPage() {
                           {/* Correct Choice (shown if user made a mistake) */}
                           {!item.isCorrect && (
                             <div className="p-2.5 rounded-xl border bg-emerald-100/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 flex items-start gap-2">
-                              <span className="font-black shrink-0">Correct Answer:</span>
+                              <span className="font-black shrink-0">
+                                {lang === 'ta' ? 'சரியான விடை:' : 'Correct Answer:'}
+                              </span>
                               <div>
-                                <span>{item.correctOptionTextEn}</span>
-                                {item.correctOptionTextTa && (
-                                  <span className="font-tamil ml-1 opacity-90">({item.correctOptionTextTa})</span>
+                                {lang === 'en' && (
+                                  <span>{item.correctOptionTextEn || item.correctOptionTextTa}</span>
+                                )}
+                                {lang === 'ta' && (
+                                  <span className="font-tamil">{item.correctOptionTextTa || item.correctOptionTextEn}</span>
+                                )}
+                                {lang === 'both' && (
+                                  <>
+                                    <span>{item.correctOptionTextEn}</span>
+                                    {item.correctOptionTextTa && (
+                                      <span className="font-tamil ml-1 opacity-90">({item.correctOptionTextTa})</span>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </div>
