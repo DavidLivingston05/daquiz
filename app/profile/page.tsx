@@ -455,7 +455,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Score Breakdown Header */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
                     <span className="text-[10px] uppercase font-black text-emerald-800 dark:text-emerald-300 block">
                       {lang === 'ta' ? 'சரியான விடைகள்' : 'Correct Answers'}
@@ -471,15 +471,6 @@ export default function ProfilePage() {
                     </span>
                     <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
                       {reviewingAttemptData.wrongAnswers}
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
-                    <span className="text-[10px] uppercase font-black text-[#8C6B1B] dark:text-amber-300 block">
-                      {lang === 'ta' ? 'மதிப்பெண்' : 'Points Earned'}
-                    </span>
-                    <p className="text-2xl font-black text-slate-900 dark:text-white">
-                      {reviewingAttemptData.scoreEarned}
                     </p>
                   </div>
                 </div>

@@ -1009,7 +1009,6 @@ export default function AdminPage() {
                     <th className="p-4">Participant Name</th>
                     <th className="p-4">Phone Number</th>
                     <th className="p-4">Age</th>
-                    <th className="p-4">Total Points</th>
                     <th className="p-4">Quizzes Completed</th>
                     <th className="p-4">Practice Tests</th>
                     <th className="p-4">Registration Date</th>
@@ -1027,7 +1026,6 @@ export default function AdminPage() {
                       </td>
                       <td className="p-4 font-mono text-slate-600 dark:text-slate-300 font-semibold">{u.phone}</td>
                       <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{u.age} yrs</td>
-                      <td className="p-4 font-black text-[#8C6B1B] dark:text-amber-300">{u.totalScore} pts</td>
                       <td className="p-4 text-slate-700 dark:text-slate-200 font-bold">{u.quizzesTaken}</td>
                       <td className="p-4 text-slate-700 dark:text-slate-200 font-bold">{u.practiceCount}</td>
                       <td className="p-4 text-slate-500 dark:text-slate-400 text-[11px] font-medium">
@@ -1320,7 +1318,7 @@ export default function AdminPage() {
                         </span>
                         <span>•</span>
                         <span className="text-[#8C6B1B] dark:text-amber-300 font-black">
-                          {inspectingUserData.user.totalScore} Total Points
+                          {inspectingUserData.stats?.totalAttempts || 0} Attempts
                         </span>
                       </div>
                     </div>
@@ -1529,13 +1527,13 @@ export default function AdminPage() {
                 </div>
 
                 {/* Score Breakdown Header */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
                     <span className="text-[10px] uppercase font-black text-emerald-800 dark:text-emerald-300 block">
                       Correct Answers
                     </span>
                     <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                      {inspectingAttemptData.correctAnswers}
+                      {inspectingAttemptData.correctAnswers} / {inspectingAttemptData.totalQuestions}
                     </p>
                   </div>
 
@@ -1545,15 +1543,6 @@ export default function AdminPage() {
                     </span>
                     <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
                       {inspectingAttemptData.wrongAnswers}
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
-                    <span className="text-[10px] uppercase font-black text-[#8C6B1B] dark:text-amber-300 block">
-                      Points Earned
-                    </span>
-                    <p className="text-2xl font-black text-slate-900 dark:text-white">
-                      {inspectingAttemptData.scoreEarned}
                     </p>
                   </div>
                 </div>

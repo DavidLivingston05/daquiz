@@ -789,7 +789,7 @@ export default function QuizPlayPage() {
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 text-yellow-200" />
-                  <span>{langMode === 'ta' ? 'முடிவுகளைக் காண்க' : 'Finish & View Score'}</span>
+                  <span>{langMode === 'ta' ? 'முடிவுகளைக் காண்க' : 'Finish & View Results'}</span>
                 </>
               )}
             </button>
