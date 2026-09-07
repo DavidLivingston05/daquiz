@@ -313,8 +313,12 @@ export async function getAdminUserFullDetails(userPhone: string) {
 }
 
 /**
- * Admin action to fetch detailed mistake review for a specific attempt
+ * User & Admin action to fetch detailed mistake review for a specific attempt
  */
+export async function getUserAttemptReview(attemptId: string) {
+  return getAdminAttemptReview(attemptId);
+}
+
 export async function getAdminAttemptReview(attemptId: string) {
   try {
     await connectToDatabase();

@@ -20,9 +20,11 @@ import {
   Clock,
   Check,
   X,
+  XCircle,
+  Eye,
   ShieldCheck,
 } from 'lucide-react';
-import { getUserProgressAndProfile } from '@/lib/actions/userActions';
+import { getUserProgressAndProfile, getUserAttemptReview } from '@/lib/actions/userActions';
 import { useLanguage } from '@/context/LanguageContext';
 
 const tamilBookNames: Record<string, string> = {
@@ -50,6 +52,12 @@ export default function ProfilePage() {
   const [currentUser, setCurrentUser] = useState<any | null>(null);
   const [profileData, setProfileData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Attempt Review Modal State
+  const [reviewingAttemptId, setReviewingAttemptId] = useState<string | null>(null);
+  const [reviewingAttemptData, setReviewingAttemptData] = useState<any | null>(null);
+  const [loadingReview, setLoadingReview] = useState(false);
+  const [mistakeFilterOnly, setMistakeFilterOnly] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -85,6 +93,21 @@ export default function ProfilePage() {
     sessionStorage.removeItem('daquiz_user');
     window.dispatchEvent(new CustomEvent('daquiz-user-updated', { detail: null }));
     router.push('/');
+  };
+
+  const handleOpenReview = async (attemptId: string) => {
+    setReviewingAttemptId(attemptId);
+    setLoadingReview(true);
+    setReviewingAttemptData(null);
+    setMistakeFilterOnly(false);
+    try {
+      const data = await getUserAttemptReview(attemptId);
+      setReviewingAttemptData(data);
+    } catch (err: any) {
+      console.error('Failed to load attempt review:', err);
+    } finally {
+      setLoadingReview(false);
+    }
   };
 
   if (loading) {
@@ -364,13 +387,13 @@ export default function ProfilePage() {
                       </span>
                     </div>
 
-                    <Link
-                      href={`/quiz/${encodeURIComponent(attempt.book)}?mode=practice&chapter=${attempt.chapter}`}
-                      className="px-3 py-1.5 rounded-xl btn-modern-gold text-xs font-extrabold shadow-sm flex items-center gap-1.5"
+                    <button
+                      onClick={() => handleOpenReview(attempt.id)}
+                      className="px-3 py-1.5 rounded-xl btn-modern-gold text-xs font-extrabold shadow-sm flex items-center gap-1.5 cursor-pointer"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <Eye className="w-3.5 h-3.5" />
                       <span>{lang === 'ta' ? 'ஆய்வு' : 'Review'}</span>
-                    </Link>
+                    </button>
                   </div>
                 </div>
               );
@@ -378,6 +401,220 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+
+      {/* ================= USER ATTEMPT REVIEW MODAL ================= */}
+      {reviewingAttemptId && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-md overflow-y-auto">
+          <div className="relative z-10 w-full max-w-3xl my-auto bg-white dark:bg-[#111724] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Close */}
+            <button
+              onClick={() => {
+                setReviewingAttemptId(null);
+                setReviewingAttemptData(null);
+              }}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {loadingReview ? (
+              <div className="py-16 text-center text-slate-500 dark:text-slate-400 space-y-3">
+                <div className="w-8 h-8 border-3 border-[#D49020] border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-xs font-bold">
+                  {lang === 'ta' ? 'முயற்சியின் விவரங்களை ஏற்றுகிறது...' : 'Loading attempt questions and answers...'}
+                </p>
+              </div>
+            ) : !reviewingAttemptData ? (
+              <div className="py-12 text-center text-slate-500 dark:text-slate-400 text-sm font-semibold">
+                {lang === 'ta' ? 'விவரங்களை ஏற்ற முடியவில்லை.' : 'Could not load attempt review details.'}
+              </div>
+            ) : (
+              <div className="space-y-6 text-slate-800 dark:text-slate-100">
+                {/* Attempt Header */}
+                <div className="border-b border-slate-200/80 dark:border-slate-800 pb-4 pr-8">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30">
+                      {tamilBookNames[reviewingAttemptData.book] || reviewingAttemptData.book} • {lang === 'ta' ? `அதிகாரம் ${reviewingAttemptData.chapter}` : `Chapter ${reviewingAttemptData.chapter}`}
+                    </span>
+                    <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                      {reviewingAttemptData.mode === 'practice'
+                        ? lang === 'ta' ? 'பயிற்சி' : 'Practice'
+                        : lang === 'ta' ? 'போட்டி' : 'Competition'}
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1.5">
+                    {lang === 'ta' ? 'முயற்சி ஆய்வு & தவறுகள்' : 'Attempt Review & Mistakes'}
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
+                    {new Date(reviewingAttemptData.createdAt).toLocaleDateString()} • {lang === 'ta' ? 'நேரம்:' : 'Duration:'} {reviewingAttemptData.durationStr}
+                  </p>
+                </div>
+
+                {/* Score Breakdown Header */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
+                    <span className="text-[10px] uppercase font-black text-emerald-800 dark:text-emerald-300 block">
+                      {lang === 'ta' ? 'சரியான விடைகள்' : 'Correct Answers'}
+                    </span>
+                    <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                      {reviewingAttemptData.correctAnswers} / {reviewingAttemptData.totalQuestions}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-center">
+                    <span className="text-[10px] uppercase font-black text-rose-800 dark:text-rose-300 block">
+                      {lang === 'ta' ? 'தவறானவை' : 'Mistakes / Wrong'}
+                    </span>
+                    <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
+                      {reviewingAttemptData.wrongAnswers}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
+                    <span className="text-[10px] uppercase font-black text-[#8C6B1B] dark:text-amber-300 block">
+                      {lang === 'ta' ? 'மதிப்பெண்' : 'Points Earned'}
+                    </span>
+                    <p className="text-2xl font-black text-slate-900 dark:text-white">
+                      {reviewingAttemptData.scoreEarned}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Filter Switcher: All Questions vs Mistakes Only */}
+                <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setMistakeFilterOnly(false)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        !mistakeFilterOnly
+                          ? 'btn-modern-gold text-white shadow-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      }`}
+                    >
+                      {lang === 'ta' ? 'எல்லா வினாக்களும்' : 'All Questions'} ({reviewingAttemptData.reviewItems?.length || 0})
+                    </button>
+                    <button
+                      onClick={() => setMistakeFilterOnly(true)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        mistakeFilterOnly
+                          ? 'bg-rose-600 text-white shadow-sm'
+                          : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                      }`}
+                    >
+                      {lang === 'ta' ? 'தவறுகள் மட்டும்' : 'Mistakes Only'} ({reviewingAttemptData.wrongAnswers})
+                    </button>
+                  </div>
+                </div>
+
+                {/* Review Questions List */}
+                <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                  {reviewingAttemptData.reviewItems
+                    ?.filter((item: any) => (mistakeFilterOnly ? !item.isCorrect : true))
+                    .map((item: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+                          item.isCorrect
+                            ? 'bg-emerald-50/40 dark:bg-emerald-950/15 border-emerald-200 dark:border-emerald-800/60'
+                            : 'bg-rose-50/40 dark:bg-rose-950/15 border-rose-200 dark:border-rose-800/60'
+                        }`}
+                      >
+                        {/* Question Header & Correctness Tag */}
+                        <div className="flex items-start justify-between gap-3 mb-2.5">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black ${
+                                item.isCorrect
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-rose-600 text-white'
+                              }`}
+                            >
+                              {item.questionNumber}
+                            </span>
+                            <span className="text-xs font-black text-slate-500 dark:text-slate-400">
+                              {item.timeSpentSeconds}s {lang === 'ta' ? 'எடுத்த நேரம்' : 'spent'}
+                            </span>
+                          </div>
+
+                          <span
+                            className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase flex items-center gap-1 ${
+                              item.isCorrect
+                                ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300'
+                                : 'bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300'
+                            }`}
+                          >
+                            {item.isCorrect ? (
+                              <>
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>{lang === 'ta' ? 'சரி' : 'Correct'}</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-3 h-3" />
+                                <span>{lang === 'ta' ? 'தவறு' : 'Mistake'}</span>
+                              </>
+                            )}
+                          </span>
+                        </div>
+
+                        {/* Question Text */}
+                        <div className="space-y-1 mb-3">
+                          {item.questionEn && (
+                            <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">
+                              {item.questionEn}
+                            </p>
+                          )}
+                          {item.questionTa && (
+                            <p className="text-xs font-tamil text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
+                              {item.questionTa}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* User Answer vs Correct Answer Box */}
+                        <div className="space-y-2 text-xs">
+                          {/* User's choice */}
+                          <div
+                            className={`p-2.5 rounded-xl border flex items-start gap-2 ${
+                              item.isCorrect
+                                ? 'bg-emerald-100/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
+                                : 'bg-rose-100/60 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200'
+                            }`}
+                          >
+                            <span className="font-black shrink-0">
+                              {lang === 'ta' ? 'நீங்கள் தேர்ந்தெடுத்தது:' : 'Your Selection:'}
+                            </span>
+                            <div>
+                              <span>{item.selectedOptionTextEn || (lang === 'ta' ? 'விடை அளிக்கப்படவில்லை' : 'No Answer / Unanswered')}</span>
+                              {item.selectedOptionTextTa && (
+                                <span className="font-tamil ml-1 opacity-90">({item.selectedOptionTextTa})</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Correct Choice (shown if user made a mistake) */}
+                          {!item.isCorrect && (
+                            <div className="p-2.5 rounded-xl border bg-emerald-100/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 flex items-start gap-2">
+                              <span className="font-black shrink-0">
+                                {lang === 'ta' ? 'சரியான விடை:' : 'Correct Answer:'}
+                              </span>
+                              <div>
+                                <span>{item.correctOptionTextEn}</span>
+                                {item.correctOptionTextTa && (
+                                  <span className="font-tamil ml-1 opacity-90">({item.correctOptionTextTa})</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
