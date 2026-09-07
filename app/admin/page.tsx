@@ -7,7 +7,12 @@ import {
   updateQuestion,
   deleteQuestion,
 } from '@/lib/actions/quizActions';
-import { getAllUsersAdmin, deleteUserAdmin } from '@/lib/actions/userActions';
+import {
+  getAllUsersAdmin,
+  deleteUserAdmin,
+  getAdminUserFullDetails,
+  getAdminAttemptReview,
+} from '@/lib/actions/userActions';
 import {
   ShieldCheck,
   PlusCircle,
@@ -29,6 +34,14 @@ import {
   User,
   HelpCircle,
   Activity,
+  Eye,
+  Clock,
+  Phone,
+  Calendar,
+  ChevronLeft,
+  GraduationCap,
+  Trophy,
+  XCircle,
 } from 'lucide-react';
 
 export default function AdminPage() {
@@ -61,6 +74,16 @@ export default function AdminPage() {
   const [usersList, setUsersList] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [userSearch, setUserSearch] = useState('');
+
+  // Admin User Inspection & Attempt Mistake Review Modals
+  const [inspectingUserPhone, setInspectingUserPhone] = useState<string | null>(null);
+  const [inspectingUserData, setInspectingUserData] = useState<any | null>(null);
+  const [loadingInspectUser, setLoadingInspectUser] = useState(false);
+
+  const [inspectingAttemptId, setInspectingAttemptId] = useState<string | null>(null);
+  const [inspectingAttemptData, setInspectingAttemptData] = useState<any | null>(null);
+  const [loadingInspectAttempt, setLoadingInspectAttempt] = useState(false);
+  const [mistakeFilterOnly, setMistakeFilterOnly] = useState(false);
 
   // Create Question Form State
   const [testament, setTestament] = useState<'OT' | 'NT'>('NT');
@@ -227,6 +250,35 @@ export default function AdminPage() {
       }
     } catch (err: any) {
       setStatusMessage({ type: 'error', text: err.message || 'Failed to delete participant.' });
+    }
+  };
+
+  const handleInspectUser = async (phone: string) => {
+    setInspectingUserPhone(phone);
+    setLoadingInspectUser(true);
+    setInspectingUserData(null);
+    try {
+      const data = await getAdminUserFullDetails(phone);
+      setInspectingUserData(data);
+    } catch (err: any) {
+      console.error('Failed to load user inspection data:', err);
+    } finally {
+      setLoadingInspectUser(false);
+    }
+  };
+
+  const handleInspectAttempt = async (attemptId: string) => {
+    setInspectingAttemptId(attemptId);
+    setLoadingInspectAttempt(true);
+    setInspectingAttemptData(null);
+    setMistakeFilterOnly(false);
+    try {
+      const data = await getAdminAttemptReview(attemptId);
+      setInspectingAttemptData(data);
+    } catch (err: any) {
+      console.error('Failed to load attempt review data:', err);
+    } finally {
+      setLoadingInspectAttempt(false);
     }
   };
 
@@ -982,14 +1034,24 @@ export default function AdminPage() {
                         {new Date(u.createdAt).toLocaleDateString()}
                       </td>
                       <td className="p-4 text-right">
-                        <button
-                          onClick={() => handleDeleteUser(u.id, u.name, u.phone)}
-                          className="px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-extrabold transition-all flex items-center gap-1.5 ml-auto"
-                          title="Delete Participant"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Delete</span>
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleInspectUser(u.phone)}
+                            className="px-3 py-1.5 rounded-xl bg-[#FAF3E0] dark:bg-amber-500/15 hover:bg-[#F2E5C5] dark:hover:bg-amber-500/25 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 text-xs font-black transition-all flex items-center gap-1.5 shadow-sm"
+                            title="View Participant Profile & Progress"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" />
+                            <span>View Profile</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(u.id, u.name, u.phone)}
+                            className="px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-extrabold transition-all flex items-center gap-1.5"
+                            title="Delete Participant"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1201,6 +1263,438 @@ export default function AdminPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= USER PROFILE & PROGRESS INSPECTION MODAL ================= */}
+      {inspectingUserPhone && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 dark:bg-black/75 backdrop-blur-md overflow-y-auto">
+          <div className="relative z-10 w-full max-w-3xl my-auto bg-white dark:bg-[#111724] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Close */}
+            <button
+              onClick={() => {
+                setInspectingUserPhone(null);
+                setInspectingUserData(null);
+              }}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {loadingInspectUser ? (
+              <div className="py-16 text-center text-slate-500 dark:text-slate-400 space-y-3">
+                <div className="w-8 h-8 border-3 border-[#D49020] border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-xs font-bold">Loading participant progress & attempts...</p>
+              </div>
+            ) : !inspectingUserData ? (
+              <div className="py-12 text-center text-slate-500 dark:text-slate-400 text-sm font-semibold">
+                Could not retrieve details for this participant.
+              </div>
+            ) : (
+              <div className="space-y-6 text-slate-800 dark:text-slate-100">
+                {/* User Identity Header */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-5">
+                  <div className="flex items-center gap-4 text-center sm:text-left">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#E8A838] to-[#B87410] text-white flex items-center justify-center font-black text-2xl shadow-md">
+                      {inspectingUserData.user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                          {inspectingUserData.user.name}
+                        </h2>
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                          Participant
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-bold mt-1">
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3.5 h-3.5 text-[#D49020]" />
+                          +91 {inspectingUserData.user.phone}
+                        </span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5 text-[#D49020]" />
+                          {inspectingUserData.user.age} Years old
+                        </span>
+                        <span>•</span>
+                        <span className="text-[#8C6B1B] dark:text-amber-300 font-black">
+                          {inspectingUserData.user.totalScore} Total Points
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Overall Stats Cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
+                    <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">
+                      Competitions
+                    </span>
+                    <p className="text-xl font-black text-slate-900 dark:text-white">
+                      {inspectingUserData.stats?.competitionAttempts || 0}
+                    </p>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
+                    <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">
+                      Practice Tests
+                    </span>
+                    <p className="text-xl font-black text-slate-900 dark:text-white">
+                      {inspectingUserData.stats?.practiceAttempts || 0}
+                    </p>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
+                    <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">
+                      Chapters Completed
+                    </span>
+                    <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                      {inspectingUserData.stats?.distinctChaptersCompleted || 0}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Completed Chapters List */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2">
+                    <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
+                      <span>Completed Chapters & Best Scores</span>
+                    </h3>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                      {inspectingUserData.completedChapters?.length || 0} Chapters
+                    </span>
+                  </div>
+
+                  {(!inspectingUserData.completedChapters || inspectingUserData.completedChapters.length === 0) ? (
+                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#161F30] text-center text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      No chapters completed yet by this participant.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
+                      {inspectingUserData.completedChapters.map((ch: any, idx: number) => (
+                        <div
+                          key={idx}
+                          className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 flex items-center justify-between shadow-sm"
+                        >
+                          <div>
+                            <span className="text-[10px] font-black uppercase text-amber-800 dark:text-amber-300">
+                              {ch.book} • Chapter {ch.chapter}
+                            </span>
+                            <div className="text-xs font-black text-slate-900 dark:text-white">
+                              {ch.book} Ch. {ch.chapter}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">
+                              {ch.attemptsCount} {ch.attemptsCount === 1 ? 'Attempt' : 'Attempts'}
+                            </div>
+                          </div>
+                          <div className="px-2.5 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-black text-xs">
+                            {ch.bestCorrect}/{ch.totalQuestions}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Quiz Attempts History with Review Mistakes Button */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2">
+                    <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[#D49020] dark:text-amber-400" />
+                      <span>Attempt History & Mistake Inspection</span>
+                    </h3>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                      {inspectingUserData.recentAttempts?.length || 0} Attempts
+                    </span>
+                  </div>
+
+                  {(!inspectingUserData.recentAttempts || inspectingUserData.recentAttempts.length === 0) ? (
+                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#161F30] text-center text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      No attempt history found.
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                      {inspectingUserData.recentAttempts.map((attempt: any) => {
+                        const dateStr = new Date(attempt.createdAt)
+                          .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                          .toUpperCase();
+                        const mins = Math.floor(attempt.timeTakenSeconds / 60);
+                        const secs = attempt.timeTakenSeconds % 60;
+                        const durationStr = `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+                        const wrongCount = (attempt.totalQuestions || 0) - (attempt.correctAnswers || 0);
+
+                        return (
+                          <div
+                            key={attempt.id}
+                            className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-11 h-11 rounded-full border-2 border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center font-black text-xs text-blue-600 dark:text-blue-400 shrink-0">
+                                {attempt.correctAnswers}/{attempt.totalQuestions}
+                              </div>
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-extrabold text-slate-900 dark:text-white">
+                                    {attempt.book} • Chapter {attempt.chapter}
+                                  </span>
+                                  <span
+                                    className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
+                                      attempt.mode === 'practice'
+                                        ? 'bg-amber-100 dark:bg-amber-950/50 text-[#8C6B1B] dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                        : 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
+                                    }`}
+                                  >
+                                    {attempt.mode}
+                                  </span>
+                                </div>
+                                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-2">
+                                  <span>{dateStr}</span>
+                                  <span>•</span>
+                                  <span>{durationStr}</span>
+                                  {wrongCount > 0 && (
+                                    <>
+                                      <span>•</span>
+                                      <span className="text-rose-600 dark:text-rose-400 font-bold">
+                                        {wrongCount} {wrongCount === 1 ? 'mistake' : 'mistakes'}
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => handleInspectAttempt(attempt.id)}
+                              className="px-3.5 py-1.5 rounded-xl btn-modern-gold text-xs font-black shadow-sm flex items-center justify-center gap-1.5 shrink-0"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Review Answers & Mistakes</span>
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ================= ATTEMPT DETAILED MISTAKE REVIEW MODAL ================= */}
+      {inspectingAttemptId && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-md overflow-y-auto">
+          <div className="relative z-10 w-full max-w-3xl my-auto bg-white dark:bg-[#111724] rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Close */}
+            <button
+              onClick={() => {
+                setInspectingAttemptId(null);
+                setInspectingAttemptData(null);
+              }}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {loadingInspectAttempt ? (
+              <div className="py-16 text-center text-slate-500 dark:text-slate-400 space-y-3">
+                <div className="w-8 h-8 border-3 border-[#D49020] border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-xs font-bold">Loading detailed attempt questions and user responses...</p>
+              </div>
+            ) : !inspectingAttemptData ? (
+              <div className="py-12 text-center text-slate-500 dark:text-slate-400 text-sm font-semibold">
+                Could not load attempt review details.
+              </div>
+            ) : (
+              <div className="space-y-6 text-slate-800 dark:text-slate-100">
+                {/* Attempt Header */}
+                <div className="border-b border-slate-200/80 dark:border-slate-800 pb-4 pr-8">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30">
+                      {inspectingAttemptData.book} • Chapter {inspectingAttemptData.chapter}
+                    </span>
+                    <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                      {inspectingAttemptData.mode}
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mt-1.5">
+                    {inspectingAttemptData.userName} — Attempt Review
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
+                    Completed on {new Date(inspectingAttemptData.createdAt).toLocaleDateString()} • Duration: {inspectingAttemptData.durationStr}
+                  </p>
+                </div>
+
+                {/* Score Breakdown Header */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center">
+                    <span className="text-[10px] uppercase font-black text-emerald-800 dark:text-emerald-300 block">
+                      Correct Answers
+                    </span>
+                    <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                      {inspectingAttemptData.correctAnswers}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-center">
+                    <span className="text-[10px] uppercase font-black text-rose-800 dark:text-rose-300 block">
+                      Mistakes / Wrong
+                    </span>
+                    <p className="text-2xl font-black text-rose-600 dark:text-rose-400">
+                      {inspectingAttemptData.wrongAnswers}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#FBF8F4] dark:bg-[#161F30] border border-slate-200/80 dark:border-slate-800 text-center">
+                    <span className="text-[10px] uppercase font-black text-[#8C6B1B] dark:text-amber-300 block">
+                      Points Earned
+                    </span>
+                    <p className="text-2xl font-black text-slate-900 dark:text-white">
+                      {inspectingAttemptData.scoreEarned}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Filter Switcher: All Questions vs Mistakes Only */}
+                <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setMistakeFilterOnly(false)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+                        !mistakeFilterOnly
+                          ? 'btn-modern-gold text-white shadow-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      }`}
+                    >
+                      All Questions ({inspectingAttemptData.reviewItems?.length || 0})
+                    </button>
+                    <button
+                      onClick={() => setMistakeFilterOnly(true)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+                        mistakeFilterOnly
+                          ? 'bg-rose-600 text-white shadow-sm'
+                          : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                      }`}
+                    >
+                      Mistakes Only ({inspectingAttemptData.wrongAnswers})
+                    </button>
+                  </div>
+                </div>
+
+                {/* Review Questions List */}
+                <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                  {inspectingAttemptData.reviewItems
+                    ?.filter((item: any) => (mistakeFilterOnly ? !item.isCorrect : true))
+                    .map((item: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+                          item.isCorrect
+                            ? 'bg-emerald-50/40 dark:bg-emerald-950/15 border-emerald-200 dark:border-emerald-800/60'
+                            : 'bg-rose-50/40 dark:bg-rose-950/15 border-rose-200 dark:border-rose-800/60'
+                        }`}
+                      >
+                        {/* Question Header & Correctness Tag */}
+                        <div className="flex items-start justify-between gap-3 mb-2.5">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black ${
+                                item.isCorrect
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-rose-600 text-white'
+                              }`}
+                            >
+                              {item.questionNumber}
+                            </span>
+                            <span className="text-xs font-black text-slate-500 dark:text-slate-400">
+                              {item.timeSpentSeconds}s spent
+                            </span>
+                          </div>
+
+                          <span
+                            className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase flex items-center gap-1 ${
+                              item.isCorrect
+                                ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300'
+                                : 'bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300'
+                            }`}
+                          >
+                            {item.isCorrect ? (
+                              <>
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>Correct</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-3 h-3" />
+                                <span>Mistake</span>
+                              </>
+                            )}
+                          </span>
+                        </div>
+
+                        {/* Question Text */}
+                        <div className="space-y-1 mb-3">
+                          <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">
+                            {item.questionEn}
+                          </p>
+                          {item.questionTa && (
+                            <p className="text-xs font-tamil text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
+                              {item.questionTa}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* User Answer vs Correct Answer Box */}
+                        <div className="space-y-2 text-xs">
+                          {/* User's choice */}
+                          <div
+                            className={`p-2.5 rounded-xl border flex items-start gap-2 ${
+                              item.isCorrect
+                                ? 'bg-emerald-100/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
+                                : 'bg-rose-100/60 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200'
+                            }`}
+                          >
+                            <span className="font-black shrink-0">User Selected:</span>
+                            <div>
+                              <span>{item.selectedOptionTextEn || 'No Answer / Unanswered'}</span>
+                              {item.selectedOptionTextTa && (
+                                <span className="font-tamil ml-1 opacity-90">({item.selectedOptionTextTa})</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Correct Choice (shown if user made a mistake) */}
+                          {!item.isCorrect && (
+                            <div className="p-2.5 rounded-xl border bg-emerald-100/60 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 flex items-start gap-2">
+                              <span className="font-black shrink-0">Correct Answer:</span>
+                              <div>
+                                <span>{item.correctOptionTextEn}</span>
+                                {item.correctOptionTextTa && (
+                                  <span className="font-tamil ml-1 opacity-90">({item.correctOptionTextTa})</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Scripture Explanation */}
+                          {(item.explanationEn || item.explanationTa) && (
+                            <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 space-y-0.5">
+                              <span className="font-bold text-[10px] uppercase text-[#8C6B1B] dark:text-amber-300 block">
+                                Scripture Insight:
+                              </span>
+                              {item.explanationEn && <p className="text-[11px] leading-relaxed">{item.explanationEn}</p>}
+                              {item.explanationTa && <p className="text-[11px] font-tamil leading-relaxed">{item.explanationTa}</p>}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

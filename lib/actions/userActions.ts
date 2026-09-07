@@ -300,6 +300,110 @@ export async function getAllUsersAdmin(adminKeyProvided?: string) {
 }
 
 /**
+ * Admin action to fetch full profile, completed chapters, and detailed attempts for any user
+ */
+export async function getAdminUserFullDetails(userPhone: string) {
+  try {
+    await connectToDatabase();
+    return await getUserProgressAndProfile(userPhone);
+  } catch (error: any) {
+    console.error('[GET_ADMIN_USER_FULL_DETAILS_ERROR]', error.message);
+    return null;
+  }
+}
+
+/**
+ * Admin action to fetch detailed mistake review for a specific attempt
+ */
+export async function getAdminAttemptReview(attemptId: string) {
+  try {
+    await connectToDatabase();
+    const { Question } = await import('@/models/Question');
+
+    const attempt = await QuizAttempt.findById(attemptId).lean();
+    if (!attempt) {
+      throw new Error('Attempt not found');
+    }
+
+    const questionIds = ((attempt as any).answers || []).map((a: any) => a.questionId);
+    const questions = await Question.find({ _id: { $in: questionIds } })
+      .select('+options.isCorrect')
+      .lean();
+
+    const questionMap = new Map(questions.map((q: any) => [q._id.toString(), q]));
+
+    const reviewItems = ((attempt as any).answers || []).map((ans: any, idx: number) => {
+      const original = questionMap.get(ans.questionId.toString());
+      if (!original) {
+        return {
+          questionNumber: idx + 1,
+          questionId: ans.questionId,
+          questionEn: 'Question data no longer available',
+          questionTa: '',
+          selectedOptionId: ans.selectedOptionId,
+          selectedOptionTextEn: null,
+          selectedOptionTextTa: null,
+          correctOptionId: null,
+          correctOptionTextEn: null,
+          correctOptionTextTa: null,
+          isCorrect: ans.isCorrect,
+          explanationEn: '',
+          explanationTa: '',
+          timeSpentSeconds: ans.timeSpentSeconds || 0,
+        };
+      }
+
+      const correctOption = original.options?.find((o: any) => o.isCorrect);
+      const selectedOption = original.options?.find((o: any) => o.id === ans.selectedOptionId);
+
+      return {
+        questionNumber: idx + 1,
+        questionId: original._id.toString(),
+        questionEn: original.question?.en,
+        questionTa: original.question?.ta,
+        book: original.book,
+        chapter: original.chapter,
+        verse: original.verse,
+        selectedOptionId: ans.selectedOptionId,
+        selectedOptionTextEn: selectedOption?.text?.en || null,
+        selectedOptionTextTa: selectedOption?.text?.ta || null,
+        correctOptionId: correctOption?.id || null,
+        correctOptionTextEn: correctOption?.text?.en || null,
+        correctOptionTextTa: correctOption?.text?.ta || null,
+        isCorrect: ans.isCorrect,
+        explanationEn: original.explanation?.en || '',
+        explanationTa: original.explanation?.ta || '',
+        timeSpentSeconds: ans.timeSpentSeconds || 0,
+      };
+    });
+
+    const mins = Math.floor(((attempt as any).timeTakenSeconds || 0) / 60);
+    const secs = ((attempt as any).timeTakenSeconds || 0) % 60;
+    const durationStr = `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+
+    return {
+      attemptId: (attempt as any)._id.toString(),
+      userName: (attempt as any).userName || 'Participant',
+      userPhone: (attempt as any).userPhone,
+      book: (attempt as any).book,
+      chapter: (attempt as any).chapter || 1,
+      mode: (attempt as any).mode || 'competition',
+      totalQuestions: (attempt as any).totalQuestions,
+      correctAnswers: (attempt as any).correctAnswers,
+      wrongAnswers: ((attempt as any).totalQuestions || 0) - ((attempt as any).correctAnswers || 0),
+      scoreEarned: (attempt as any).scoreEarned,
+      timeTakenSeconds: (attempt as any).timeTakenSeconds,
+      durationStr,
+      createdAt: (attempt as any).createdAt,
+      reviewItems,
+    };
+  } catch (error: any) {
+    console.error('[GET_ADMIN_ATTEMPT_REVIEW_ERROR]', error.message);
+    throw new Error(error.message || 'Failed to fetch attempt review');
+  }
+}
+
+/**
  * Admin action to delete a registered user and their attempts
  */
 export async function deleteUserAdmin(userId: string) {
