@@ -1678,17 +1678,6 @@ export default function AdminPage() {
                               </div>
                             </div>
                           )}
-
-                          {/* Scripture Explanation */}
-                          {(item.explanationEn || item.explanationTa) && (
-                            <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 space-y-0.5">
-                              <span className="font-bold text-[10px] uppercase text-[#8C6B1B] dark:text-amber-300 block">
-                                Scripture Insight:
-                              </span>
-                              {item.explanationEn && <p className="text-[11px] leading-relaxed">{item.explanationEn}</p>}
-                              {item.explanationTa && <p className="text-[11px] font-tamil leading-relaxed">{item.explanationTa}</p>}
-                            </div>
-                          )}
                         </div>
                       </div>
                     ))}

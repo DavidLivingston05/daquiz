@@ -724,21 +724,6 @@ export default function QuizPlayPage() {
           })}
         </div>
 
-        {/* Practice Mode Instant Explanation */}
-        {quizMode === 'practice' && practiceRevealed && currentQ.explanation && (currentQ.explanation.en || currentQ.explanation.ta) && (
-          <div className="p-4 rounded-2xl bg-[#FAF3E0] dark:bg-amber-500/15 border border-[#E8D8B8] dark:border-amber-500/30 space-y-1.5 animate-fadeIn">
-            <span className="text-xs font-extrabold text-[#8C6B1B] dark:text-amber-300 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-[#D49020] dark:text-amber-400" /> Scripture Insight:
-            </span>
-            {(langMode === 'both' || langMode === 'en') && currentQ.explanation.en && (
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{currentQ.explanation.en}</p>
-            )}
-            {(langMode === 'both' || langMode === 'ta') && currentQ.explanation.ta && (
-              <p className="text-xs font-tamil text-slate-700 dark:text-slate-300 leading-relaxed">{currentQ.explanation.ta}</p>
-            )}
-          </div>
-        )}
-
         {/* Action Button(s): Practice Mode has Back & Next, Competition Mode has Next only */}
         <div className="pt-2">
           {quizMode === 'practice' ? (
