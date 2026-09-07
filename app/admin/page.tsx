@@ -91,7 +91,6 @@ export default function AdminPage() {
   const [chapter, setChapter] = useState(1);
   const [verse, setVerse] = useState(1);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
-  const [category, setCategory] = useState('Gospel');
   const [questionEn, setQuestionEn] = useState('');
   const [questionTa, setQuestionTa] = useState('');
   const [options, setOptions] = useState([
@@ -101,8 +100,6 @@ export default function AdminPage() {
     { text_en: '', text_ta: '' },
   ]);
   const [correctOptionIndex, setCorrectOptionIndex] = useState(0);
-  const [explanationEn, setExplanationEn] = useState('');
-  const [explanationTa, setExplanationTa] = useState('');
   const [createSubmitting, setCreateSubmitting] = useState(false);
 
   // System Stats
@@ -304,7 +301,7 @@ export default function AdminPage() {
         chapter: Number(chapter),
         verse: Number(verse) || 1,
         difficulty,
-        category: category.trim() || 'General',
+        category: 'General',
         question_en: questionEn.trim(),
         question_ta: questionTa.trim(),
         options: options.map((opt) => ({
@@ -312,8 +309,6 @@ export default function AdminPage() {
           text_ta: opt.text_ta.trim(),
         })),
         correctOptionIndex,
-        explanation_en: explanationEn.trim() || undefined,
-        explanation_ta: explanationTa.trim() || undefined,
       });
 
       if (res.success) {
@@ -326,14 +321,11 @@ export default function AdminPage() {
           { text_en: '', text_ta: '' },
           { text_en: '', text_ta: '' },
         ]);
-        setExplanationEn('');
-        setExplanationTa('');
-        setActiveTab('questions');
+        setCorrectOptionIndex(0);
         loadQuestions();
       }
     } catch (err: any) {
-      console.error('Create error:', err);
-      setStatusMessage({ type: 'error', text: err.message || 'Failed to create question.' });
+      setStatusMessage({ type: 'error', text: err.message });
     } finally {
       setCreateSubmitting(false);
     }
@@ -754,7 +746,7 @@ export default function AdminPage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Testament</label>
               <select
@@ -786,9 +778,9 @@ export default function AdminPage() {
                 onChange={(e) => setDifficulty(e.target.value as any)}
                 className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
               >
-                <option value="easy">Easy (+100 pts)</option>
-                <option value="medium">Medium (+150 pts)</option>
-                <option value="hard">Hard (+200 pts)</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
               </select>
             </div>
 
@@ -799,17 +791,6 @@ export default function AdminPage() {
                 min={1}
                 value={chapter}
                 onChange={(e) => setChapter(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Topic / Category</label>
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="e.g. Creation, Faith"
                 className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
               />
             </div>
@@ -926,30 +907,6 @@ export default function AdminPage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-
-          {/* Explanations */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Scripture Context (English)</label>
-              <textarea
-                rows={2}
-                value={explanationEn}
-                onChange={(e) => setExplanationEn(e.target.value)}
-                placeholder="Biblical explanation..."
-                className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Scripture Context (தமிழ்)</label>
-              <textarea
-                rows={2}
-                value={explanationTa}
-                onChange={(e) => setExplanationTa(e.target.value)}
-                placeholder="வசன விளக்கம்..."
-                className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-tamil font-medium focus:outline-none"
-              />
             </div>
           </div>
 
