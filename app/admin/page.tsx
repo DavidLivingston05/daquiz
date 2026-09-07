@@ -43,6 +43,12 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
+import {
+  OLD_TESTAMENT_BOOKS,
+  NEW_TESTAMENT_BOOKS,
+  ALL_BIBLE_BOOKS,
+  BIBLE_BOOK_MAP,
+} from '@/lib/bibleBooks';
 
 export default function AdminPage() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
@@ -86,8 +92,8 @@ export default function AdminPage() {
   const [mistakeFilterOnly, setMistakeFilterOnly] = useState(false);
 
   // Create Question Form State
-  const [testament, setTestament] = useState<'OT' | 'NT'>('NT');
-  const [book, setBook] = useState('Matthew');
+  const [testament, setTestament] = useState<'OT' | 'NT'>('OT');
+  const [book, setBook] = useState('Genesis');
   const [chapter, setChapter] = useState(1);
   const [verse, setVerse] = useState(1);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
@@ -751,24 +757,38 @@ export default function AdminPage() {
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Testament</label>
               <select
                 value={testament}
-                onChange={(e) => setTestament(e.target.value as 'OT' | 'NT')}
+                onChange={(e) => {
+                  const newTestament = e.target.value as 'OT' | 'NT';
+                  setTestament(newTestament);
+                  const defaultBook = newTestament === 'OT' ? 'Genesis' : 'Matthew';
+                  setBook(defaultBook);
+                  setChapter(1);
+                }}
                 className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
               >
-                <option value="OT">Old Testament (OT)</option>
-                <option value="NT">New Testament (NT)</option>
+                <option value="OT">Old Testament (OT) • 39 Books</option>
+                <option value="NT">New Testament (NT) • 27 Books</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Book Name</label>
-              <input
-                type="text"
-                required
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                Book Name ({testament === 'OT' ? '39 Books' : '27 Books'})
+              </label>
+              <select
                 value={book}
-                onChange={(e) => setBook(e.target.value)}
-                placeholder="e.g. Genesis, Matthew"
+                onChange={(e) => {
+                  setBook(e.target.value);
+                  setChapter(1);
+                }}
                 className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
-              />
+              >
+                {(testament === 'OT' ? OLD_TESTAMENT_BOOKS : NEW_TESTAMENT_BOOKS).map((b) => (
+                  <option key={b.name} value={b.name}>
+                    {b.name} ({b.nameTa})
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -785,10 +805,13 @@ export default function AdminPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Chapter</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                Chapter {BIBLE_BOOK_MAP[book] ? `(Max: ${BIBLE_BOOK_MAP[book].totalChapters})` : ''}
+              </label>
               <input
                 type="number"
                 min={1}
+                max={BIBLE_BOOK_MAP[book]?.totalChapters || 150}
                 value={chapter}
                 onChange={(e) => setChapter(Number(e.target.value))}
                 className="w-full px-3.5 py-2.5 text-xs bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
@@ -1072,13 +1095,27 @@ export default function AdminPage() {
             <form onSubmit={handleEditSubmit} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Book</label>
-                  <input
-                    type="text"
+                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Book Name</label>
+                  <select
                     value={editingQuestion.book}
                     onChange={(e) => setEditingQuestion({ ...editingQuestion, book: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold"
-                  />
+                    className="w-full px-3 py-2 bg-[#FBF8F4] dark:bg-[#1A2232] border border-[#EAE0D0] dark:border-[#232E42] focus:border-[#D49020] focus:bg-white dark:focus:bg-[#141A26] rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none"
+                  >
+                    <optgroup label="Old Testament (பழைய ஏற்பாடு)">
+                      {OLD_TESTAMENT_BOOKS.map((b) => (
+                        <option key={b.name} value={b.name}>
+                          {b.name} ({b.nameTa})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="New Testament (புதிய ஏற்பாடு)">
+                      {NEW_TESTAMENT_BOOKS.map((b) => (
+                        <option key={b.name} value={b.name}>
+                          {b.name} ({b.nameTa})
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Chapter</label>
