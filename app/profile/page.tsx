@@ -434,7 +434,11 @@ export default function ProfilePage() {
                 <div className="border-b border-slate-200/80 dark:border-slate-800 pb-4 pr-8">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30">
-                      {tamilBookNames[reviewingAttemptData.book] || reviewingAttemptData.book} • {lang === 'ta' ? `அதிகாரம் ${reviewingAttemptData.chapter}` : `Chapter ${reviewingAttemptData.chapter}`}
+                      {lang === 'ta'
+                        ? `${tamilBookNames[reviewingAttemptData.book] || reviewingAttemptData.book} • அதிகாரம் ${reviewingAttemptData.chapter}`
+                        : lang === 'both'
+                        ? `${reviewingAttemptData.book} (${tamilBookNames[reviewingAttemptData.book] || reviewingAttemptData.book}) • Chapter ${reviewingAttemptData.chapter}`
+                        : `${reviewingAttemptData.book} • Chapter ${reviewingAttemptData.chapter}`}
                     </span>
                     <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                       {reviewingAttemptData.mode === 'practice'
@@ -559,13 +563,13 @@ export default function ProfilePage() {
 
                         {/* Question Text */}
                         <div className="space-y-1 mb-3">
-                          {item.questionEn && (
+                          {(lang === 'both' || lang === 'en') && item.questionEn && (
                             <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-snug">
                               {item.questionEn}
                             </p>
                           )}
-                          {item.questionTa && (
-                            <p className="text-xs font-tamil text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
+                          {(lang === 'both' || lang === 'ta') && item.questionTa && (
+                            <p className={`font-tamil leading-relaxed font-semibold ${lang === 'ta' ? 'text-sm font-extrabold text-slate-900 dark:text-white' : 'text-xs text-slate-600 dark:text-slate-300'}`}>
                               {item.questionTa}
                             </p>
                           )}
@@ -585,9 +589,19 @@ export default function ProfilePage() {
                               {lang === 'ta' ? 'நீங்கள் தேர்ந்தெடுத்தது:' : 'Your Selection:'}
                             </span>
                             <div>
-                              <span>{item.selectedOptionTextEn || (lang === 'ta' ? 'விடை அளிக்கப்படவில்லை' : 'No Answer / Unanswered')}</span>
-                              {item.selectedOptionTextTa && (
-                                <span className="font-tamil ml-1 opacity-90">({item.selectedOptionTextTa})</span>
+                              {lang === 'en' && (
+                                <span>{item.selectedOptionTextEn || item.selectedOptionTextTa || 'No Answer / Unanswered'}</span>
+                              )}
+                              {lang === 'ta' && (
+                                <span className="font-tamil">{item.selectedOptionTextTa || item.selectedOptionTextEn || 'விடை அளிக்கப்படவில்லை'}</span>
+                              )}
+                              {lang === 'both' && (
+                                <>
+                                  <span>{item.selectedOptionTextEn || 'No Answer / Unanswered'}</span>
+                                  {item.selectedOptionTextTa && (
+                                    <span className="font-tamil ml-1 opacity-90">({item.selectedOptionTextTa})</span>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
@@ -599,9 +613,19 @@ export default function ProfilePage() {
                                 {lang === 'ta' ? 'சரியான விடை:' : 'Correct Answer:'}
                               </span>
                               <div>
-                                <span>{item.correctOptionTextEn}</span>
-                                {item.correctOptionTextTa && (
-                                  <span className="font-tamil ml-1 opacity-90">({item.correctOptionTextTa})</span>
+                                {lang === 'en' && (
+                                  <span>{item.correctOptionTextEn || item.correctOptionTextTa}</span>
+                                )}
+                                {lang === 'ta' && (
+                                  <span className="font-tamil">{item.correctOptionTextTa || item.correctOptionTextEn}</span>
+                                )}
+                                {lang === 'both' && (
+                                  <>
+                                    <span>{item.correctOptionTextEn}</span>
+                                    {item.correctOptionTextTa && (
+                                      <span className="font-tamil ml-1 opacity-90">({item.correctOptionTextTa})</span>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </div>
