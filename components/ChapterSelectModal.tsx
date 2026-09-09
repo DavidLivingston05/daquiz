@@ -9,7 +9,6 @@ import {
   GraduationCap,
   Sparkles,
   ArrowRight,
-  Layers,
   CheckCircle2,
 } from 'lucide-react';
 import { getAvailableChapters } from '@/lib/actions/quizActions';
@@ -37,7 +36,7 @@ export default function ChapterSelectModal({
   const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<'competition' | 'practice'>(initialMode);
   const [chapters, setChapters] = useState<{ chapter: number; count: number }[]>([]);
-  const [selectedChapter, setSelectedChapter] = useState<number | 'all'>('all');
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,17 +46,17 @@ export default function ChapterSelectModal({
   useEffect(() => {
     if (!isOpen || !book) return;
     setMode(initialMode);
-    setSelectedChapter('all');
+    setSelectedChapter(null);
 
     async function loadChapters() {
       setLoading(true);
       try {
         const data = await getAvailableChapters(book);
         setChapters(data || []);
-        if (data && data.length === 1) {
+        if (data && data.length > 0) {
           setSelectedChapter(data[0].chapter);
         } else {
-          setSelectedChapter('all');
+          setSelectedChapter(null);
         }
       } catch (e) {
         console.error('Failed to load chapters:', e);
@@ -71,17 +70,13 @@ export default function ChapterSelectModal({
 
   if (!isOpen || !mounted) return null;
 
-  const handleStartQuiz = (chapterChoice?: number | 'all') => {
+  const handleStartQuiz = (chapterChoice?: number) => {
     const ch = chapterChoice !== undefined ? chapterChoice : selectedChapter;
-    let url = `/quiz/${encodeURIComponent(book)}?mode=${mode}`;
-    if (ch !== 'all') {
-      url += `&chapter=${ch}`;
-    }
+    if (ch === null || ch === undefined) return;
+    const url = `/quiz/${encodeURIComponent(book)}?mode=${mode}&chapter=${ch}`;
     onClose();
     router.push(url);
   };
-
-  const totalQuestionsInBook = chapters.reduce((acc, c) => acc + c.count, 0);
 
   const t = {
     en: {
@@ -91,7 +86,6 @@ export default function ChapterSelectModal({
       competitionDesc: 'Timed test with leaderboard scoring',
       practice: 'Practice',
       practiceDesc: 'Instant answers & scripture study',
-      allChapters: 'All Chapters',
       chapter: 'Chapter',
       questions: 'Questions',
       startBtn: 'Start Quiz Now',
@@ -105,7 +99,6 @@ export default function ChapterSelectModal({
       competitionDesc: 'நேர வரம்புடன் கூடிய புள்ளிப் போட்டி',
       practice: 'பயிற்சி முறை',
       practiceDesc: 'உடனடி விடைகள் & வசன ஆய்வு',
-      allChapters: 'அனைத்து அதிகாரங்களும்',
       chapter: 'அதிகாரம்',
       questions: 'கேள்விகள்',
       startBtn: 'வினாடி வினாவைத் தொடங்குக',
@@ -119,7 +112,6 @@ export default function ChapterSelectModal({
       competitionDesc: 'Timed test with leaderboard scoring',
       practice: 'Practice • பயிற்சி',
       practiceDesc: 'Instant answers & scripture study',
-      allChapters: 'All Chapters • அனைத்தும்',
       chapter: 'Chapter • அதிகாரம்',
       questions: 'Questions • கேள்விகள்',
       startBtn: 'Start Quiz (தொடங்குக) →',
@@ -147,8 +139,6 @@ export default function ChapterSelectModal({
         <div className="space-y-1.5 text-left pr-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-500/30 text-[10px] font-black uppercase tracking-wider">
             <span>{testament}</span>
-            <span>•</span>
-            <span>{totalQuestionsInBook} {t.questions}</span>
           </div>
           <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
             <span>{book}</span>
@@ -204,36 +194,6 @@ export default function ChapterSelectModal({
             </div>
           ) : (
             <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-              {/* All Chapters Option */}
-              {chapters.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedChapter('all')}
-                  className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
-                    selectedChapter === 'all'
-                      ? 'bg-[#FAF3E0] dark:bg-amber-500/15 border-[#D49020] dark:border-amber-500/50 text-[#3D2F14] dark:text-amber-200 shadow-sm ring-2 ring-[#D49020]/20 font-bold'
-                      : 'bg-[#FBF8F4] dark:bg-[#1A2232] border-[#EAE0D0] dark:border-[#232E42] text-slate-700 dark:text-slate-300 hover:border-[#D49020]/40'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#E8A838] to-[#B87410] text-white flex items-center justify-center text-xs font-black shadow-sm">
-                      <Layers className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-black text-slate-900 dark:text-white">
-                        {t.allChapters}
-                      </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                        {totalQuestionsInBook} {t.questions}
-                      </div>
-                    </div>
-                  </div>
-                  {selectedChapter === 'all' && (
-                    <CheckCircle2 className="w-4 h-4 text-[#D49020] dark:text-amber-400 shrink-0" />
-                  )}
-                </button>
-              )}
-
               {/* Individual Chapter Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {chapters.map((ch) => (
@@ -251,13 +211,8 @@ export default function ChapterSelectModal({
                       <div className="w-7 h-7 rounded-lg bg-[#FAF3E0] dark:bg-amber-500/20 border border-[#E8D8B8] dark:border-amber-500/30 text-[#8C6B1B] dark:text-amber-300 flex items-center justify-center text-xs font-black">
                         {ch.chapter}
                       </div>
-                      <div>
-                        <div className="text-xs font-black text-slate-900 dark:text-white">
-                          {t.chapter} {ch.chapter}
-                        </div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
-                          {ch.count} {t.questions}
-                        </div>
+                      <div className="text-xs font-black text-slate-900 dark:text-white">
+                        {t.chapter} {ch.chapter}
                       </div>
                     </div>
                     {selectedChapter === ch.chapter && (
@@ -274,7 +229,7 @@ export default function ChapterSelectModal({
         <div className="pt-2">
           <button
             type="button"
-            disabled={loading || chapters.length === 0}
+            disabled={loading || chapters.length === 0 || selectedChapter === null}
             onClick={() => handleStartQuiz()}
             className="w-full py-3.5 px-6 rounded-2xl btn-modern-gold font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
