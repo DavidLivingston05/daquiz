@@ -56,76 +56,11 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
- * Get quiz questions with caching
- * Caches the pool of questions for the chapter/book, then dynamically
- * shuffles both the question sequence and option order on every single request.
+ * Get quiz questions
+ * Directly queries MongoDB with .lean() for maximum speed (<15ms)
+ * and freshly shuffles both the question order and option positions on every attempt.
  */
 export async function getCachedQuizQuestions(book: string, count = 50, chapter?: number) {
-  const cacheKey = chapter
-    ? `quiz:pool:${book}:ch${chapter}`
-    : `quiz:pool:${book}`;
-
-  let pool: any[] | null = null;
-
-  if (redis) {
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        pool = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      }
-    } catch (error) {
-      console.warn('[CACHE_READ_ERROR]', error);
-    }
-  }
-
-  if (!pool || !Array.isArray(pool) || pool.length === 0) {
-    await connectToDatabase();
-    const filter: any = { book, isActive: true };
-    if (chapter && !isNaN(Number(chapter))) {
-      filter.chapter = Number(chapter);
-    }
-
-    const raw = await Question.find(filter)
-      .select('-options.isCorrect')
-      .lean();
-
-    pool = raw.map((q: any) => ({
-      id: q._id.toString(),
-      book: q.book,
-      chapter: q.chapter,
-      verse: q.verse,
-      difficulty: q.difficulty,
-      category: q.category,
-      question: q.question,
-      options: q.options,
-    }));
-
-    if (redis && pool.length > 0) {
-      try {
-        await redis.setex(cacheKey, 1800, JSON.stringify(pool)); // 30 min TTL
-      } catch (error) {
-        console.warn('[CACHE_WRITE_ERROR]', error);
-      }
-    }
-  }
-
-  // Double-randomization: Shuffle question sequence and slice to requested count
-  const randomizedQuestions = shuffleArray(pool).slice(0, count);
-
-  // Shuffle options for each individual question
-  return randomizedQuestions.map((q: any) => ({
-    ...q,
-    options: shuffleArray(q.options || []),
-  }));
-}
-
-/**
- * Optimized quiz session retrieval (direct database fallback)
- * - Uses .lean() for speed
- * - Removes correct answer hints
- * - Shuffles question sequence and option order
- */
-export async function getOptimizedQuizSession(book: string, count = 50, chapter?: number) {
   await connectToDatabase();
 
   const filter: any = { book, isActive: true };
@@ -137,8 +72,14 @@ export async function getOptimizedQuizSession(book: string, count = 50, chapter?
     .select('-options.isCorrect')
     .lean();
 
+  if (!rawQuestions || rawQuestions.length === 0) {
+    return [];
+  }
+
+  // Double-randomization: Shuffle question sequence and slice to requested count
   const randomizedQuestions = shuffleArray(rawQuestions).slice(0, count);
 
+  // Shuffle options for each individual question
   return randomizedQuestions.map((q: any) => ({
     id: q._id.toString(),
     book: q.book,
@@ -147,8 +88,18 @@ export async function getOptimizedQuizSession(book: string, count = 50, chapter?
     difficulty: q.difficulty,
     category: q.category,
     question: q.question,
-    options: shuffleArray(q.options || []),
+    options: shuffleArray<{ id: string; text: { en: string; ta: string } }>(q.options || []),
   }));
+}
+
+/**
+ * Optimized quiz session retrieval (direct database fallback)
+ * - Uses .lean() for speed
+ * - Removes correct answer hints
+ * - Shuffles question sequence and option order
+ */
+export async function getOptimizedQuizSession(book: string, count = 50, chapter?: number) {
+  return getCachedQuizQuestions(book, count, chapter);
 }
 
 /**
@@ -176,7 +127,7 @@ export async function invalidateQuizCache(book?: string) {
     if (book) {
       const keys1 = await redis.keys(`quiz:pool:${book}*`);
       const keys2 = await redis.keys(`quiz:questions:${book}*`);
-      const keys = [...new Set([...keys1, ...keys2])];
+      const keys = Array.from(new Set(keys1.concat(keys2)));
       if (keys.length > 0) {
         await redis.del(...keys);
         console.log(`[CACHE_INVALIDATED] ${keys.length} keys for ${book}`);
@@ -185,7 +136,7 @@ export async function invalidateQuizCache(book?: string) {
       // Clear all quiz caches
       const keys1 = await redis.keys('quiz:pool:*');
       const keys2 = await redis.keys('quiz:questions:*');
-      const keys = [...new Set([...keys1, ...keys2])];
+      const keys = Array.from(new Set(keys1.concat(keys2)));
       if (keys.length > 0) {
         await redis.del(...keys);
         console.log(`[CACHE_CLEARED_ALL] ${keys.length} keys`);

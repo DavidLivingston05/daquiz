@@ -159,7 +159,7 @@ export async function getQuizSession(
       difficulty: q.difficulty,
       category: q.category,
       question: q.question,
-      options: shuffleArray(q.options || []),
+      options: shuffleArray<{ id: string; text: { en: string; ta: string } }>(q.options || []),
       explanation: q.explanation,
     }));
   }
