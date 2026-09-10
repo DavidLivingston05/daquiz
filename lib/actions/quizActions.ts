@@ -15,6 +15,7 @@ import {
   getCachedQuizQuestions,
   getQuestionsForVerification,
   invalidateQuizCache,
+  shuffleArray,
 } from '@/lib/dbOptimizations';
 import {
   QuizSubmissionSchema,
@@ -137,19 +138,20 @@ export async function getQuizSession(
   const validated = validateInput(QuizSessionSchema, { book, count, chapter });
 
   if (mode === 'practice') {
-    // For practice mode, return questions with explanation
+    // For practice mode, return questions with explanation and randomized order
     await connectToDatabase();
     const filter: any = { book: validated.book, isActive: true };
     if (validated.chapter) {
       filter.chapter = validated.chapter;
     }
 
-    const questions = await Question.find(filter)
-      .limit(validated.count || 50)
+    const rawQuestions = await Question.find(filter)
       .select('-options.isCorrect')
       .lean();
 
-    return questions.map((q: any) => ({
+    const randomizedQuestions = shuffleArray(rawQuestions).slice(0, validated.count || 50);
+
+    return randomizedQuestions.map((q: any) => ({
       id: q._id.toString(),
       book: q.book,
       chapter: q.chapter,
@@ -157,7 +159,7 @@ export async function getQuizSession(
       difficulty: q.difficulty,
       category: q.category,
       question: q.question,
-      options: q.options,
+      options: shuffleArray(q.options || []),
       explanation: q.explanation,
     }));
   }

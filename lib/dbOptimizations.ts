@@ -46,50 +46,84 @@ export async function ensureProductionIndexes() {
   }
 }
 
-/**
- * Get quiz questions with caching
- * 30-minute cache prevents database hammering
- */
-export async function getCachedQuizQuestions(book: string, count = 50, chapter?: number) {
-  const cacheKey = chapter
-    ? `quiz:questions:${book}:ch${chapter}:${count}`
-    : `quiz:questions:${book}:${count}`;
-
-  if (redis) {
-    try {
-      // Try cache first
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        console.log(`[CACHE_HIT] ${cacheKey}`);
-        return typeof cached === 'string' ? JSON.parse(cached) : cached;
-      }
-    } catch (error) {
-      console.warn('[CACHE_READ_ERROR]', error);
-      // Continue to database fetch
-    }
+export function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-
-  // Cache miss or no Redis: fetch from database
-  const questions = await getOptimizedQuizSession(book, count, chapter);
-
-  // Store in cache
-  if (redis) {
-    try {
-      await redis.setex(cacheKey, 1800, JSON.stringify(questions)); // 30 min TTL
-      console.log(`[CACHE_SET] ${cacheKey}`);
-    } catch (error) {
-      console.warn('[CACHE_WRITE_ERROR]', error);
-    }
-  }
-
-  return questions;
+  return arr;
 }
 
 /**
- * Optimized quiz session retrieval
- * - Uses .lean() for ~3x speed improvement
+ * Get quiz questions with caching
+ * Caches the pool of questions for the chapter/book, then dynamically
+ * shuffles both the question sequence and option order on every single request.
+ */
+export async function getCachedQuizQuestions(book: string, count = 50, chapter?: number) {
+  const cacheKey = chapter
+    ? `quiz:pool:${book}:ch${chapter}`
+    : `quiz:pool:${book}`;
+
+  let pool: any[] | null = null;
+
+  if (redis) {
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        pool = typeof cached === 'string' ? JSON.parse(cached) : cached;
+      }
+    } catch (error) {
+      console.warn('[CACHE_READ_ERROR]', error);
+    }
+  }
+
+  if (!pool || !Array.isArray(pool) || pool.length === 0) {
+    await connectToDatabase();
+    const filter: any = { book, isActive: true };
+    if (chapter && !isNaN(Number(chapter))) {
+      filter.chapter = Number(chapter);
+    }
+
+    const raw = await Question.find(filter)
+      .select('-options.isCorrect')
+      .lean();
+
+    pool = raw.map((q: any) => ({
+      id: q._id.toString(),
+      book: q.book,
+      chapter: q.chapter,
+      verse: q.verse,
+      difficulty: q.difficulty,
+      category: q.category,
+      question: q.question,
+      options: q.options,
+    }));
+
+    if (redis && pool.length > 0) {
+      try {
+        await redis.setex(cacheKey, 1800, JSON.stringify(pool)); // 30 min TTL
+      } catch (error) {
+        console.warn('[CACHE_WRITE_ERROR]', error);
+      }
+    }
+  }
+
+  // Double-randomization: Shuffle question sequence and slice to requested count
+  const randomizedQuestions = shuffleArray(pool).slice(0, count);
+
+  // Shuffle options for each individual question
+  return randomizedQuestions.map((q: any) => ({
+    ...q,
+    options: shuffleArray(q.options || []),
+  }));
+}
+
+/**
+ * Optimized quiz session retrieval (direct database fallback)
+ * - Uses .lean() for speed
  * - Removes correct answer hints
- * - Uses indexed queries
+ * - Shuffles question sequence and option order
  */
 export async function getOptimizedQuizSession(book: string, count = 50, chapter?: number) {
   await connectToDatabase();
@@ -99,16 +133,13 @@ export async function getOptimizedQuizSession(book: string, count = 50, chapter?
     filter.chapter = Number(chapter);
   }
 
-  const totalCount = await Question.countDocuments(filter);
-  const skip = Math.floor(Math.random() * Math.max(0, totalCount - count + 1));
+  const rawQuestions = await Question.find(filter)
+    .select('-options.isCorrect')
+    .lean();
 
-  const questions = await Question.find(filter)
-    .skip(skip)
-    .limit(count)
-    .select('-options.isCorrect') // Never send correct answers to client
-    .lean(); // Returns plain JS objects (2-3x faster)
+  const randomizedQuestions = shuffleArray(rawQuestions).slice(0, count);
 
-  return questions.map((q: any) => ({
+  return randomizedQuestions.map((q: any) => ({
     id: q._id.toString(),
     book: q.book,
     chapter: q.chapter,
@@ -116,7 +147,7 @@ export async function getOptimizedQuizSession(book: string, count = 50, chapter?
     difficulty: q.difficulty,
     category: q.category,
     question: q.question,
-    options: q.options,
+    options: shuffleArray(q.options || []),
   }));
 }
 
@@ -143,15 +174,18 @@ export async function invalidateQuizCache(book?: string) {
 
   try {
     if (book) {
-      const pattern = `quiz:questions:${book}:*`;
-      const keys = await redis.keys(pattern);
+      const keys1 = await redis.keys(`quiz:pool:${book}*`);
+      const keys2 = await redis.keys(`quiz:questions:${book}*`);
+      const keys = [...new Set([...keys1, ...keys2])];
       if (keys.length > 0) {
         await redis.del(...keys);
         console.log(`[CACHE_INVALIDATED] ${keys.length} keys for ${book}`);
       }
     } else {
       // Clear all quiz caches
-      const keys = await redis.keys('quiz:questions:*');
+      const keys1 = await redis.keys('quiz:pool:*');
+      const keys2 = await redis.keys('quiz:questions:*');
+      const keys = [...new Set([...keys1, ...keys2])];
       if (keys.length > 0) {
         await redis.del(...keys);
         console.log(`[CACHE_CLEARED_ALL] ${keys.length} keys`);
